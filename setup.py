@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 version = {'__builtins__': None}
 
-with open("netbox-client/__version__.py", "r") as fh:
+with open("netbox_client/__version__.py", "r") as fh:
     exec(fh.read(), version)
 
 del version["__builtins__"]
