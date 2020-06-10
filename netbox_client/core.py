@@ -30,7 +30,7 @@ class Config():
         assert self.url and self.token
 
     def init(self, conffile):
-        pass
+        print('Not Implemented')
 
     def load(self, conffile):
 
@@ -97,7 +97,10 @@ def add_detail_endpoints():
     
     @property
     def elevation(self):
-        return pynetbox.core.endpoint.RODetailEndpoint(self, 'elevation')
+        RUs = pynetbox.models.dcim.RUs
+        return pynetbox.core.endpoint.RODetailEndpoint(self,
+                                                       'elevation',
+                                                        custom_return=RUs)
     
     pynetbox.models.dcim.Interfaces.trace = trace
     
