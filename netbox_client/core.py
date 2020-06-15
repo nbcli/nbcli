@@ -3,7 +3,8 @@ from pathlib import Path
 import os
 import urllib3
 import pynetbox
-
+from pynetbox.core.response import Record
+from pynetbox.models.dcim import Cables, Interfaces, Termination
 
 class Config():
 
@@ -49,7 +50,7 @@ class Config():
             setattr(self, key, pynb_conf.get(key))
 
         for param in params:
-            env_var = 'NBCLI_' + param.upper()
+            env_var = 'NBC_' + param.upper()
             self_value = getattr(self, param)
             env_value = os.environ.get(env_var, self_value)
             if self_value != env_value:
@@ -69,9 +70,61 @@ class Config():
         super().__setattr__(name, value)
 
 
+class Trace(list):
+
+    def __init__(self, values, api, endpoint):
+        assert isinstance(values, list)
+        for i in values:
+            if i:
+                a, e, i = i['url'].replace(api.base_url, '').strip('/').split('/')
+                app = getattr(api, a)
+                endpoint = getattr(app, e.replace('-', '_'))
+                obj = endpoint.get(int(i))
+                self.append(obj)
+            else:
+                self.append(i)
+
+    def __repr__(self):
+
+        if None in self:
+            return '{} [{}] <- n/c'.format(self[0].device.name, self[0].name)
+
+        return '{} [{}] <- {} -> {} [{}]'.format(self[0].device.name,
+                                             self[0].name, 
+                                             str(self[1].id),
+                                             self[2].device.name,
+                                             self[2].name)
+
+
+def add_detail_endpoint(model, name, RO=False, custom_return=None):
+
+    assert model in Record.__subclasses__(), 'model must b subclass of Record'
+
+    @property
+    def detail_ep(self):
+        return pynetbox.core.endpoint.DetailEndpoint(self, name, custom_return=custom_return)
+
+    @property
+    def ro_detail_ep(self):
+        return pynetbox.core.endpoint.RODetailEndpoint(self, name, custom_return=custom_return)
+
+    if RO:
+        setattr(model, name, ro_detail_ep)
+    else:
+        setattr(model, name, detail_ep)
+
+def is_record(obj):
+
+    obj_class = getattr(obj, '__class__')
+    rcd_class = getattr(Record, '__class__')
+    return isinstance(obj_class, rcd_class)
+
 def get_session(conf_file=None, init=False):
 
     conf = Config(conf_file=conf_file, init=init)
+
+    if init:
+        return
 
     if conf.ssl_verify is False:
         urllib3.disable_warnings()
@@ -87,21 +140,14 @@ def get_session(conf_file=None, init=False):
             del pynb_kwargs[arg]
 
     nb = pynetbox.api(conf.url, **pynb_kwargs)
+
+    add_detail_endpoint(pynetbox.models.dcim.Racks,
+                        'elevation',
+                        RO=True,
+                        custom_return=pynetbox.models.dcim.RUs)
+    add_detail_endpoint(pynetbox.models.dcim.Interfaces,
+                        'trace',
+                        RO=True,
+                        custom_return=Trace)
+
     return nb
-
-def add_detail_endpoints():
-
-    @property
-    def trace(self):
-        return pynetbox.core.endpoint.RODetailEndpoint(self, 'trace')
-    
-    @property
-    def elevation(self):
-        RUs = pynetbox.models.dcim.RUs
-        return pynetbox.core.endpoint.RODetailEndpoint(self,
-                                                       'elevation',
-                                                        custom_return=RUs)
-    
-    pynetbox.models.dcim.Interfaces.trace = trace
-    
-    pynetbox.models.dcim.Racks.elevation = elevation

@@ -1,7 +1,7 @@
 import argparse
 import pkgutil
 import sys
-from .core import get_session, add_detail_endpoints
+from .core import get_session
 import requests
 import pynetbox
 
@@ -16,7 +16,6 @@ class Shell():
         self.script = script
         self.interact = interact
         self.netbox = get_session()
-        add_detail_endpoints()
         self.build_ns() 
         self.banner = ''
         self.banner += 'NetBox version {}\n'.format(self.netbox.version)

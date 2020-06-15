@@ -31,6 +31,7 @@ setuptools.setup(
     entry_points={
         "console_scripts": [
             "nbcli=netbox_client.cli:main",
+            "nbcmd=netbox_client.cmd:main",
             "nbshell=netbox_client.shell:main",
         ],
     },
