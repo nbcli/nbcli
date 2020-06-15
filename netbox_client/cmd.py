@@ -1,7 +1,8 @@
 import argparse
 import sys
 from pprint import pprint
-from .core import get_session, is_record, add_detail_endpoint
+from pynetbox.core.response import Record
+from .core import get_session
 
 ENDPOINT_METHODS =  ('all', 'choices', 'count', 'create', 'filter', 'get')
 
@@ -17,7 +18,7 @@ class ProcKWArgsAction(argparse.Action):
                 getattr(namespace, self.dest).append(i)
 
 
-class CLI():
+class CMD():
 
     def __init__(self,
                  app,
@@ -49,11 +50,11 @@ class CLI():
             print(self.result)
         elif isinstance(self.result, list):
             for i in self.result:
-                if is_record(i):
+                if isinstance(i, Record):
                     print('({}) {}'.format(i.id, i))
                 else:
                     print(i)
-        elif is_record(self.result):
+        elif isinstance(self.result, Record):
             pprint(dict(self.result))
         else:
             print(self.result)
@@ -131,7 +132,7 @@ def main():
     print(args)
 
     try:
-        cli = CLI(args.app,
+        cli = CMD(args.app,
                   args.endpoint,
                   args.method,
                   args=args.args,
