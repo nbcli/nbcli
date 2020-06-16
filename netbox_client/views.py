@@ -104,12 +104,25 @@ class DcimDevices(BaseView):
 
     def view_model(self, obj):
 
+        position = ''
+        parent = ''
+        bay = ''
+
+        if obj.position:
+            position = obj.position
+        if obj.parent_device:
+            parent = obj.parent_device
+            position = obj.parent_device.position
+            bay = obj.parent_device.device_bay
+
         self.view['DeviceID'] = obj.id
         self.view['Name'] = obj.name
         self.view['Model'] = obj.device_type.model
         self.view['SN'] = obj.serial
         self.view['Rack'] = obj.rack
-        self.view['Position'] = obj.position
+        self.view['Position'] = position
+        self.view['Parent'] = parent
+        self.view['Bay'] = bay
 
 
 class DcimInterfaces(BaseView):
