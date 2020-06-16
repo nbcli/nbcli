@@ -100,3 +100,22 @@ class DcimDevices(BaseView):
         self.view['SN'] = obj.serial
         self.view['Rack'] = obj.rack
         self.view['Position'] = obj.position
+
+
+class DcimInterfaces(BaseView):
+
+    def view_model(self, obj):
+
+        endpoint = ''
+        if obj.connected_endpoint:
+            endpoint = str(obj.connected_endpoint.device) + '['
+            endpoint += str(obj.connected_endpoint) + ']'
+
+        cable = ''
+        if obj.cable:
+            cable = '<-' + str(obj.cable.id) + '->'
+
+        self.view['InterfaceID'] = obj.id
+        self.view['Name'] = str(obj.device) + '[' + str(obj.name) + ']'
+        self.view['Cable'] = cable
+        self.view['ConnectedEndpoint'] = endpoint

@@ -43,7 +43,7 @@ class CMD():
         self.method = getattr(self.endpoint, method)
         self.result = self.method(*args, **kwargs)
 
-    def display(self):
+    def display(self, header=True):
 
         if not self.result:
             print('No result to display')
@@ -51,12 +51,12 @@ class CMD():
             print(self.result)
         elif isinstance(self.result, list):
             if (len(self.result) > 0) and isinstance(self.result[0], Record):
-                display_result(self.result)
+                display_result(self.result, header=header)
             else:
                 for i in self.result:
                     print(i)
         elif isinstance(self.result, Record):
-            display_result(self.result)
+            display_result(self.result, header=header)
         else:
             print(self.result)
 
@@ -117,6 +117,10 @@ def main():
                         action=ProcKWArgsAction,
                         help='Argumets to pass to the de-action')
 
+    parser.add_argument('--nh', '--no-header',
+                        action='store_false',
+                        help='Disable header row in results')
+
     args = parser.parse_args()
 
     if args.update is None:
@@ -129,6 +133,8 @@ def main():
     if args.dea is None:
         args.dea = list()
         args.dea_kwargs = dict()
+
+#    print(args)
 
     try:
         cli = CMD(args.app,
@@ -143,10 +149,12 @@ def main():
                   dea=args.dea,
                   dea_kwargs=args.dea_kwargs)
 
-        cli.display()
+        cli.display(header=args.nh)
+
     except Exception as e:
         print(type(e).__name__)
         print(e)
+        raise e
         #from IPython import embed; embed()
 
         sys.exit(1)
