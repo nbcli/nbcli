@@ -3,6 +3,7 @@ import sys
 from pprint import pprint
 from pynetbox.core.response import Record
 from .core import get_session
+from .views import display_result
 
 ENDPOINT_METHODS =  ('all', 'choices', 'count', 'create', 'filter', 'get')
 
@@ -49,13 +50,13 @@ class CMD():
         elif isinstance(self.result, int):
             print(self.result)
         elif isinstance(self.result, list):
-            for i in self.result:
-                if isinstance(i, Record):
-                    print('({}) {}'.format(i.id, i))
-                else:
+            if (len(self.result) > 0) and isinstance(self.result[0], Record):
+                display_result(self.result)
+            else:
+                for i in self.result:
                     print(i)
         elif isinstance(self.result, Record):
-            pprint(dict(self.result))
+            display_result(self.result)
         else:
             print(self.result)
 
@@ -128,8 +129,6 @@ def main():
     if args.dea is None:
         args.dea = list()
         args.dea_kwargs = dict()
-
-    print(args)
 
     try:
         cli = CMD(args.app,

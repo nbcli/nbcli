@@ -4,24 +4,68 @@ from collections import OrderedDict
 from pynetbox.core.response import Record
 from .core import app_endpoint_names
 
-class RecordView():
+def get_view_name(obj):
+
+    if hasattr(obj, 'endpoint'):
+        return '-'.join(app_endpoint_names(obj)).title().replace('-', '')
+
+    return ''
+
+
+def get_view(obj):
+    
+    for view in BaseView.__subclasses__():
+        if view.__name__ == get_view_name(obj):
+            return view(obj)
+
+    return RecordView(obj)
+
+
+def build_display_matrix(result):
+
+    display = list()
+
+    if isinstance(result, Record):
+        view = get_view(result)
+        display.append([str(i) for i in view.keys()])
+        display.append([str(i) for i in view.values()])
+
+    if isinstance(result, list):
+        assert len(result) > 0
+        assert isinstance(result[0], Record)
+        assert len(set(entry.__class__ for entry in result)) == 1
+        display.append([str(i) for i in get_view(result[0]).keys()])
+        for entry in result:
+            view = get_view(entry)
+            display.append([str(i) for i in view.values()])
+
+    return display
+
+
+def display_result(result, header=True):
+
+    display = build_display_matrix(result)
+    assert len(display) > 1
+    if not header:
+        display.pop(0)
+
+    template = '{:<15s}' * len(display[0])
+    for entry in display:
+        print(template.format(*entry))
+
+class BaseView():
 
     def __init__(self, obj):
 
         assert isinstance(obj, Record)
-        self.obj = obj
         self.view = OrderedDict()
-        self.view_model()
+        self.view_model(obj)
 
     def __iter__(self):
-        return self.view.__iter__()
+        return iter(self.view)
 
-    def view_model(self):
-
-        idkey = self.obj.endpoint.name.title().replace('-', '') + 'ID'
-
-        self.view[idkey] = self.obj.id
-        self.view['Name'] = str(self.obj)
+    def view_model(self, obj):
+        pass
 
     def items(self):
         return self.view.items()
@@ -32,14 +76,27 @@ class RecordView():
     def values(self):
         return self.view.values()
 
+    def __repr__(self):
+        return 'View' + repr(list(self.items()))
 
-class DcimDevices(RecordView):
 
-    def view_model(self):
+class RecordView(BaseView):
 
-        self.view['DeviceID'] = self.obj.id
-        self.view['Name'] = self.obj.name
-        self.view['Model'] = self.device_type.model
-        self.view['SN'] = self.obj.serial
-        self.view['Rack'] = self.obj.rack
-        self.view['Position'] = self.obj.position
+    def view_model(self, obj):
+
+        idkey = obj.endpoint.name.title().replace('-', '') + 'ID'
+
+        self.view[idkey] = obj.id
+        self.view['Name'] = str(obj)
+
+
+class DcimDevices(BaseView):
+
+    def view_model(self, obj):
+
+        self.view['DeviceID'] = obj.id
+        self.view['Name'] = obj.name
+        self.view['Model'] = obj.device_type.model
+        self.view['SN'] = obj.serial
+        self.view['Rack'] = obj.rack
+        self.view['Position'] = obj.position
