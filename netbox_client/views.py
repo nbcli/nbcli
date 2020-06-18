@@ -1,8 +1,23 @@
 """Display Views to use for nbcli and nbcmd"""
 
+import json
 from collections import OrderedDict
 from pynetbox.core.response import Record
 from .core import app_endpoint_names
+
+def get_json(result):
+
+    def build(data):
+        if isinstance(data, Record):
+            data = dict(data)
+        elif isinstance(data, list):
+            data = [build(d) for d in data]
+        return data
+
+    data = build(result)
+
+    return json.dumps(data, indent=4)
+
 
 def get_view_name(obj):
 
