@@ -10,7 +10,7 @@ class Shell():
     def __init__(self, interactive_shell=None, script=None, interact=False, conf_file=None):
 
         if pkgutil.find_loader('IPython') is None:
-            interactive_shell = python
+            interactive_shell = 'python'
 
         self.interactive_shell = interactive_shell
         self.script = script

@@ -12,7 +12,7 @@ def main():
     add_subcommands(subparsers)
 
     args = parser.parse_args()
-    print(args)
+#    print(args)
     if args.func:
         args.func(args)
     else:

@@ -19,7 +19,7 @@ class ProcKWArgsAction(argparse.Action):
                 getattr(namespace, self.dest).append(i)
 
 
-class CMD():
+class Pynb():
 
     def __init__(self,
                  app,
@@ -70,7 +70,7 @@ class CMD():
         print('Not Implemented!')
 
 
-def run_cmd(args):
+def run_pynb(args):
 
     if args.update is None:
         args.update = list()
@@ -84,7 +84,7 @@ def run_cmd(args):
         args.dea_kwargs = dict()
 
     try:
-        cli = CMD(args.app,
+        cli = Pynb(args.app,
                   args.endpoint,
                   args.method,
                   args=args.args,
@@ -106,32 +106,32 @@ def run_cmd(args):
         sys.exit(1)
 
 
-def add_cmd(subparsers):
+def add_pynb(subparsers):
 
-    parser_cmd = subparsers.add_parser('cmd', help='Wrapper for pynetbox')
-    parser_cmd.set_defaults(func=run_cmd)
-    parser_cmd.add_argument('app',
+    parser_pynb = subparsers.add_parser('pynb', help='Wrapper for pynetbox')
+    parser_pynb.set_defaults(func=run_pynb)
+    parser_pynb.add_argument('app',
                         metavar="APP",
                         type=str,
                         help="App to call")
 
-    parser_cmd.add_argument('endpoint',
+    parser_pynb.add_argument('endpoint',
                         metavar="ENDPOINT",
                         type=str,
                         help="App endpoint")
 
-    parser_cmd.add_argument('method',
+    parser_pynb.add_argument('method',
                         metavar="METHOD",
                         type=str,
                         choices=ENDPOINT_METHODS,
                         help="Endpoint Method")
 
-    parser_cmd.add_argument('args',
+    parser_pynb.add_argument('args',
                         nargs='*',
                         action=ProcKWArgsAction,
                         help='Argumnet to pass to func')
 
-    obj_meth = parser_cmd.add_mutually_exclusive_group()
+    obj_meth = parser_pynb.add_mutually_exclusive_group()
 
     obj_meth.add_argument('-D', '--delete',
                           action='store_true',
@@ -148,12 +148,12 @@ def add_cmd(subparsers):
                           nargs=2,
                           help='Get the detail endpoint of object')
 
-    parser_cmd.add_argument('--dea', '--de-args',
+    parser_pynb.add_argument('--dea', '--de-args',
                         metavar='DE-ARGS',
                         nargs='*',
                         action=ProcKWArgsAction,
                         help='Argumets to pass to the de-action')
 
-    parser_cmd.add_argument('--nh', '--no-header',
+    parser_pynb.add_argument('--nh', '--no-header',
                         action='store_false',
                         help='Disable header row in results')
