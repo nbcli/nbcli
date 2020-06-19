@@ -2,8 +2,8 @@ import argparse
 import sys
 from pprint import pprint
 from pynetbox.core.response import Record
-from .core import get_session
-from .views import display_result
+from ..core import get_session
+from ..views import display_result
 
 ENDPOINT_METHODS =  ('all', 'choices', 'count', 'create', 'filter', 'get')
 
@@ -69,59 +69,8 @@ class CMD():
     def detail(self, obj):
         print('Not Implemented!')
 
-def main():
 
-    parser = argparse.ArgumentParser(description='nbcli', prog='nbcli')
-
-    parser.add_argument('app',
-                        metavar="APP",
-                        type=str,
-                        help="App to call")
-
-    parser.add_argument('endpoint',
-                        metavar="ENDPOINT",
-                        type=str,
-                        help="App endpoint")
-
-    parser.add_argument('method',
-                        metavar="METHOD",
-                        type=str,
-                        choices=ENDPOINT_METHODS,
-                        help="Endpoint Method")
-
-    parser.add_argument('args',
-                        nargs='*',
-                        action=ProcKWArgsAction,
-                        help='Argumnet to pass to func')
-
-    obj_meth = parser.add_mutually_exclusive_group()
-
-    obj_meth.add_argument('-D', '--delete',
-                          action='store_true',
-                          help='Delete Object retrieved by get method')
-
-    obj_meth.add_argument('-u', '--update',
-                          metavar='UD-ARGS',
-                          nargs='+',
-                          action=ProcKWArgsAction,
-                          help='Update object with given kwargs')
-
-    obj_meth.add_argument('--de', '--detail-endpoint',
-                          metavar=('DE', 'DE-METHOD'),
-                          nargs=2,
-                          help='Get the detail endpoint of object')
-
-    parser.add_argument('--dea', '--de-args',
-                        metavar='DE-ARGS',
-                        nargs='*',
-                        action=ProcKWArgsAction,
-                        help='Argumets to pass to the de-action')
-
-    parser.add_argument('--nh', '--no-header',
-                        action='store_false',
-                        help='Disable header row in results')
-
-    args = parser.parse_args()
+def run_cmd(args):
 
     if args.update is None:
         args.update = list()
@@ -133,8 +82,6 @@ def main():
     if args.dea is None:
         args.dea = list()
         args.dea_kwargs = dict()
-
-#    print(args)
 
     try:
         cli = CMD(args.app,
@@ -155,9 +102,58 @@ def main():
         print(type(e).__name__)
         print(e)
         raise e
-        #from IPython import embed; embed()
 
         sys.exit(1)
 
-if __name__ == '__main__':
-    main()
+
+def add_cmd(subparsers):
+
+    parser_cmd = subparsers.add_parser('cmd', help='Wrapper for pynetbox')
+    parser_cmd.set_defaults(func=run_cmd)
+    parser_cmd.add_argument('app',
+                        metavar="APP",
+                        type=str,
+                        help="App to call")
+
+    parser_cmd.add_argument('endpoint',
+                        metavar="ENDPOINT",
+                        type=str,
+                        help="App endpoint")
+
+    parser_cmd.add_argument('method',
+                        metavar="METHOD",
+                        type=str,
+                        choices=ENDPOINT_METHODS,
+                        help="Endpoint Method")
+
+    parser_cmd.add_argument('args',
+                        nargs='*',
+                        action=ProcKWArgsAction,
+                        help='Argumnet to pass to func')
+
+    obj_meth = parser_cmd.add_mutually_exclusive_group()
+
+    obj_meth.add_argument('-D', '--delete',
+                          action='store_true',
+                          help='Delete Object retrieved by get method')
+
+    obj_meth.add_argument('-u', '--update',
+                          metavar='UD-ARGS',
+                          nargs='+',
+                          action=ProcKWArgsAction,
+                          help='Update object with given kwargs')
+
+    obj_meth.add_argument('--de', '--detail-endpoint',
+                          metavar=('DE', 'DE-METHOD'),
+                          nargs=2,
+                          help='Get the detail endpoint of object')
+
+    parser_cmd.add_argument('--dea', '--de-args',
+                        metavar='DE-ARGS',
+                        nargs='*',
+                        action=ProcKWArgsAction,
+                        help='Argumets to pass to the de-action')
+
+    parser_cmd.add_argument('--nh', '--no-header',
+                        action='store_false',
+                        help='Disable header row in results')

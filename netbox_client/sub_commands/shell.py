@@ -1,13 +1,13 @@
 import argparse
 import pkgutil
 import sys
-from .core import get_session
+from ..core import get_session
 import requests
 import pynetbox
 
 class Shell():
 
-    def __init__(self, interactive_shell=None, script=None, interact=False):
+    def __init__(self, interactive_shell=None, script=None, interact=False, conf_file=None):
 
         if pkgutil.find_loader('IPython') is None:
             interactive_shell = python
@@ -15,7 +15,7 @@ class Shell():
         self.interactive_shell = interactive_shell
         self.script = script
         self.interact = interact
-        self.netbox = get_session()
+        self.netbox = get_session(conf_file=conf_file)
         self.build_ns() 
         self.banner = ''
         self.banner += 'NetBox version {}\n'.format(self.netbox.version)
@@ -96,23 +96,23 @@ class Shell():
             self.python()
 
 
-def main():
-
-    parser = argparse.ArgumentParser(description='nbshell', prog='nbshell')
-    parser.add_argument('script', nargs='?', type=str, help='Script to run')
-    parser.add_argument('-i', action='store_true',
-                        help='inspect interactively after running script')
-    parser.add_argument('-s', '--interactive-shell', choices=['python', 'ipython'],
-                        default='ipython',
-                        help='Specifies interactive shell to use')
-    args = parser.parse_args()
+def start_shell(args):
 
     shell = Shell(interactive_shell=args.interactive_shell,
                   script=args.script,
-                  interact=args.i)
+                  interact=args.i,
+                  conf_file=args.config)
 
     shell.run()
 
 
-if __name__ == '__main__':
-    main()
+def add_shell(subparsers):
+
+    parser_shell = subparsers.add_parser('shell', help='Launch interactive shell')
+    parser_shell.set_defaults(func=start_shell)
+    parser_shell.add_argument('script', nargs='?', type=str, help='Script to run')
+    parser_shell.add_argument('-i', action='store_true',
+                        help='inspect interactively after running script')
+    parser_shell.add_argument('-s', '--interactive-shell', choices=['python', 'ipython'],
+                        default='ipython',
+                        help='Specifies interactive shell to use')
