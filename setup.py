@@ -5,20 +5,20 @@ with open("README.md", "r") as fh:
 
 version = {'__builtins__': None}
 
-with open("netbox_client/__version__.py", "r") as fh:
+with open("nbcli/__version__.py", "r") as fh:
     exec(fh.read(), version)
 
 del version["__builtins__"]
 
 setuptools.setup(
-    name="netbox-client",
+    name="nbcli",
     version=version["__version__"],
     author="Eric Geldmacher",
     author_email="egeldmacher@wustl.edu",
-    description="CLI and shell for netbox using pynetbox module",
+    description="CLI for netbox using pynetbox module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://gitlab.com/egeldmacher/netbox-client",
+    url="https://gitlab.com/egeldmacher/nbcli",
     license="GPLv3",
     packages=setuptools.find_packages(),
     install_requires=["pynetbox"],
@@ -30,7 +30,7 @@ setuptools.setup(
     python_requires='>=3.6',
     entry_points={
         "console_scripts": [
-            "nbcli=netbox_client.cli:main",
+            "nbcli=nbcli.cli:main",
         ],
     },
 )

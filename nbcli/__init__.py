@@ -1,4 +1,4 @@
-"""Initialize netbox-client module."""
+"""Initialize nbcli module."""
 
 from pynetbox.models.dcim import Interfaces, Racks, RUs
 from .__version__ import __version__  # noqa: F401

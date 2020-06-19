@@ -1,4 +1,4 @@
-"""Define Classes and Functions used throughout netbox-client."""
+"""Define Classes and Functions used throughout nbcli."""
 
 from configparser import ConfigParser
 from pathlib import Path
@@ -29,7 +29,7 @@ class Config():
         if conf_file:
             conffile = Path(conf_file)
         else:
-            conffile = Path.home().joinpath('.netbox-client.ini')
+            conffile = Path.home().joinpath('.nbcli.ini')
 
         if init:
             self.init(conffile)
