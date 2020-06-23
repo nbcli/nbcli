@@ -3,11 +3,13 @@ from .sub_commands import add_subcommands
 
 def main():
 
-    parser = argparse.ArgumentParser(description='nbcli', prog='nbcli')
+    parser = argparse.ArgumentParser(prog='nbcli')
     parser.set_defaults(func=None)
     parser.add_argument('-c', '--config', help='config file to use')
 
-    subparsers = parser.add_subparsers(help='sub-command help')
+    subparsers = parser.add_subparsers(title='Commands',
+                                       help='additional help',
+                                       metavar='<command>')
 
     add_subcommands(subparsers)
 

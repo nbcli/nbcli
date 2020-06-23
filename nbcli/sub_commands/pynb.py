@@ -3,7 +3,7 @@ import sys
 from pprint import pprint
 from pynetbox.core.response import Record
 from ..core import get_session
-from ..views import display_result
+from ..views.tools import display_result
 
 ENDPOINT_METHODS =  ('all', 'choices', 'count', 'create', 'filter', 'get')
 
