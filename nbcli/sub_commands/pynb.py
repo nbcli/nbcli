@@ -147,7 +147,3 @@ class PynbSubCommand(BaseSubCommand):
                             nargs='*',
                             action=ProcKWArgsAction,
                             help='Argumets to pass to the de-action')
-    
-        self.parser.add_argument('--nh', '--no-header',
-                            action='store_false',
-                            help='Disable header row in results')

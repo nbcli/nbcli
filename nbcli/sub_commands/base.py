@@ -8,6 +8,10 @@ view_parser.add_argument('--view', type=str, help='Output view.',
                            default='table')
 view_parser.add_argument('--cols', nargs='*',
                            help="Custome columns for table output.")
+view_parser.add_argument('--nh', '--no-header',
+                         action='store_false',
+                         help='Disable header row in results')
+
 
 class ProcKWArgsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string):
