@@ -1,8 +1,15 @@
+import logging
+from .base import BaseSubCommand
 from ..core import get_session
 
-def init_nbcli(args):
-    get_session(conf_file=args.config, init=True)
+class InitSubCommand(BaseSubCommand):
 
-def add_init(subparsers):
-    parser_init = subparsers.add_parser('init', help='Initialize nbcli')
-    parser_init.set_defaults(func=init_nbcli)
+    name = 'init'
+    parser_kwargs = dict(help='Initialize nbcli.')
+
+    def _pre_run_(self, args):
+        
+        self.args = args
+        self.netbox = get_session(conf_file=args.config, init=True)
+        self.logger = logging.getLogger('nbcli.'+self.name)
+        self.run()
