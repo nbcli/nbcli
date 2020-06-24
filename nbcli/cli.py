@@ -1,5 +1,4 @@
 import argparse
-from .sub_commands import add_subcommands
 from .sub_commands.base import BaseSubCommand
 
 def main():
@@ -22,8 +21,6 @@ def main():
 
     for command in BaseSubCommand.__subclasses__():
         command(subparsers, parents=[common_parser])
-
-#    add_subcommands(subparsers, common_parser, view_parser)
 
     args = parser.parse_args()
 #    print(args)
