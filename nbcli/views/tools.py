@@ -57,26 +57,26 @@ def build_table(result):
     return display
 
 
-def display_result(result, header=True):
-
-    display = build_table(result)
-    assert len(display) > 1
-    if not header:
-        display.pop(0)
-
-    # get max width for each column
-    colw = list()
-    for col in range(len(display[0])):
-        colw.append(max([len(row[col]) for row in display]))
-
-    # build template based on max with for each column
-    template = ''
-    buff = 2
-    for w in colw:
-        template += '{:<' + str(w + buff) + 's}'
-
-    for entry in display:
-        print(template.format(*entry))
+#def display_result(result, header=True):
+#
+#    display = build_table(result)
+#    assert len(display) > 1
+#    if not header:
+#        display.pop(0)
+#
+#    # get max width for each column
+#    colw = list()
+#    for col in range(len(display[0])):
+#        colw.append(max([len(row[col]) for row in display]))
+#
+#    # build template based on max with for each column
+#    template = ''
+#    buff = 2
+#    for w in colw:
+#        template += '{:<' + str(w + buff) + 's}'
+#
+#    for entry in display:
+#        print(template.format(*entry))
 
 
 def get_table(result, disable_header=False):

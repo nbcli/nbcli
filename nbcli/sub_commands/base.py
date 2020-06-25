@@ -27,7 +27,7 @@ def get_view_parser():
     view_parser.add_argument('--cols', nargs='*',
                                help="Custome columns for table output.")
     view_parser.add_argument('--nh', '--no-header',
-                             action='store_false',
+                             action='store_true',
                              help='Disable header row in results')
     return view_parser
 
@@ -39,7 +39,16 @@ class ProcKWArgsAction(argparse.Action):
         setattr(namespace, kw_dest, dict())
         for i in values:
             if i.find('=') > 0:
-                getattr(namespace, kw_dest)[i.split('=')[0]] = i.split('=')[1]
+                kwargs = getattr(namespace, kw_dest)
+                key = i.split('=')[0]
+                value = i.split('=')[1]
+                if key in kwargs:
+                    if isinstance(kwargs[key], list):
+                        kwargs[key].append(value)
+                    else:
+                        kwargs[key] = [kwargs[key], value]
+                else:
+                    kwargs[key] = value
             else:
                 getattr(namespace, self.dest).append(i)
 
@@ -71,13 +80,29 @@ class BaseSubCommand():
         self.args = args
         self.netbox = get_session(conf_file=args.config)
         self.logger = logging.getLogger('nbcli.'+self.name)
+        self._set_log_level_()
         if self.view_options:
-            self.args.nbprint = functools.partial(nbprint,
-                                                  view=self.args.view,
-                                                  cols=self.args.cols,
-                                                  disable_header=self.args.nh)
+            self.nbprint = functools.partial(nbprint,
+                                             view=self.args.view,
+                                             cols=self.args.cols,
+                                             disable_header=self.args.nh)
+        self.logger.debug(args)
         self.run()
 
+    def _set_log_level_(self):
+        """Set the loglevel base on the arguments passed."""
+        if self.args.quiet:
+            if self.args.quiet == 1:
+                self.logger.setLevel(logging.ERROR)
+            elif self.args.quiet == 2:
+                self.logger.setLevel(logging.CRITICAL)
+            elif self.args.quiet > 2:
+                self.logger.setLevel(100)
+        if self.args.verbose:
+            if self.args.verbose == 1:
+                self.logger.setLevel(logging.INFO)
+            elif self.args.verbose > 1:
+                self.logger.setLevel(logging.DEBUG)
 
     def setup(self):
         pass

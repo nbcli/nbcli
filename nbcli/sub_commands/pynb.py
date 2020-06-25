@@ -1,8 +1,4 @@
-import sys
-from pprint import pprint
-from pynetbox.core.response import Record
 from .base import BaseSubCommand, ProcKWArgsAction
-from ..views.tools import display_result
 
 ENDPOINT_METHODS = ('all', 'choices', 'count', 'create', 'filter', 'get')
 
@@ -34,23 +30,6 @@ class Pynb():
         self.method = getattr(self.endpoint, method)
         self.result = self.method(*args, **kwargs)
 
-    def display(self, header=True):
-
-        if not self.result:
-            print('No result to display')
-        elif isinstance(self.result, int):
-            print(self.result)
-        elif isinstance(self.result, list):
-            if (len(self.result) > 0) and isinstance(self.result[0], Record):
-                display_result(self.result, header=header)
-            else:
-                for i in self.result:
-                    print(i)
-        elif isinstance(self.result, Record):
-            display_result(self.result, header=header)
-        else:
-            print(self.result)
-
     def delete(self, obj):
         print('Not Implemented!')
 
@@ -67,44 +46,7 @@ class PynbSubCommand(BaseSubCommand):
     parser_kwargs = dict(help='Wrapper for pynetbox')
     view_options = True
 
-    def run(self):
-    
-        if self.args.update is None:
-            self.args.update = list()
-            self.args.update_kwargs = dict()
-    
-        if self.args.de is None:
-            self.args.de = list()
-    
-        if self.args.dea is None:
-            self.args.dea = list()
-            self.args.dea_kwargs = dict()
-    
-        try:
-            cli = Pynb(self.netbox,
-                       self.args.app,
-                       self.args.endpoint,
-                       self.args.method,
-                       args=self.args.args,
-                       kwargs=self.args.args_kwargs,
-                       delete=self.args.delete,
-                       update=self.args.update,
-                       update_kwargs=self.args.update_kwargs,
-                       de=self.args.de,
-                       dea=self.args.dea,
-                       dea_kwargs=self.args.dea_kwargs,
-                       nbprint=self.args.nbprint)
-            cli.nbprint(cli.result)
-            #cli.display(header=self.args.nh)
-    
-        except Exception as e:
-            print(type(e).__name__)
-            print(e)
-            raise e
-    
-            sys.exit(1)
-    
-    
+
     def setup(self):
     
         self.parser.add_argument('app',
@@ -150,3 +92,32 @@ class PynbSubCommand(BaseSubCommand):
                             nargs='*',
                             action=ProcKWArgsAction,
                             help='Argumets to pass to the de-action')
+
+
+    def run(self):
+    
+        if self.args.update is None:
+            self.args.update = list()
+            self.args.update_kwargs = dict()
+    
+        if self.args.de is None:
+            self.args.de = list()
+    
+        if self.args.dea is None:
+            self.args.dea = list()
+            self.args.dea_kwargs = dict()
+    
+        cli = Pynb(self.netbox,
+                   self.args.app,
+                   self.args.endpoint,
+                   self.args.method,
+                   args=self.args.args,
+                   kwargs=self.args.args_kwargs,
+                   delete=self.args.delete,
+                   update=self.args.update,
+                   update_kwargs=self.args.update_kwargs,
+                   de=self.args.de,
+                   dea=self.args.dea,
+                   dea_kwargs=self.args.dea_kwargs,
+                   nbprint=self.nbprint)
+        cli.nbprint(cli.result)

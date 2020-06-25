@@ -3,6 +3,7 @@ import sys
 import requests
 import pynetbox
 from .base import BaseSubCommand
+from ..views.tools import nbprint
 
 class Shell():
 
@@ -59,6 +60,7 @@ class Shell():
                         print('    ' + ep)
 
         self.ns['lsnb'] = lsnb
+        self.ns['nbprint'] = nbprint
 
     def python(self):
         from code import interact, InteractiveConsole
