@@ -1,7 +1,7 @@
 import sys
 from pprint import pprint
 from pynetbox.core.response import Record
-from .base import BaseSubCommand, ProcKWArgsAction, view_parser
+from .base import BaseSubCommand, ProcKWArgsAction
 from ..views.tools import display_result
 
 ENDPOINT_METHODS = ('all', 'choices', 'count', 'create', 'filter', 'get')
@@ -21,12 +21,14 @@ class Pynb():
                  update_kwargs=dict(),
                  de=list(),
                  dea=list(),
-                 dea_kwargs=dict()):
+                 dea_kwargs=dict(),
+                 nbprint=print):
 
         assert method in ENDPOINT_METHODS, \
             'Allowed methods ' + str(ENDPOINT_METHODS)
 
         self.netbox = netbox
+        self.nbprint = nbprint
         self.app = getattr(self.netbox, app)
         self.endpoint = getattr(self.app, endpoint)
         self.method = getattr(self.endpoint, method)
@@ -62,8 +64,8 @@ class Pynb():
 class PynbSubCommand(BaseSubCommand):
 
     name = 'pynb'
-    parser_kwargs = dict(help='Wrapper for pynetbox',
-                         parents=[view_parser])
+    parser_kwargs = dict(help='Wrapper for pynetbox')
+    view_options = True
 
     def run(self):
     
@@ -90,9 +92,10 @@ class PynbSubCommand(BaseSubCommand):
                        update_kwargs=self.args.update_kwargs,
                        de=self.args.de,
                        dea=self.args.dea,
-                       dea_kwargs=self.args.dea_kwargs)
-    
-            cli.display(header=self.args.nh)
+                       dea_kwargs=self.args.dea_kwargs,
+                       nbprint=self.args.nbprint)
+            cli.nbprint(cli.result)
+            #cli.display(header=self.args.nh)
     
         except Exception as e:
             print(type(e).__name__)

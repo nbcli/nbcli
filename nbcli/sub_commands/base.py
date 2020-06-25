@@ -1,16 +1,35 @@
 import argparse
+import functools
 import logging
 from ..core import get_session
+from ..views.tools import nbprint
 
-view_parser = argparse.ArgumentParser(add_help=False)
-view_parser.add_argument('--view', type=str, help='Output view.',
-                           choices=['table', 'detail', 'json'],
-                           default='table')
-view_parser.add_argument('--cols', nargs='*',
-                           help="Custome columns for table output.")
-view_parser.add_argument('--nh', '--no-header',
-                         action='store_false',
-                         help='Disable header row in results')
+
+def get_common_parser():
+
+    common_parser = argparse.ArgumentParser(add_help=False)
+    common_parser.add_argument('-c', '--config', help='config file to use')
+    common_parser.add_argument("-v", "--verbose",
+                        	   action="count",
+                        	   help="Show more logging messages")
+    common_parser.add_argument("-q", "--quiet",
+                        	   action="count",
+                       		   help="Show fewer logging messages")
+    return common_parser
+
+
+def get_view_parser():
+
+    view_parser = argparse.ArgumentParser(add_help=False)
+    view_parser.add_argument('--view', type=str, help='Output view.',
+                               choices=['table', 'detail', 'json'],
+                               default='table')
+    view_parser.add_argument('--cols', nargs='*',
+                               help="Custome columns for table output.")
+    view_parser.add_argument('--nh', '--no-header',
+                             action='store_false',
+                             help='Disable header row in results')
+    return view_parser
 
 
 class ProcKWArgsAction(argparse.Action):
@@ -29,14 +48,18 @@ class BaseSubCommand():
 
     name = 'base'
     parser_kwargs = dict()
+    view_options = False
 
-    def __init__(self, subparser, parents=list()):
+    def __init__(self, subparser):
 
         if 'parents' in self.parser_kwargs.keys():
             assert isinstance(self.parser_kwargs['parents'], list)
-            self.parser_kwargs['parents'] += parents
+            self.parser_kwargs['parents'].append(get_common_parser())
         else:
-            self.parser_kwargs['parents'] = parents
+            self.parser_kwargs['parents'] = [get_common_parser()]
+
+        if self.view_options:
+            self.parser_kwargs['parents'].append(get_view_parser())
 
         self.name = self.name.lower()
         self.parser = subparser.add_parser(self.name, **self.parser_kwargs)
@@ -48,6 +71,11 @@ class BaseSubCommand():
         self.args = args
         self.netbox = get_session(conf_file=args.config)
         self.logger = logging.getLogger('nbcli.'+self.name)
+        if self.view_options:
+            self.args.nbprint = functools.partial(nbprint,
+                                                  view=self.args.view,
+                                                  cols=self.args.cols,
+                                                  disable_header=self.args.nh)
         self.run()
 
 

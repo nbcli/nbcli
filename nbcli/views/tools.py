@@ -36,7 +36,7 @@ def get_view(obj):
     return RecordView(obj)
 
 
-def build_display_matrix(result):
+def build_table(result):
 
     display = list()
 
@@ -59,7 +59,7 @@ def build_display_matrix(result):
 
 def display_result(result, header=True):
 
-    display = build_display_matrix(result)
+    display = build_table(result)
     assert len(display) > 1
     if not header:
         display.pop(0)
@@ -77,3 +77,37 @@ def display_result(result, header=True):
 
     for entry in display:
         print(template.format(*entry))
+
+
+def get_table(result, disable_header=False):
+
+    display = build_table(result)
+    assert len(display) > 1
+    if disable_header:
+        display.pop(0)
+
+    # get max width for each column
+    colw = list()
+    for col in range(len(display[0])):
+        colw.append(max([len(row[col]) for row in display]))
+
+    # build template based on max with for each column
+    template = ''
+    buff = 2
+    for w in colw:
+        template += '{:<' + str(w + buff) + 's}'
+
+    return '\n'.join([template.format(*entry) for entry in display])
+
+
+def nbprint(result, view='table', disable_header=False, cols=list()):
+    assert view in ['table', 'detail', 'json']
+
+    if view == 'table':
+        print(get_table(result, disable_header=disable_header))
+    if view == 'detail':
+        print(get_json(result))
+    if view == 'json':
+        print(get_json(result))
+
+    pass
