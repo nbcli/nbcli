@@ -122,6 +122,17 @@ def endpoint_loc(obj):
     return '.'.join(parts[:2]).replace('-', '_')
 
 
+def endpoint_by_loc(api, loc):
+    """Return Endpoint defined by location"""
+    assert isinstance(loc, str)
+    loc = loc.lower().replace('-', '_')
+    app_ep = loc.split('.')
+    assert len(app_ep) == 2
+    app = getattr(api, app_ep[0])
+    ep = getattr(app, app_ep[1])
+    return ep
+
+
 def add_detail_endpoint(model, name, RO=False, custom_return=None):
 
     assert model in Record.__subclasses__(), 'model must b subclass of Record'

@@ -120,4 +120,7 @@ class PynbSubCommand(BaseSubCommand):
                    dea=self.args.dea,
                    dea_kwargs=self.args.dea_kwargs,
                    nbprint=self.nbprint)
-        cli.nbprint(cli.result)
+        if cli.result:
+            cli.nbprint(cli.result)
+        else:
+            self.logger.warning('No results found')
