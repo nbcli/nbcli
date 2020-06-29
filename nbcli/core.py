@@ -114,7 +114,7 @@ class Trace(list):
                                                  self[2].name)
 
 
-def endpoint_loc(obj):
+def app_model_loc(obj):
     """Derive pynetbox App and Endpoint names from endpoint.url."""
     assert isinstance(obj, Record)
     parts = obj.endpoint.url.replace(obj.api.base_url, ''). \
@@ -122,7 +122,7 @@ def endpoint_loc(obj):
     return '.'.join(parts[:2]).replace('-', '_')
 
 
-def endpoint_by_loc(api, loc):
+def app_model_by_loc(api, loc):
     """Return Endpoint defined by location"""
     assert isinstance(loc, str)
     loc = loc.lower().replace('-', '_')

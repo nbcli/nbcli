@@ -2,7 +2,7 @@ import json
 from pynetbox.core.response import Record
 from .base import BaseView
 from .record import RecordView
-from ..core import endpoint_loc
+from ..core import app_model_loc
 
 def get_json(result):
 
@@ -21,8 +21,8 @@ def get_json(result):
 def get_view_name(obj):
 
     if hasattr(obj, 'endpoint'):
-        ep_loc = endpoint_loc(obj)
-        return ep_loc.title().replace('_', '').replace('.', '') + 'View'
+        model_loc = app_model_loc(obj)
+        return model_loc.title().replace('_', '').replace('.', '') + 'View'
 
     return ''
 

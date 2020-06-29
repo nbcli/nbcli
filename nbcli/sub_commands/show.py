@@ -1,5 +1,5 @@
 from .base import BaseSubCommand, ProcKWArgsAction
-from ..core import endpoint_by_loc
+from ..core import app_model_by_loc
 from ..views.tools import nbprint
 
 
@@ -10,9 +10,9 @@ class ShowSubCommand(BaseSubCommand):
 
     def setup(self):
 
-        self.parser.add_argument('endpoint',
+        self.parser.add_argument('app_model',
                                  type=str,
-                                 help='Endpoint location to search')
+                                 help='Model location to search (app.model)')
 
         self.parser.add_argument('args',
                             nargs='+',
@@ -24,7 +24,7 @@ class ShowSubCommand(BaseSubCommand):
         
         self.nbprint = nbprint
 
-        ep = endpoint_by_loc(self.netbox, self.args.endpoint)
+        ep = app_model_by_loc(self.netbox, self.args.app_model)
         result = ep.get(*self.args.args, **self.args.args_kwargs)
         if result:
             self.nbprint(result, view='detail')

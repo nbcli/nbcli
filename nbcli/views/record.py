@@ -1,12 +1,12 @@
 from .base import BaseView
-from ..core import endpoint_loc
+from ..core import app_model_loc
 
 class RecordView(BaseView):
 
     def table_view(self, obj):
 
         self.view['ID'] = obj.id
-        self.view[endpoint_loc(obj)] = str(obj)
+        self.view[app_model_loc(obj)] = str(obj)
 
 
     def detail_view(self, obj):

@@ -98,6 +98,7 @@ class Shell():
 
 
 class ShellSubCommand(BaseSubCommand):
+    """Launch Interactive Shell with pynetbox objects preloaded."""
 
     name = 'shell'
     parser_kwargs = dict(help='Launch interactive shell')
@@ -112,6 +113,11 @@ class ShellSubCommand(BaseSubCommand):
                       help='Specifies interactive shell to use')
 
     def run(self):
+        """Run Shell enviornment.
+
+        Example usage:
+        $ nbcli shell -i myscript.py
+        $ nbcli shell -s python"""
  
         shell = Shell(self.netbox,
                       interactive_shell=self.args.interactive_shell,

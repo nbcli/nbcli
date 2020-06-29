@@ -1,6 +1,9 @@
 import argparse
 import functools
 import logging
+import sys
+from pydoc import getdoc
+from textwrap import dedent
 from ..core import get_session
 from ..views.tools import nbprint
 
@@ -8,13 +11,14 @@ from ..views.tools import nbprint
 def get_common_parser():
 
     common_parser = argparse.ArgumentParser(add_help=False)
-    common_parser.add_argument('-c', '--config', help='config file to use')
-    common_parser.add_argument("-v", "--verbose",
-                        	   action="count",
-                        	   help="Show more logging messages")
-    common_parser.add_argument("-q", "--quiet",
-                        	   action="count",
-                       		   help="Show fewer logging messages")
+    common_parser.add_argument('--conf_dir',
+                               help='Specify config directory')
+    common_parser.add_argument('-v', '--verbose',
+                        	   action='count',
+                        	   help='Show more logging messages')
+    common_parser.add_argument('-q', '--quiet',
+                        	   action='count',
+                       		   help='Show fewer logging messages')
     return common_parser
 
 
@@ -71,6 +75,16 @@ class BaseSubCommand():
             self.parser_kwargs['parents'].append(get_view_parser())
 
         self.name = self.name.lower()
+
+        if 'formatter_class' not in self.parser_kwargs.keys():
+            self.parser_kwargs['formatter_class'] = argparse.RawTextHelpFormatter
+
+        if 'description' not in self.parser_kwargs.keys():
+            self.parser_kwargs['description'] = dedent(getdoc(self))
+
+        if 'epilog' not in self.parser_kwargs.keys():
+            self.parser_kwargs['epilog'] = dedent(getdoc(self.run))
+
         self.parser = subparser.add_parser(self.name, **self.parser_kwargs)
         self.parser.set_defaults(func=self._pre_run_)
         self.setup()
@@ -78,7 +92,7 @@ class BaseSubCommand():
     def _pre_run_(self, args):
         
         self.args = args
-        self.netbox = get_session(conf_file=args.config)
+        self.netbox = get_session(conf_file=args.conf_dir)
         self.logger = logging.getLogger('nbcli.'+self.name)
         self._set_log_level_()
         if self.view_options:
@@ -87,7 +101,15 @@ class BaseSubCommand():
                                              cols=self.args.cols,
                                              disable_header=self.args.nh)
         self.logger.debug(args)
-        self.run()
+        try:
+            self.run()
+        except Exception as e:
+            self.logger.critical('%s: %s', type(e).__name__, str(e))
+
+            if self.logger.level >= 10:
+                raise e
+
+            sys.exit(1)
 
     def _set_log_level_(self):
         """Set the loglevel base on the arguments passed."""

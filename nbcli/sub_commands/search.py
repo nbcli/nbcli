@@ -1,8 +1,8 @@
-from .base import BaseSubCommand
-from ..core import endpoint_by_loc
+from .base import BaseSubCommand, ProcKWArgsAction
+from ..core import app_model_by_loc
 from ..views.tools import nbprint
 
-SEARCH_ENDPOINTS = ['circuits.providers',
+SEARCH_MODELS = ['circuits.providers',
                     'circuits.circuits',
                     'dcim.sites',
                     'dcim.racks',
@@ -24,44 +24,58 @@ SEARCH_ENDPOINTS = ['circuits.providers',
 
 
 class SearchSubCommand(BaseSubCommand):
+    """Search Netbox objects with the given searchterm.
+
+    The List of search models can be modified in:
+    $HOME/$CONF_DIR/config.py"""
 
     name = 'search'
     parser_kwargs = dict(help='Search Netbox Objects')
 
     def setup(self):
 
-        self.parser.add_argument('endpoint',
+        self.parser.add_argument('app_model',
                                  type=str,
                                  nargs='?',
-                                 help='Endpoint location to search')
+                                 help='Model location to search (app.model)')
 
-        self.parser.add_argument('searchterm',
-                                 type=str,
-                                 help='Search term')
+        self.parser.add_argument('search_args',
+                            nargs='+',
+                            action=ProcKWArgsAction,
+                            help='Search argumnets')
 
     def run(self):
-        
+        """Run a search of Netbox objects and show a table view of results.
+
+        example usage:
+        - search all search modelss for 'server1':
+          $ nbcli search server1
+        - search the dcim.interfaces model for 'eth 1':
+          $ nbcli search dcim.interfaces 'eth 1'"""
+
         self.nbprint = nbprint
 
         print('')
-        if self.args.endpoint:
-            ep = endpoint_by_loc(self.netbox, self.args.endpoint)
-            result = ep.filter(self.args.searchterm)
+        if self.args.app_model:
+            model = app_model_by_loc(self.netbox, self.args.app_model)
+            result = model.filter(*self.args.search_args,
+                                  **self.args.search_args_kwargs)
             if len(result) > 0:
-                endpoint = self.args.endpoint.lower().replace('-', '_')
-                print('# Endpoint:', endpoint)
+                app_model = self.args.app_model.lower().replace('-', '_')
+                print('# Model:', app_model)
                 self.nbprint(result)
             else:
                 self.logger.warning('No results found')
             print('')
         else:
             result_count = 0
-            for endpoint in SEARCH_ENDPOINTS:
-                ep = endpoint_by_loc(self.netbox, endpoint)
-                result = ep.filter(self.args.searchterm)
+            for app_model in SEARCH_MODELS:
+                model = app_model_by_loc(self.netbox, app_model)
+                result = model.filter(*self.args.search_args,
+                                      **self.args.search_args_kwargs)
                 if len(result) > 0:
                     result_count += 1
-                    print('# Endpoint:', endpoint)
+                    print('# Model:', app_model)
                     self.nbprint(result)
                     print('')
             if result_count == 0:
