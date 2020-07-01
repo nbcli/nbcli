@@ -4,7 +4,7 @@ import sys
 import pynetbox
 from pynetbox.core.endpoint import Endpoint
 from .base import BaseSubCommand
-from ..core import get_req
+from ..core.utils import get_req
 from ..views.tools import nbprint
 
 class Shell():

@@ -1,7 +1,7 @@
 import concurrent.futures
 #import requests
 from .base import BaseSubCommand
-from ..core import get_req
+from ..core.utils import get_req
 
 
 class LsmodelsSubCommand(BaseSubCommand):

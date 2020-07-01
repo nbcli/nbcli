@@ -1,5 +1,5 @@
 from .base import BaseSubCommand, ProcKWArgsAction
-from ..core import app_model_by_loc
+from ..core.utils import app_model_by_loc
 from ..views.tools import nbprint
 
 

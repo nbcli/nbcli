@@ -4,7 +4,7 @@ import logging
 import sys
 from pydoc import getdoc
 from textwrap import dedent
-from ..core import get_session
+from ..core.config import get_session
 from ..views.tools import nbprint
 
 
@@ -94,7 +94,7 @@ class BaseSubCommand():
         self.args = args
         self.logger = logging.getLogger('nbcli.'+self.name)
         self._set_log_level_()
-        self.netbox = get_session(conf_file=args.conf_dir)
+        self.netbox = get_session(conf_dir=args.conf_dir)
         if self.view_options:
             self.nbprint = functools.partial(nbprint,
                                              view=self.args.view,

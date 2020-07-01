@@ -1,5 +1,5 @@
 from .base import BaseView
-from ..core import app_model_loc
+from ..core.utils import app_model_loc
 
 class RecordView(BaseView):
 

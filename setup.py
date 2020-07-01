@@ -21,6 +21,9 @@ setuptools.setup(
     url="https://gitlab.com/egeldmacher/nbcli",
     license="GPLv3",
     packages=setuptools.find_packages(),
+    package_data={
+        'core': ['user_*.default']
+    },
     install_requires=["pynetbox"],
     classifiers=[
         "Programming Language :: Python :: 3",

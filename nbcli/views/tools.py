@@ -2,7 +2,7 @@ import json
 from pynetbox.core.response import Record
 from .base import BaseView
 from .record import RecordView
-from ..core import app_model_loc
+from ..core.utils import app_model_loc
 
 def get_json(result):
 

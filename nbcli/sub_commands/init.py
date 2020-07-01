@@ -1,6 +1,6 @@
 import logging
 from .base import BaseSubCommand
-from ..core import get_session
+from ..core.config import get_session
 
 class InitSubCommand(BaseSubCommand):
     """Initialize nbcli.
@@ -26,4 +26,4 @@ class InitSubCommand(BaseSubCommand):
         $ nbcli init
         $ nbcli init --conf_dir .alt_nbcli.d"""
 
-        self.netbox = get_session(conf_file=self.args.conf_dir, init=True)
+        self.netbox = get_session(conf_dir=self.args.conf_dir, init=True)
