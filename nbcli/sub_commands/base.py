@@ -92,9 +92,9 @@ class BaseSubCommand():
     def _pre_run_(self, args):
         
         self.args = args
-        self.netbox = get_session(conf_file=args.conf_dir)
         self.logger = logging.getLogger('nbcli.'+self.name)
         self._set_log_level_()
+        self.netbox = get_session(conf_file=args.conf_dir)
         if self.view_options:
             self.nbprint = functools.partial(nbprint,
                                              view=self.args.view,

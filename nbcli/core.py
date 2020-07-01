@@ -1,12 +1,17 @@
 """Define Classes and Functions used throughout nbcli."""
 
 from configparser import ConfigParser
+import logging
 from pathlib import Path
 import os
 import urllib3
 import pynetbox
+import requests
 from pynetbox.core.response import Record
 from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
+
+
+logger = logging.getLogger('nbcli')
 
 
 class Config():
@@ -113,6 +118,17 @@ class Trace(list):
                                                  self[2].device.name,
                                                  self[2].name)
 
+
+def get_req(netbox, url):
+    """Perform get request"""
+
+    headers = {'Authorization': 'Token ' + netbox.token}
+    reply = requests.get(url, headers=headers, verify=netbox.ssl_verify)
+
+    if reply.ok:
+        return reply.json()
+
+    return None
 
 def app_model_loc(obj):
     """Derive pynetbox App and Endpoint names from endpoint.url."""

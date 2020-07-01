@@ -39,10 +39,8 @@ class SearchSubCommand(BaseSubCommand):
                                  nargs='?',
                                  help='Model location to search (app.model)')
 
-        self.parser.add_argument('search_args',
-                            nargs='+',
-                            action=ProcKWArgsAction,
-                            help='Search argumnets')
+        self.parser.add_argument('searchterm',
+                            help='Search term')
 
     def run(self):
         """Run a search of Netbox objects and show a table view of results.
@@ -58,8 +56,7 @@ class SearchSubCommand(BaseSubCommand):
         print('')
         if self.args.app_model:
             model = app_model_by_loc(self.netbox, self.args.app_model)
-            result = model.filter(*self.args.search_args,
-                                  **self.args.search_args_kwargs)
+            result = model.filter(self.args.searchterm)
             if len(result) > 0:
                 app_model = self.args.app_model.lower().replace('-', '_')
                 print('# Model:', app_model)
@@ -71,8 +68,7 @@ class SearchSubCommand(BaseSubCommand):
             result_count = 0
             for app_model in SEARCH_MODELS:
                 model = app_model_by_loc(self.netbox, app_model)
-                result = model.filter(*self.args.search_args,
-                                      **self.args.search_args_kwargs)
+                result = model.filter(self.args.searchterm)
                 if len(result) > 0:
                     result_count += 1
                     print('# Model:', app_model)
