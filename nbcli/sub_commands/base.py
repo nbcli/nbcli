@@ -94,14 +94,15 @@ class BaseSubCommand():
         self.args = args
         self.logger = logging.getLogger('nbcli.'+self.name)
         self._set_log_level_()
-        self.netbox = get_session(conf_dir=args.conf_dir)
-        if self.view_options:
-            self.nbprint = functools.partial(nbprint,
-                                             view=self.args.view,
-                                             cols=self.args.cols,
-                                             disable_header=self.args.nh)
-        self.logger.debug(args)
         try:
+            self.netbox = get_session(conf_dir=args.conf_dir)
+            if self.view_options:
+                self.nbprint = functools.partial(nbprint,
+                                                 view=self.args.view,
+                                                 cols=self.args.cols,
+                                                 disable_header=self.args.nh)
+            self.logger.debug(args)
+
             self.run()
         except Exception as e:
             self.logger.critical('%s: %s', type(e).__name__, str(e))

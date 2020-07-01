@@ -1,8 +1,9 @@
-from configparser import ConfigParser
 from pathlib import Path
 import os
+import sys
 import pynetbox
 import urllib3
+from .utils import logger
 
 class Config():
     """Namespace to hold config options that will be passed to pynetbox."""
@@ -22,24 +23,34 @@ class Config():
         self.threading = False
 
         if conf_dir:
-            conffile = Path(conf_dir)
+            confdir = Path(conf_dir)
         else:
-            conffile = Path.home().joinpath('.nbcli.ini')
+            confdir = Path.home().joinpath('.nbcli')
 
         if init:
-            self.init(conffile)
+            self.init(confdir)
             return
 
-        self.load(conffile)
+        self.load(confdir)
 
         assert self.url and self.token
 
-    def init(self, conffile):
+    def init(self, confdir):
         """Create a new empty config file."""
         print('Not Implemented')
 
-    def load(self, conffile):
+    def load(self, confdir):
         """Set attributes from configfile or os environment variables."""
+
+        try:
+            user_config = {'__builtins__': None}
+            with open(str(confdir.joinpath('user_config.py')), 'r') as fh:
+                exec(fh.read(), user_config)
+        except Exception as e:
+            logger.critical('Error loading user_config!')
+            logger.critical("Run: 'nbcli init' or specify a '--conf_dir'")
+            raise e
+
         params = ['url',
                   'token',
                   'private_key_file',
@@ -47,22 +58,16 @@ class Config():
                   'ssl_verify',
                   'threading']
 
-        config = ConfigParser()
-        config.read(conffile)
-        pynb_conf = config['pynetbox']
-
-        for key in pynb_conf.keys():
-            setattr(self, key, pynb_conf.get(key))
-
         for param in params:
-            env_var = 'NBC_' + param.upper()
-            self_value = getattr(self, param)
-            env_value = os.environ.get(env_var, self_value)
-            if self_value != env_value:
-                setattr(self, param, env_value)
+            env_var = 'NBCLI_' + param.upper()
+            if param in user_config.keys():
+                setattr(self, param, user_config[param])
+            if env_var in os.environ.keys():
+                setattr(self, param, os.environ[env_var])
+
 
     def __setattr__(self, name, value):
-        """Override configparser strings to Nond and bool types."""
+        """Override strings to None and bool types."""
         if str(value).lower() in ['', 'none']:
             value = None
 
