@@ -107,25 +107,25 @@ class BaseSubCommand():
         except Exception as e:
             self.logger.critical('%s: %s', type(e).__name__, str(e))
 
-            if self.logger.level >= 10:
+            if 0 < self.logger.parent.level <= 10:
                 raise e
 
             sys.exit(1)
 
     def _set_log_level_(self):
-        """Set the loglevel base on the arguments passed."""
+        """Set the loglevel based on the arguments passed."""
         if self.args.quiet:
             if self.args.quiet == 1:
-                self.logger.setLevel(logging.ERROR)
+                self.logger.parent.setLevel(logging.ERROR)
             elif self.args.quiet == 2:
-                self.logger.setLevel(logging.CRITICAL)
+                self.logger.parent.setLevel(logging.CRITICAL)
             elif self.args.quiet > 2:
-                self.logger.setLevel(100)
+                self.logger.parent.setLevel(100)
         if self.args.verbose:
             if self.args.verbose == 1:
-                self.logger.setLevel(logging.INFO)
+                self.logger.parent.setLevel(logging.INFO)
             elif self.args.verbose > 1:
-                self.logger.setLevel(logging.DEBUG)
+                self.logger.parent.setLevel(logging.DEBUG)
 
     def setup(self):
         pass

@@ -13,7 +13,8 @@ class Shell():
                  interactive_shell=None,
                  script=None,
                  interact=False,
-                 skip_models=False):
+                 skip_models=False,
+                 logger=None):
 
         if pkgutil.find_loader('IPython') is None:
             interactive_shell = 'python'
@@ -22,15 +23,22 @@ class Shell():
         self.script = script
         self.interact = interact
         self.netbox = netbox
+        self.logger = logger
         self.banner = ''
-        self.banner += 'Python ' + sys.version.splitlines()[0] + '\n'
-        self.banner += 'NetBox {} | pynetbox {}\n'.format(self.netbox.version, pynetbox.__version__)
+        versions = 'Python {}.{}.{} | NetBox {} | pynetbox {}'
+        self.banner += versions.format(*sys.version_info[:3],
+                                       self.netbox.version,
+                                       pynetbox.__version__)
+        self.banner += '\nAdditional utilities available:\n\t'
         self.build_ns(skip_models=skip_models) 
 
 
     def build_ns(self, skip_models=False):
 
         self.ns = dict(Netbox=self.netbox)
+        if self.logger:
+            self.ns['nblogger'] = self.logger
+            self.banner += 'nblogger, '
 
         def load_models(item):
             app, url = item
@@ -40,7 +48,7 @@ class Shell():
                 if model[0] != '_':
                     modelname = model.title().replace('-', '')
                     modelobj = getattr(appobj, model.replace('-', '_'))
-                    if app == 'Virtualization' and model == "interfaces":
+                    if app == 'virtualization' and model == "interfaces":
                         modelname = 'VirtualInterfaces'
                     self.ns[modelname] = modelobj
 
@@ -56,8 +64,8 @@ class Shell():
 
             nbns = dict(self.ns)
 
-            def lsmodels():
-
+            def nbmodels():
+                """List available pynetbox models"""
                 modeldict = dict()
 
                 for key, value in nbns.items():
@@ -74,29 +82,40 @@ class Shell():
                     for model in sorted(modellist):
                         print('  ' + model)
 
-            self.ns['lsmodels'] = lsmodels
-            self.banner += 'lsmodels() will show available pynetbox models.\n'
-
+            self.ns['nbmodels'] = nbmodels
+            self.banner += 'nbmodels(), '
 
         self.ns['nbprint'] = nbprint
+        self.banner += 'nbprint()'
+
 
     def python(self):
         from code import interact, InteractiveConsole
-        banner = self.banner
+
+        try:
+            import readline
+            import rlcompleter
+            readline.set_completer(rlcompleter.Completer(self.ns).complete)
+            readline.parse_and_bind('tab:complete')
+        except:
+            pass
+
         console = InteractiveConsole(locals=self.ns)
         if self.script:
             console.runcode(open(self.script).read())
             if self.interact:
                 console.interact(banner='')
         else:
-            console.interact(banner=banner)
+            console.interact(banner=self.banner)
     
     def ipython(self):
-        from IPython import start_ipython
+        from IPython import start_ipython, __version__
         from traitlets.config.loader import Config
     
+        banner = 'IPython {} | '.format(__version__) + self.banner
+
         c = Config()
-        c.TerminalInteractiveShell.banner1 = self.banner
+        c.TerminalInteractiveShell.banner1 = banner
         argv=[]
 
         if self.script:
@@ -143,5 +162,6 @@ class ShellSubCommand(BaseSubCommand):
                       interactive_shell=self.args.interactive_shell,
                       script=self.args.script,
                       interact=self.args.i,
-                      skip_models=self.args.skip)
+                      skip_models=self.args.skip,
+                      logger=self.logger)
         shell.run()

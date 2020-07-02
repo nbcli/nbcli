@@ -3,12 +3,10 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-version = {'__builtins__': None}
+version = dict()
 
 with open("nbcli/__version__.py", "r") as fh:
-    exec(fh.read(), version)
-
-del version["__builtins__"]
+    exec(fh.read(), dict(), version)
 
 setuptools.setup(
     name="nbcli",
@@ -24,7 +22,7 @@ setuptools.setup(
     package_data={
         'core': ['user_*.default']
     },
-    install_requires=["pynetbox"],
+    install_requires=["pynetbox==4.3.3"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",

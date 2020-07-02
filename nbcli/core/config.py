@@ -43,9 +43,9 @@ class Config():
         """Set attributes from configfile or os environment variables."""
 
         try:
-            user_config = {'__builtins__': None}
+            user_config = dict()
             with open(str(confdir.joinpath('user_config.py')), 'r') as fh:
-                exec(fh.read(), user_config)
+                exec(fh.read(), dict(), user_config)
         except Exception as e:
             logger.critical('Error loading user_config!')
             logger.critical("Run: 'nbcli init' or specify a '--conf_dir'")
