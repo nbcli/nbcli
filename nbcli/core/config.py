@@ -3,6 +3,7 @@ import os
 from pkg_resources import resource_string
 import sys
 import pynetbox
+import requests
 import urllib3
 from .utils import logger
 
@@ -105,14 +106,24 @@ def get_session(conf_dir=None, init=False):
     if init:
         return
 
-    if conf.pynetbox['ssl_verify'] is False:
-        urllib3.disable_warnings()
-
     url = conf.pynetbox['url']
     del conf.pynetbox['url']
 
     nb = pynetbox.api(url, **conf.pynetbox)
     del conf.pynetbox
+
+    if hasattr(conf, 'requests'):
+        reqconf = getattr(conf, 'requests')
+        session = requests.Session()
+        for key, value in reqconf.items():
+            setattr(session, key, value)
+
+        nb.http_session = session
+        del conf.requests
+
+    if nb.http_session.verify is False:
+        urllib3.disable_warnings()
+
     nb.nbcli_conf = conf
 
     return nb

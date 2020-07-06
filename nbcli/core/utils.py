@@ -41,8 +41,9 @@ class Trace(list):
 def get_req(netbox, url):
     """Perform get request"""
 
-    headers = {'Authorization': 'Token ' + netbox.token}
-    reply = requests.get(url, headers=headers, verify=netbox.ssl_verify)
+    #headers = {'Authorization': 'Token ' + netbox.token}
+    #reply = requests.get(url, headers=headers, verify=netbox.ssl_verify)
+    reply = netbox.http_session.get(url)
 
     if reply.ok:
         return reply.json()

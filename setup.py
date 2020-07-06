@@ -22,7 +22,7 @@ setuptools.setup(
     package_data={
         'core': ['user_*.default']
     },
-    install_requires=["pynetbox==4.3.3"],
+    install_requires=["pynetbox>=5.0.3"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
