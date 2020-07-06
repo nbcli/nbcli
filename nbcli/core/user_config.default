@@ -1,0 +1,18 @@
+pynetbox = dict(
+    url='',
+    token='',
+#    private_key_file = None,
+#    private_key = None,
+#    ssl_verify=False,
+#    threading=True
+    )
+
+#nbcli = dict(
+#    search_models=[
+#        'dcim.devices',
+#        'dcim.interfaces',
+#        ]
+#    )
+
+#requests = dict(
+#    verify=False)

@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from pkg_resources import resource_string
 import sys
 import pynetbox
 import urllib3
@@ -15,55 +16,76 @@ class Config():
             conf_dir (str): Alternate configuration file to use.
             init (bool): Seting True will create a new configuration file.
         """
-        self.url = None
-        self.token = None
-        self.private_key_file = None
-        self.private_key = None
-        self.ssl_verify = True
-        self.threading = False
+
+#        self.conf = type('conf', (), {})()
+        self._tree = type('tree', (), {})()
 
         if conf_dir:
-            confdir = Path(conf_dir)
+            self._tree.confdir = Path(conf_dir)
         else:
-            confdir = Path.home().joinpath('.nbcli')
+            self._tree.confdir = Path.home().joinpath('.nbcli')
+
+        self._tree.conffile = self._tree.confdir.joinpath('user_config.py')
 
         if init:
-            self.init(confdir)
+            self._init()
             return
 
-        self.load(confdir)
+        self._load()
 
-        assert self.url and self.token
 
-    def init(self, confdir):
+    def _init(self):
         """Create a new empty config file."""
-        print('Not Implemented')
 
-    def load(self, confdir):
+        # Create base directory
+        confdir = self._tree.confdir
+        if confdir.exists() and not confdir.is_dir():
+            logger.critical('%s exists, but is not a directory',
+                                 str(confdir.absolute()))
+            logger.critical("Move, or specify different directory")
+            raise FileExistsError(str(confdir.absolute()))
+        else:
+            confdir.mkdir(exist_ok=True)
+
+        # Create user_config.py file
+        conffile = self._tree.conffile
+        if conffile.exists():
+            logger.info('%s already exists. Skiping.', str(conffile))
+        else:
+            conffile.touch()
+            with open(str(conffile), 'w') as fh:
+                fh.write(resource_string('nbcli.core', 'user_config.default').decode())
+
+
+    def _load(self):
         """Set attributes from configfile or os environment variables."""
 
+        conffile = self._tree.conffile
         try:
             user_config = dict()
-            with open(str(confdir.joinpath('user_config.py')), 'r') as fh:
+            with open(str(conffile), 'r') as fh:
                 exec(fh.read(), dict(), user_config)
         except Exception as e:
             logger.critical('Error loading user_config!')
             logger.critical("Run: 'nbcli init' or specify a '--conf_dir'")
             raise e
 
-        params = ['url',
-                  'token',
-                  'private_key_file',
-                  'private_key',
-                  'ssl_verify',
-                  'threading']
+        for key, value in user_config.items():
+            setattr(self, key, value)
 
-        for param in params:
-            env_var = 'NBCLI_' + param.upper()
-            if param in user_config.keys():
-                setattr(self, param, user_config[param])
-            if env_var in os.environ.keys():
-                setattr(self, param, os.environ[env_var])
+#        params = ['url',
+#                  'token',
+#                  'private_key_file',
+#                  'private_key',
+#                  'ssl_verify',
+#                  'threading']
+#
+#        for param in params:
+#            env_var = 'NBCLI_' + param.upper()
+#            if param in user_config.keys():
+#                setattr(self, param, user_config[param])
+#            if env_var in os.environ.keys():
+#                setattr(self, param, os.environ[env_var])
 
 
     def __setattr__(self, name, value):
@@ -87,19 +109,22 @@ def get_session(conf_dir=None, init=False):
     if init:
         return
 
-    if conf.ssl_verify is False:
+    if conf.pynetbox['ssl_verify'] is False:
         urllib3.disable_warnings()
 
-    pynb_kwargs = dict(token=conf.token,
-                       private_key_file=conf.private_key_file,
-                       private_key=conf.private_key,
-                       ssl_verify=conf.ssl_verify,
-                       threading=conf.threading)
+#    pynb_kwargs = dict(token=conf.token,
+#                       private_key_file=conf.private_key_file,
+#                       private_key=conf.private_key,
+#                       ssl_verify=conf.ssl_verify,
+#                       threading=conf.threading)
+#
+#    for arg in ['private_key_file', 'private_key']:
+#        if not pynb_kwargs[arg]:
+#            del pynb_kwargs[arg]
 
-    for arg in ['private_key_file', 'private_key']:
-        if not pynb_kwargs[arg]:
-            del pynb_kwargs[arg]
+    url = conf.pynetbox['url']
+    del conf.pynetbox['url']
 
-    nb = pynetbox.api(conf.url, **pynb_kwargs)
+    nb = pynetbox.api(url, **conf.pynetbox)
 
     return nb
