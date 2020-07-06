@@ -1,7 +1,6 @@
 import json
 from pynetbox.core.response import Record
 from .base import BaseView
-from .record import RecordView
 from ..core.utils import app_model_loc
 
 def get_json(result):
@@ -33,7 +32,7 @@ def get_view(obj):
         if view.__name__ == get_view_name(obj):
             return view(obj)
 
-    return RecordView(obj)
+    return BaseView(obj)
 
 
 def build_table(result):
@@ -49,10 +48,10 @@ def build_table(result):
         assert len(result) > 0
         assert isinstance(result[0], Record)
         assert len(set(entry.__class__ for entry in result)) == 1
-        display.append([str(i) for i in get_view(result[0]).keys()])
+        display.append([i for i in get_view(result[0]).keys()])
         for entry in result:
             view = get_view(entry)
-            display.append([str(i) for i in view.values()])
+            display.append([i for i in view.values()])
 
     return display
 
@@ -78,12 +77,28 @@ def get_table(result, disable_header=False):
     return '\n'.join([template.format(*entry) for entry in display])
 
 
+def get_detail(result):
+
+    display = list()
+
+    if isinstance(result, Record):
+        view = get_view(result)
+        display.append(view.detail_view())
+
+    if isinstance(result, list):
+        assert len(result) > 0
+        assert isinstance(result[0], Record)
+        assert len(set(entry.__class__ for entry in result)) == 1
+        for entry in result:
+            view = get_view(entry)
+            display.append(view.detail_view())
+
+    return ('\n\n' + ('-' * 80) + '\n\n').join(display)
+
 def nbprint(result, view='table', disable_header=False, cols=list()):
 
-    assert result
-
     if view == 'detail':
-        print(get_json(result))
+        print(get_detail(result))
     elif view == 'json':
         print(get_json(result))
     else:
