@@ -73,19 +73,15 @@ class Config():
         for key, value in user_config.items():
             setattr(self, key, value)
 
-#        params = ['url',
-#                  'token',
-#                  'private_key_file',
-#                  'private_key',
-#                  'ssl_verify',
-#                  'threading']
-#
-#        for param in params:
-#            env_var = 'NBCLI_' + param.upper()
-#            if param in user_config.keys():
-#                setattr(self, param, user_config[param])
-#            if env_var in os.environ.keys():
-#                setattr(self, param, os.environ[env_var])
+            # get envars
+            prefix = key.upper() + '_'
+
+            def has_prefix(ek):
+                return ek.find(prefix) == 0
+
+            for envkey in filter(has_prefix, os.environ.keys()):
+                attr = envkey[len(prefix):].lower()
+                getattr(self, key)[attr] = os.environ.get(envkey)
 
 
     def __setattr__(self, name, value):
@@ -112,19 +108,11 @@ def get_session(conf_dir=None, init=False):
     if conf.pynetbox['ssl_verify'] is False:
         urllib3.disable_warnings()
 
-#    pynb_kwargs = dict(token=conf.token,
-#                       private_key_file=conf.private_key_file,
-#                       private_key=conf.private_key,
-#                       ssl_verify=conf.ssl_verify,
-#                       threading=conf.threading)
-#
-#    for arg in ['private_key_file', 'private_key']:
-#        if not pynb_kwargs[arg]:
-#            del pynb_kwargs[arg]
-
     url = conf.pynetbox['url']
     del conf.pynetbox['url']
 
     nb = pynetbox.api(url, **conf.pynetbox)
+    del conf.pynetbox
+    nb.nbcli_conf = conf
 
     return nb
