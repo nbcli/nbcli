@@ -1,7 +1,6 @@
 import concurrent.futures
-#import requests
+from pynetbox.core.query import Request
 from .base import BaseSubCommand
-from ..core.utils import get_req
 
 
 class LsmodelsSubCommand(BaseSubCommand):
@@ -16,13 +15,13 @@ class LsmodelsSubCommand(BaseSubCommand):
         example usage:
           $ nbcli lsmodels"""
 
-        apps = get_req(self.netbox, self.netbox.base_url)
+        apps = Request(self.netbox.base_url, self.netbox.http_session).get()
 
         def get_models(item):
             app, url = item
             result = list()
             result.append(app.title() + ':')
-            models = get_req(self.netbox, url)
+            models = Request(url, self.netbox.http_session).get()
             for model in models.keys():
                 if model[0] != '_':
                     result.append('  ' + app + '.' + model.replace('-', '_'))

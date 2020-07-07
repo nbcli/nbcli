@@ -3,8 +3,8 @@ import pkgutil
 import sys
 import pynetbox
 from pynetbox.core.endpoint import Endpoint
+from pynetbox.core.query import Request
 from .base import BaseSubCommand
-from ..core.utils import get_req
 from ..views.tools import nbprint
 
 class Shell():
@@ -43,7 +43,7 @@ class Shell():
         def load_models(item):
             app, url = item
             appobj = getattr(self.netbox, app)
-            models = get_req(self.netbox, url)
+            models = Request(url, self.netbox.http_session).get()
             for model in models.keys():
                 if model[0] != '_':
                     modelname = model.title().replace('-', '')
@@ -53,7 +53,7 @@ class Shell():
                     self.ns[modelname] = modelobj
 
         if not skip_models:
-            apps = get_req(self.netbox, self.netbox.base_url)
+            apps = Request(self.netbox.base_url, self.netbox.http_session).get()
 
             if self.netbox.threading:
                 with ThreadPoolExecutor() as executor:

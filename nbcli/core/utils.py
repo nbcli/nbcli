@@ -1,6 +1,5 @@
 """Define Classes and Functions used throughout nbcli."""
 import logging
-import requests
 from pynetbox.core.response import Record
 from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
 
@@ -37,18 +36,6 @@ class Trace(list):
                                                  self[2].device.name,
                                                  self[2].name)
 
-
-def get_req(netbox, url):
-    """Perform get request"""
-
-    #headers = {'Authorization': 'Token ' + netbox.token}
-    #reply = requests.get(url, headers=headers, verify=netbox.ssl_verify)
-    reply = netbox.http_session.get(url)
-
-    if reply.ok:
-        return reply.json()
-
-    return None
 
 def app_model_loc(obj):
     """Derive pynetbox App and Endpoint names from endpoint.url."""
