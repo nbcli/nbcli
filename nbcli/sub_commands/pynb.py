@@ -17,13 +17,11 @@ class Pynb():
                  update_kwargs=dict(),
                  de=list(),
                  dea=list(),
-                 dea_kwargs=dict(),
-                 nbprint=print):
+                 dea_kwargs=dict()):
 
         assert method in ENDPOINT_METHODS, \
             'Allowed methods ' + str(ENDPOINT_METHODS)
 
-        self.nbprint = nbprint
         self.endpoint = app_model_by_loc(netbox, endpoint)
         self.method = getattr(self.endpoint, method)
         self.result = self.method(*args, **kwargs)
@@ -110,9 +108,8 @@ class PynbSubCommand(BaseSubCommand):
                    update_kwargs=self.args.update_kwargs,
                    de=self.args.de,
                    dea=self.args.dea,
-                   dea_kwargs=self.args.dea_kwargs,
-                   nbprint=self.nbprint)
+                   dea_kwargs=self.args.dea_kwargs)
         if cli.result:
-            cli.nbprint(cli.result)
+            self.nbprint(cli.result, cols=self.args.cols)
         else:
             self.logger.warning('No results found')

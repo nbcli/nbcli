@@ -5,12 +5,19 @@ from ..core.utils import app_model_loc
 
 class BaseView():
 
-    def __init__(self, obj):
+    def __init__(self, obj, cols=list()):
 
         assert isinstance(obj, Record)
         self._obj = obj
         self._view = OrderedDict()
-        self.table_view()
+        if cols and isinstance(cols, list) and (len(cols) > 0):
+            for col in cols:
+                if isinstance(col, str):
+                    col = (col, col)
+                assert isinstance(col, tuple) and (len(col) == 2)
+                self.add_col(col[0], self.get_attr(col[1]))
+        else:
+            self.table_view()
 
     @property
     def obj(self):
@@ -32,7 +39,7 @@ class BaseView():
 
         obj = self.obj
 
-        for attr in attribute.split('.'):
+        for attr in attribute.lower().split('.'):
             if hasattr(obj, attr):
                 obj = getattr(obj, attr)
             else:

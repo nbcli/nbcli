@@ -26,21 +26,21 @@ def get_view_name(obj):
     return ''
 
 
-def get_view(obj):
+def get_view(obj, cols=list()):
     
     for view in BaseView.__subclasses__():
         if view.__name__ == get_view_name(obj):
-            return view(obj)
+            return view(obj, cols=cols)
 
-    return BaseView(obj)
+    return BaseView(obj, cols=cols)
 
 
-def build_table(result):
+def build_table(result, cols=list()):
 
     display = list()
 
     if isinstance(result, Record):
-        view = get_view(result)
+        view = get_view(result, cols=cols)
         display.append([str(i) for i in view.keys()])
         display.append([str(i) for i in view.values()])
 
@@ -48,17 +48,17 @@ def build_table(result):
         assert len(result) > 0
         assert isinstance(result[0], Record)
         assert len(set(entry.__class__ for entry in result)) == 1
-        display.append([i for i in get_view(result[0]).keys()])
+        display.append([i for i in get_view(result[0], cols=cols).keys()])
         for entry in result:
-            view = get_view(entry)
+            view = get_view(entry, cols=cols)
             display.append([i for i in view.values()])
 
     return display
 
 
-def get_table(result, disable_header=False):
+def get_table(result, disable_header=False, cols=list()):
 
-    display = build_table(result)
+    display = build_table(result, cols=cols)
     assert len(display) > 1
     if disable_header:
         display.pop(0)
@@ -93,7 +93,7 @@ def get_detail(result):
             view = get_view(entry)
             display.append(view.detail_view())
 
-    return ('\n\n' + ('-' * 80) + '\n\n').join(display)
+    return ('\n\n' + ('#' * 80) + '\n\n').join(display)
 
 def nbprint(result, view='table', disable_header=False, cols=list()):
 
@@ -102,4 +102,4 @@ def nbprint(result, view='table', disable_header=False, cols=list()):
     elif view == 'json':
         print(get_json(result))
     else:
-        print(get_table(result, disable_header=disable_header))
+        print(get_table(result, disable_header=disable_header, cols=cols))
