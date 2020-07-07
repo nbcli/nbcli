@@ -1,4 +1,5 @@
 from .base import BaseSubCommand, ProcKWArgsAction
+from ..core.utils import app_model_by_loc
 
 ENDPOINT_METHODS = ('all', 'choices', 'count', 'create', 'filter', 'get')
 
@@ -7,7 +8,6 @@ class Pynb():
 
     def __init__(self,
                  netbox,
-                 app,
                  endpoint,
                  method,
                  args=list(),
@@ -23,10 +23,8 @@ class Pynb():
         assert method in ENDPOINT_METHODS, \
             'Allowed methods ' + str(ENDPOINT_METHODS)
 
-        self.netbox = netbox
         self.nbprint = nbprint
-        self.app = getattr(self.netbox, app)
-        self.endpoint = getattr(self.app, endpoint)
+        self.endpoint = app_model_by_loc(netbox, endpoint)
         self.method = getattr(self.endpoint, method)
         self.result = self.method(*args, **kwargs)
 
@@ -48,11 +46,6 @@ class PynbSubCommand(BaseSubCommand):
 
 
     def setup(self):
-    
-        self.parser.add_argument('app',
-                            metavar="APP",
-                            type=str,
-                            help="App to call")
     
         self.parser.add_argument('endpoint',
                             metavar="ENDPOINT",
@@ -108,7 +101,6 @@ class PynbSubCommand(BaseSubCommand):
             self.args.dea_kwargs = dict()
     
         cli = Pynb(self.netbox,
-                   self.args.app,
                    self.args.endpoint,
                    self.args.method,
                    args=self.args.args,

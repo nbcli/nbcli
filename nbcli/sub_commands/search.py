@@ -1,3 +1,5 @@
+from pynetbox.core.query import Request
+from pynetbox.core.endpoint import response_loader
 from .base import BaseSubCommand, ProcKWArgsAction
 from ..core.utils import app_model_by_loc
 from ..views.tools import nbprint
@@ -51,29 +53,46 @@ class SearchSubCommand(BaseSubCommand):
         - search the dcim.interfaces model for 'eth 1':
           $ nbcli search dcim.interfaces 'eth 1'"""
 
+        def search(ep):
+            req = Request(filters=dict(q=self.args.searchterm),
+                          base=ep.url,
+                          token=ep.token,
+                          session_key=ep.session_key,
+                          http_session=ep.api.http_session)
+
+            rep = req._make_call(add_params=dict(limit=15))
+
+            result = list()
+
+            if rep.get('results'):
+                result = response_loader(rep['results'], ep.return_obj, ep)
+
+            return result
+
+
         self.nbprint = nbprint
 
-        print('')
         if self.args.app_model:
-            model = app_model_by_loc(self.netbox, self.args.app_model)
-            result = model.filter(self.args.searchterm)
-            if len(result) > 0:
-                app_model = self.args.app_model.lower().replace('-', '_')
-                print('# Model:', app_model)
-                self.nbprint(result)
-            else:
-                self.logger.warning('No results found')
-            print('')
+            modellist = [self.args.app_model]
         else:
-            result_count = 0
-            for app_model in SEARCH_MODELS:
-                model = app_model_by_loc(self.netbox, app_model)
-                result = model.filter(self.args.searchterm)
-                if len(result) > 0:
-                    result_count += 1
-                    print('# Model:', app_model)
-                    self.nbprint(result)
-                    print('')
-            if result_count == 0:
-                self.logger.warning('No results found')
+            modellist = SEARCH_MODELS
+
+        result_count = 0
+
+        print('')
+        for app_model in modellist:
+            model = app_model_by_loc(self.netbox, app_model)
+            result = search(model)
+            full_count = model.count(self.args.searchterm)
+            if len(result) > 0:
+                result_count += 1
+                print('{}\n{}'.format(app_model,'=' * len(app_model)))
+                self.nbprint(result)
+                if len(result) < full_count:
+                    print('*** See all {} results: '.format(full_count) +
+                          "'$ nbcli pynb {} filter {}' ***". \
+                          format(app_model, self.args.searchterm))
                 print('')
+        if result_count == 0:
+            self.logger.warning('No results found')
+            print('')
