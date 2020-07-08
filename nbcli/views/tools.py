@@ -19,11 +19,15 @@ def get_json(result):
 
 def get_view_name(obj):
 
-    if hasattr(obj, 'endpoint'):
-        model_loc = app_model_loc(obj)
-        return model_loc.title().replace('_', '').replace('.', '') + 'View'
+    assert isinstance(obj, Record)
 
-    return ''
+    class_name = obj.__class__.__name__
+    model_loc = app_model_loc(obj)
+
+    if class_name != 'Record':
+        return model_loc.split('.')[0].title() + class_name + 'View'
+
+    return model_loc.title().replace('_', '').replace('.', '') + 'View'
 
 
 def get_view(obj, cols=list()):

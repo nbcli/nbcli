@@ -2,46 +2,48 @@
 import logging
 from pynetbox.core.response import Record
 from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
+from pynetbox.models.dcim import Cables, Termination
 
 
 logger = logging.getLogger('nbcli')
 
 
-class Trace(list):
+class Trace(Record):
     """Model to use as custom_return for trace DetailEndpoint."""
 
+    near_end = Termination
+    cable = Cables
+    far_end = Termination
+
     def __init__(self, values, api, endpoint):
-        """Create Trace object.
-        """
-        assert isinstance(values, list)
-        for i in values:
-            if i:
-                a, e, i = i['url'].replace(api.base_url, ''). \
-                    strip('/').split('/')
-                app = getattr(api, a)
-                endpoint = getattr(app, e.replace('-', '_'))
-                obj = endpoint.get(int(i))
-                self.append(obj)
-            else:
-                self.append(i)
+
+        data = dict(near_end = values[0],
+                    cable = values[1],
+                    far_end = values[2])
+        
+        super().__init__(data, api, endpoint)
 
     def __repr__(self):
 
-        if None in self:
-            return '{} [{}] <- n/c'.format(self[0].device.name, self[0].name)
-
-        return '{} [{}] <- {} -> {} [{}]'.format(self[0].device.name,
-                                                 self[0].name,
-                                                 str(self[1].id),
-                                                 self[2].device.name,
-                                                 self[2].name)
+        if self.cable:
+            return '{}[{}] < #{} > {}[{}]'.format(self.near_end.device.name,
+                                             self.near_end.name,
+                                             self.cable.id,
+                                             self.far_end.device.name,
+                                             self.far_end.name)
+        else:
+            return '{}[{}] <'.format(self.near_end.device.name,
+                                             self.near_end.name)
 
 
 def app_model_loc(obj):
-    """Derive pynetbox App and Endpoint names from endpoint.url."""
+    """Derive pynetbox App and Endpoint names from url/endpoint.url."""
     assert isinstance(obj, Record)
-    parts = obj.endpoint.url.replace(obj.api.base_url, ''). \
-        strip('/').split('/')
+    if obj.url:
+        url = obj.url
+    else:
+        url = obj.endpoint.url
+    parts = url.replace(obj.api.base_url, '').strip('/').split('/')
     return '.'.join(parts[:2]).replace('-', '_')
 
 
