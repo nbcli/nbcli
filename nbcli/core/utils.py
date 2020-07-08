@@ -23,7 +23,7 @@ class Trace(Record):
         
         super().__init__(data, api, endpoint)
 
-    def __repr__(self):
+    def __str__(self):
 
         if self.cable:
             return '{}[{}] < #{} > {}[{}]'.format(self.near_end.device.name,

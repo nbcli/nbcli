@@ -1,7 +1,7 @@
 """Display Views to use for nbcli and nbcmd"""
 from collections import OrderedDict
 from pynetbox.core.response import Record
-from ..core.utils import app_model_loc
+from .tools import get_view_name
 
 class BaseView():
 
@@ -49,7 +49,8 @@ class BaseView():
 
     def table_view(self):
         self.add_col('ID', self.get_attr('id'))
-        self.add_col(app_model_loc(self.obj), str(self.obj))
+        self.add_col(get_view_name(self.obj).replace('View', ''),
+                     str(self.obj))
 
     def detail_view(self):
         lines = list()
