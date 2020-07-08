@@ -1,5 +1,4 @@
-from .base import BaseView
-from .tools import get_table
+from .tools import BaseView, get_table
 
 class DcimDevicesView(BaseView):
 

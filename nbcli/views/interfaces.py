@@ -1,4 +1,4 @@
-from .base import BaseView
+from .tools import BaseView
 
 class DcimInterfacesView(BaseView):
 
