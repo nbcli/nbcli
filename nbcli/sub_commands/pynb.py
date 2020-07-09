@@ -1,10 +1,11 @@
+from pynetbox.core.response import Record
 from .base import BaseSubCommand, ProcKWArgsAction
 from ..core.utils import app_model_by_loc
 
-ENDPOINT_METHODS = ('all', 'choices', 'count', 'create', 'filter', 'get')
-
 
 class Pynb():
+
+    ep_methods = ('all', 'choices', 'count', 'create', 'filter', 'get')
 
     def __init__(self,
                  netbox,
@@ -19,21 +20,37 @@ class Pynb():
                  dea=list(),
                  dea_kwargs=dict()):
 
-        assert method in ENDPOINT_METHODS, \
-            'Allowed methods ' + str(ENDPOINT_METHODS)
+        assert method in self.ep_methods, \
+            'Allowed methods ' + str(self.ep_methods)
 
         self.endpoint = app_model_by_loc(netbox, endpoint)
         self.method = getattr(self.endpoint, method)
-        self.result = self.method(*args, **kwargs)
+
+        result = self.method(*args, **kwargs)
+
+        if (method == 'get') and isinstance(result, Record):
+            if delete:
+                self.delete(result)
+            elif update or update_kwargs:
+                self.update(result, *update, **update_kwargs)
+            elif de:
+                self.detail(result, de[0], de[1], *dea, **dea_kwargs)
+            else:
+                self.result = result
+        else:
+            self.result = result
 
     def delete(self, obj):
-        print('Not Implemented!')
+        print('Delete not Implemented!')
+        self.result = obj
 
-    def update(self, obj):
-        print('Not Implemented!')
+    def update(self, obj, *args, **kwargs):
+        print('Update Not Implemented!')
+        self.result = obj
 
-    def detail(self, obj):
-        print('Not Implemented!')
+    def detail(self, obj, detail, method, *args, **kwargs):
+        de = getattr(obj, detail)
+        self.result = getattr(de, method)(*args, **kwargs)
 
 
 class PynbSubCommand(BaseSubCommand):
@@ -46,14 +63,9 @@ class PynbSubCommand(BaseSubCommand):
     def setup(self):
     
         self.parser.add_argument('endpoint',
-                            metavar="ENDPOINT",
-                            type=str,
                             help="App endpoint")
     
         self.parser.add_argument('method',
-                            metavar="METHOD",
-                            type=str,
-                            choices=ENDPOINT_METHODS,
                             help="Endpoint Method")
     
         self.parser.add_argument('args',
@@ -97,7 +109,7 @@ class PynbSubCommand(BaseSubCommand):
         if self.args.dea is None:
             self.args.dea = list()
             self.args.dea_kwargs = dict()
-    
+
         cli = Pynb(self.netbox,
                    self.args.endpoint,
                    self.args.method,
