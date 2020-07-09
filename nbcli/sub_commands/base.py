@@ -60,7 +60,7 @@ class ProcKWArgsAction(argparse.Action):
 class BaseSubCommand():
 
     name = 'base'
-    parser_kwargs = dict()
+    parser_kwargs = dict(help='')
     view_options = False
 
     def __init__(self, subparser):

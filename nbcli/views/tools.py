@@ -104,7 +104,7 @@ def get_view_name(obj):
 
 def get_view(obj, cols=list()):
     
-    for view in BaseView.__subclasses__():
+    for view in reversed(BaseView.__subclasses__()):
         if view.__name__ == get_view_name(obj):
             return view(obj, cols=cols)
 

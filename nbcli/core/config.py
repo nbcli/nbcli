@@ -19,14 +19,19 @@ class Config():
         """
 
 #        self.conf = type('conf', (), {})()
-        self._tree = type('tree', (), {})()
+        uf = type('tree', (), {})()
 
         if conf_dir:
-            self._tree.confdir = Path(conf_dir)
+            uf.dir = Path(conf_dir)
         else:
-            self._tree.confdir = Path.home().joinpath('.nbcli')
+            uf.dir = Path.home().joinpath('.nbcli')
 
-        self._tree.conffile = self._tree.confdir.joinpath('user_config.py')
+        uf.user_config = uf.dir.joinpath('user_config.py')
+        uf.extdir = uf.dir.joinpath('user_extensions')
+        uf.user_commands = uf.extdir.joinpath('user_commands.py')
+        uf.user_views = uf.extdir.joinpath('user_views.py')
+
+        self.user_files = uf
 
         if init:
             self._init()
@@ -39,7 +44,7 @@ class Config():
         """Create a new empty config file."""
 
         # Create base directory
-        confdir = self._tree.confdir
+        confdir = self.user_files.dir
         if confdir.exists() and not confdir.is_dir():
             logger.critical('%s exists, but is not a directory',
                                  str(confdir.absolute()))
@@ -61,7 +66,7 @@ class Config():
     def _load(self):
         """Set attributes from configfile or os environment variables."""
 
-        conffile = self._tree.conffile
+        conffile = self.user_files.user_config
         try:
             user_config = dict()
             with open(str(conffile), 'r') as fh:
