@@ -58,6 +58,19 @@ def app_model_by_loc(api, loc):
     return ep
 
 
+def record_list_check(result):
+
+    assert isinstance(result, list) and (len(result) > 0)
+
+    # check all entries are an instance of Record
+    rc = [isinstance(e, Record) for e in result].count(True) == len(result)
+
+    # check all entries are the same type
+    tc = len(set(type(e) for e in result)) == 1
+
+    return rc and tc
+
+
 def add_detail_endpoint(model, name, RO=False, custom_return=None):
 
     assert model in Record.__subclasses__(), 'model must b subclass of Record'

@@ -1,7 +1,7 @@
 import json
 from collections import OrderedDict
 from pynetbox.core.response import Record
-from ..core.utils import app_model_loc
+from ..core.utils import app_model_loc, record_list_check
 
 
 class BaseView():
@@ -86,7 +86,7 @@ def get_json(result):
 
     data = build(result)
 
-    return json.dumps(data, indent=4)
+    return json.dumps(data)
 
 
 def get_view_name(obj):
@@ -173,9 +173,17 @@ def get_detail(result):
 
 def nbprint(result, view='table', disable_header=False, cols=list()):
 
-    if view == 'detail':
-        print(get_detail(result))
-    elif view == 'json':
+    if view == 'json':
         print(get_json(result))
+        return
+
+    if isinstance(result, Record):
+        result = [result]
+
+    if isinstance(result, list) and record_list_check(result):
+        if view == 'detail':
+            print(get_detail(result))
+        else:
+            print(get_table(result, disable_header=disable_header, cols=cols))
     else:
-        print(get_table(result, disable_header=disable_header, cols=cols))
+        print(result)
