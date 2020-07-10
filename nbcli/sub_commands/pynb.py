@@ -1,6 +1,6 @@
 from pynetbox.core.response import Record
-from .base import BaseSubCommand, ProcKWArgsAction
-from ..core.utils import app_model_by_loc
+from nbcli.sub_commands.base import BaseSubCommand, ProcKWArgsAction
+from nbcli.core.utils import app_model_by_loc
 
 
 class Pynb():

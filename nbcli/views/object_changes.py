@@ -1,4 +1,4 @@
-from .tools import BaseView
+from nbcli.views.tools import BaseView
 
 class ExtrasObjectChangesView(BaseView):
 

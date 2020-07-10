@@ -1,6 +1,6 @@
 import logging
-from .base import BaseSubCommand
-from ..core.config import get_session
+from nbcli.sub_commands.base import BaseSubCommand
+from nbcli.core.config import get_session
 
 class InitSubCommand(BaseSubCommand):
     """Initialize nbcli.

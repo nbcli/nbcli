@@ -5,7 +5,7 @@ import sys
 import pynetbox
 import requests
 import urllib3
-from .utils import logger
+from nbcli import logger
 
 class Config():
     """Namespace to hold config options that will be passed to pynetbox."""

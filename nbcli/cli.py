@@ -1,20 +1,24 @@
 import argparse
-import logging
 from pathlib import Path
 from pydoc import getdoc
 import sys
 from textwrap import dedent
-from .sub_commands.base import BaseSubCommand
+from nbcli import logger
+from nbcli.core.extend import load_extensions
+from nbcli.sub_commands.base import BaseSubCommand
 
-sys.path.append(str(Path.home().joinpath('.nbcli').joinpath('user_extensions')))
-try:
-    import user_views
-except:
-    print('Error loading user_views')
-try:
-    import user_commands
-except:
-    print('Error loading user_commands')
+
+load_extensions()
+
+#sys.path.append(str(Path.home().joinpath('.nbcli').joinpath('user_extensions')))
+#try:
+#    import user_views
+#except:
+#    print('Error loading user_views')
+#try:
+#    import user_commands
+#except Exception as e:
+#    print(e)
 
 def main():
     """Command Line Interface for Netbox."""
@@ -26,7 +30,6 @@ def main():
              -v, --verbose        Show more logging messages
              -q, --quiet          Show fewer logging messages'''
 
-    logging.basicConfig(format="[%(levelname)s](%(name)s): %(message)s")
 
     parser = argparse.ArgumentParser(prog='nbcli',
                                      description=dedent(getdoc(main)),

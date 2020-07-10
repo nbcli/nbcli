@@ -1,6 +1,6 @@
-from .base import BaseSubCommand, ProcKWArgsAction
-from ..core.utils import app_model_by_loc
-from ..views.tools import nbprint
+from nbcli.sub_commands.base import BaseSubCommand, ProcKWArgsAction
+from nbcli.core.utils import app_model_by_loc
+from nbcli.views.tools import nbprint
 
 
 class ShowSubCommand(BaseSubCommand):

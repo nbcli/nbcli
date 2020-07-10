@@ -4,8 +4,8 @@ import logging
 import sys
 from pydoc import getdoc
 from textwrap import dedent
-from ..core.config import get_session
-from ..views.tools import nbprint
+from nbcli.core.config import get_session
+from nbcli.views.tools import nbprint
 
 
 def get_common_parser():
@@ -84,6 +84,14 @@ class BaseSubCommand():
 
         if 'epilog' not in self.parser_kwargs.keys():
             self.parser_kwargs['epilog'] = dedent(getdoc(self.run))
+
+        # try to resolve conflicting sub_command names
+        if self.name in dict(subparser._get_kwargs())['choices'].keys():
+            if self.__module__.split('.')[0] == 'user_commands':
+                self.name = 'user_{}'.format(self.name)
+            else:
+                prfix = self.__module__.split('.')[0].replace('nbcli_', '')
+                self.name = '{}_{}'.format(prefix, self.name)
 
         self.parser = subparser.add_parser(self.name, **self.parser_kwargs)
         self.parser.set_defaults(func=self._pre_run_)

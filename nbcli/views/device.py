@@ -1,4 +1,4 @@
-from .tools import BaseView, get_table
+from nbcli.views.tools import BaseView, get_table
 
 class DcimDevicesView(BaseView):
 

@@ -1,6 +1,6 @@
 import concurrent.futures
 from pynetbox.core.query import Request
-from .base import BaseSubCommand
+from nbcli.sub_commands.base import BaseSubCommand
 
 
 class LsmodelsSubCommand(BaseSubCommand):

@@ -1,7 +1,7 @@
 import json
 from collections import OrderedDict
 from pynetbox.core.response import Record
-from ..core.utils import app_model_loc, record_list_check
+from nbcli.core.utils import app_model_loc, record_list_check
 
 
 class BaseView():

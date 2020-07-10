@@ -1,11 +1,20 @@
 """Define Classes and Functions used throughout nbcli."""
 import logging
+import os
 from pynetbox.core.response import Record
 from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
 from pynetbox.models.dcim import Cables, Termination
 
 
-logger = logging.getLogger('nbcli')
+def get_nbcli_logger():
+
+    logging.basicConfig(format="[%(levelname)s](%(name)s): %(message)s")
+    logger = logging.getLogger('nbcli')
+    env_level = os.environ.get('NBCLI_LOGLEVEL', 'WARNING').upper()
+    if hasattr(logging, env_level):
+        logger.setLevel(getattr(logging, env_level))
+    logger.debug('Log level DEBUG set by enviornment.')
+    return logger
 
 
 class Trace(Record):
