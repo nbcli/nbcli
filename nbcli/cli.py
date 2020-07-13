@@ -8,18 +8,6 @@ from nbcli.core.extend import load_extensions
 from nbcli.sub_commands.base import BaseSubCommand
 
 
-load_extensions()
-
-#sys.path.append(str(Path.home().joinpath('.nbcli').joinpath('user_extensions')))
-#try:
-#    import user_views
-#except:
-#    print('Error loading user_views')
-#try:
-#    import user_commands
-#except Exception as e:
-#    print(e)
-
 def main():
     """Command Line Interface for Netbox."""
 
@@ -36,6 +24,8 @@ def main():
                                      epilog=dedent(epilog),
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.set_defaults(func=None)
+
+    load_extensions()
 
     subparsers = parser.add_subparsers(title='Commands',
                                        metavar='<command>')
