@@ -1,4 +1,4 @@
-from nbcli.sub_commands.base import BaseSubCommand, ProcKWArgsAction
+from nbcli.commands.base import BaseSubCommand, ProcKWArgsAction
 from nbcli.core.utils import app_model_by_loc
 from nbcli.views.tools import nbprint
 

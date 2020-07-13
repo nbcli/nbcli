@@ -1,5 +1,5 @@
 import logging
-from nbcli.sub_commands.base import BaseSubCommand
+from nbcli.commands.base import BaseSubCommand
 from nbcli.core.config import get_session
 
 class InitSubCommand(BaseSubCommand):

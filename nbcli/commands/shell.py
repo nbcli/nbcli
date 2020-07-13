@@ -4,7 +4,7 @@ import sys
 import pynetbox
 from pynetbox.core.endpoint import Endpoint
 from pynetbox.core.query import Request
-from nbcli.sub_commands.base import BaseSubCommand
+from nbcli.commands.base import BaseSubCommand
 from nbcli.views.tools import nbprint
 
 class Shell():

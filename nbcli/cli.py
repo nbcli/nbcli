@@ -5,7 +5,7 @@ import sys
 from textwrap import dedent
 from nbcli import logger
 from nbcli.core.extend import load_extensions
-from nbcli.sub_commands.base import BaseSubCommand
+from nbcli.commands.base import BaseSubCommand
 
 
 def main():
