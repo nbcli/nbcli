@@ -23,7 +23,6 @@ class InitSubCommand(BaseSubCommand):
         """Create nbcli config directory and related files.
 
         example usage:
-        $ nbcli init
-        $ nbcli init --conf_dir .alt_nbcli.d"""
+        $ nbcli init"""
 
-        self.netbox = get_session(conf_dir=self.args.conf_dir, init=True)
+        self.netbox = get_session(init=True)

@@ -14,7 +14,6 @@ def main():
     epilog='''
            General Options:
              -h, --help           show this help message and exit
-             --conf_dir CONF_DIR  Specify config directory
              -v, --verbose        Show more logging messages
              -q, --quiet          Show fewer logging messages'''
 
@@ -25,7 +24,8 @@ def main():
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.set_defaults(func=None)
 
-    load_extensions()
+    if 'init' not in sys.argv:
+        load_extensions()
 
     subparsers = parser.add_subparsers(title='Commands',
                                        metavar='<command>')

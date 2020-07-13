@@ -11,8 +11,6 @@ from nbcli.views.tools import nbprint
 def get_common_parser():
 
     common_parser = argparse.ArgumentParser(add_help=False)
-    common_parser.add_argument('--conf_dir',
-                               help='Specify config directory')
     common_parser.add_argument('-v', '--verbose',
                         	   action='count',
                         	   help='Show more logging messages')
@@ -103,7 +101,7 @@ class BaseSubCommand():
         self.logger = logging.getLogger('nbcli.'+self.name)
         self._set_log_level_()
         try:
-            self.netbox = get_session(conf_dir=args.conf_dir)
+            self.netbox = get_session()
             if self.view_options:
                 self.nbprint = functools.partial(nbprint,
                                                  view=self.args.view,

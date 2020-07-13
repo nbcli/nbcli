@@ -10,22 +10,16 @@ from nbcli import logger
 class Config():
     """Namespace to hold config options that will be passed to pynetbox."""
 
-    def __init__(self, conf_dir=None, init=False):
+    def __init__(self, init=False):
         """Create Config object.
 
         Args:
-            conf_dir (str): Alternate configuration file to use.
             init (bool): Seting True will create a new configuration file.
         """
 
-#        self.conf = type('conf', (), {})()
         uf = type('tree', (), {})()
 
-        if conf_dir:
-            uf.dir = Path(conf_dir)
-        else:
-            uf.dir = Path.home().joinpath('.nbcli')
-
+        uf.dir = Path.home().joinpath('.nbcli')
         uf.user_config = uf.dir.joinpath('user_config.py')
         uf.extdir = uf.dir.joinpath('user_extensions')
         uf.user_commands = uf.extdir.joinpath('user_commands.py')
@@ -43,24 +37,31 @@ class Config():
     def _init(self):
         """Create a new empty config file."""
 
-        # Create base directory
-        confdir = self.user_files.dir
-        if confdir.exists() and not confdir.is_dir():
-            logger.critical('%s exists, but is not a directory',
-                                 str(confdir.absolute()))
-            logger.critical("Move, or specify different directory")
-            raise FileExistsError(str(confdir.absolute()))
-        else:
-            confdir.mkdir(exist_ok=True)
+        # Create user directory tree
+        dirlist = [self.user_files.dir, self.user_files.extdir]
+        for udir in dirlist:
+            if udir.exists() and not udir.is_dir():
+                logger.critical('%s exists, but is not a directory',
+                                     str(udir.absolute()))
+                raise FileExistsError(str(udir.absolute()))
+            else:
+                udir.mkdir(exist_ok=True)
 
-        # Create user_config.py file
-        conffile = self._tree.conffile
-        if conffile.exists():
-            logger.info('%s already exists. Skiping.', str(conffile))
-        else:
-            conffile.touch()
-            with open(str(conffile), 'w') as fh:
-                fh.write(resource_string('nbcli.core', 'user_config.default').decode())
+        # Create user files
+        filelist = [self.user_files.user_config,
+                    self.user_files.user_commands,
+                    self.user_files.user_views]
+        for ufile in filelist:
+            if ufile.exists():
+                logger.info('%s already exists. Skiping.', str(ufile))
+            else:
+                ufile.touch()
+                default = ufile.name.replace('.py', '.default')
+                with open(str(ufile), 'w') as fh:
+                    fh.write(resource_string('nbcli.user_defaults', default).decode())
+
+        print("Edit pynetbox 'url' and 'token' entries in user_config.py:")
+        print('\t{}'.format(str(self.user_files.user_config.absolute())))
 
 
     def _load(self):
@@ -73,7 +74,7 @@ class Config():
                 exec(fh.read(), dict(), user_config)
         except Exception as e:
             logger.critical('Error loading user_config!')
-            logger.critical("Run: 'nbcli init' or specify a '--conf_dir'")
+            logger.critical("Run: 'nbcli init' to create a user_config file")
             raise e
 
         for key, value in user_config.items():
@@ -104,9 +105,9 @@ class Config():
         super().__setattr__(name, value)
 
 
-def get_session(conf_dir=None, init=False):
+def get_session(init=False):
 
-    conf = Config(conf_dir=conf_dir, init=init)
+    conf = Config(init=init)
 
     if init:
         return
