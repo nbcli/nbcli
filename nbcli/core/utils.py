@@ -67,7 +67,7 @@ def app_model_by_loc(api, loc):
     return ep
 
 
-def record_list_check(result):
+def is_list_of_records(result):
 
     assert isinstance(result, list) and (len(result) > 0)
 

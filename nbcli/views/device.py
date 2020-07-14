@@ -1,4 +1,4 @@
-from nbcli.views.tools import BaseView, get_table
+from nbcli.views.tools import BaseView, Display
 
 class DcimDevicesView(BaseView):
 
@@ -56,7 +56,7 @@ class DcimDevicesView(BaseView):
                  ('', 'connected_endpoint')]
         if len(ifaces) > 0:
             lines.append('\nInterfaces\n----------')
-            lines.append(get_table(ifaces, cols=cols))
+            lines.append(Display(ifaces, cols=cols).string)
         
 
         return '\n'.join(lines)

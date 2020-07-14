@@ -26,8 +26,11 @@ def get_view_parser():
     view_parser.add_argument('--view', type=str, help='Output view.',
                                choices=['table', 'detail', 'json'],
                                default='table')
+    view_parser.add_argument('--view-model',
+                             type=str,
+                             help='View model to use')
     view_parser.add_argument('--cols', nargs='*',
-                               help="Custome columns for table output.")
+                             help="Custome columns for table output.")
     view_parser.add_argument('--nh', '--no-header',
                              action='store_true',
                              help='Disable header row in results')
@@ -105,6 +108,7 @@ class BaseSubCommand():
             if self.view_options:
                 self.nbprint = functools.partial(nbprint,
                                                  view=self.args.view,
+                                                 view_model=self.args.view_model,
                                                  cols=self.args.cols,
                                                  disable_header=self.args.nh)
             self.logger.debug(args)
