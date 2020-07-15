@@ -1,13 +1,13 @@
 import importlib
 import pkgutil
-from pathlib import Path
 import sys
 from nbcli import logger
+from nbcli.core.utils import get_nbcli_dir
 
 
 def load_extensions():
 
-    sys.path.append(str(Path.home().joinpath('.nbcli').joinpath('user_extensions')))
+    sys.path.append(str(get_nbcli_dir().joinpath('user_extensions')))
 
     extensions = list()
 

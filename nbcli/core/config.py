@@ -1,4 +1,3 @@
-from pathlib import Path
 import os
 from pkg_resources import resource_string
 import sys
@@ -6,6 +5,7 @@ import pynetbox
 import requests
 import urllib3
 from nbcli import logger
+from nbcli.core.utils import get_nbcli_dir
 
 class Config():
     """Namespace to hold config options that will be passed to pynetbox."""
@@ -19,7 +19,7 @@ class Config():
 
         uf = type('tree', (), {})()
 
-        uf.dir = Path.home().joinpath('.nbcli')
+        uf.dir = get_nbcli_dir()
         uf.user_config = uf.dir.joinpath('user_config.py')
         uf.extdir = uf.dir.joinpath('user_extensions')
         uf.user_commands = uf.extdir.joinpath('user_commands.py')

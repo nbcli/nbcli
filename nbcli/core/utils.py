@@ -1,10 +1,15 @@
 """Define Classes and Functions used throughout nbcli."""
 import logging
 import os
+from pathlib import Path
 from pynetbox.core.response import Record
 from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
 from pynetbox.models.dcim import Cables, Termination
 
+def get_nbcli_dir():
+
+    default = Path.home().joinpath('.nbcli')
+    return Path(os.environ.get('NBCLI_DIR', str(default)))
 
 def get_nbcli_logger():
 
