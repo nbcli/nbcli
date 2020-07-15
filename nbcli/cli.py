@@ -8,37 +8,44 @@ from nbcli.core.extend import load_extensions
 from nbcli.commands.base import BaseSubCommand
 
 
-def main():
+class CLI():
     """Command Line Interface for Netbox."""
 
-    epilog='''
-           General Options:
-             -h, --help           show this help message and exit
-             -v, --verbose        Show more logging messages
-             -q, --quiet          Show fewer logging messages'''
+    def __init__(self):
+        epilog='''
+               General Options:
+                 -h, --help           show this help message and exit
+                 -v, --verbose        Show more logging messages
+                 -q, --quiet          Show fewer logging messages'''
 
 
-    parser = argparse.ArgumentParser(prog='nbcli',
+        self.parser = argparse.ArgumentParser(prog='nbcli',
                                      description=dedent(getdoc(main)),
                                      epilog=dedent(epilog),
                                      formatter_class=argparse.RawTextHelpFormatter)
-    parser.set_defaults(func=None)
+        self.parser.set_defaults(func=None)
 
-    if 'init' not in sys.argv:
-        load_extensions()
+        if 'init' not in sys.argv:
+            load_extensions()
 
-    subparsers = parser.add_subparsers(title='Commands',
+        subparsers = self.parser.add_subparsers(title='Commands',
                                        metavar='<command>')
 
-    for command in BaseSubCommand.__subclasses__():
-        command(subparsers)
+        for command in BaseSubCommand.__subclasses__():
+            command(subparsers)
 
-    args = parser.parse_args()
+    def run(self, argv):
 
-    if args.func:
-        args.func(args)
-    else:
-        parser.print_help()
+        args = self.parser.parse_args(argv)
+
+        if args.func:
+            args.func(args)
+        else:
+            self.parser.print_help()
+
+def main():
+    app = CLI()
+    app.run(sys.argv[1:])
 
 if __name__ == '__main__':
     main()
