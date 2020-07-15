@@ -26,6 +26,9 @@ class Pynb():
         self.endpoint = app_model_by_loc(netbox, endpoint)
         self.method = getattr(self.endpoint, method)
 
+        if method == 'create':
+            pass
+
         result = self.method(*args, **kwargs)
 
         if (method == 'get') and isinstance(result, Record):
@@ -41,8 +44,17 @@ class Pynb():
             self.result = result
 
     def delete(self, obj):
-        print('Delete not Implemented!')
-        self.result = obj
+        ans = input('Delete {}: ({}) {}? '.format(obj.__class__.__name__,
+                                                  str(obj.id),
+                                                  str(obj)))
+        if ans.lower() == 'yes':
+            if obj.delete():
+                self.result = 'Deleted'
+            else:
+                self.result = 'Error deleting'
+        else:
+            self.result = '{}: {} not deleted!'.format(obj.__class__.__name__,
+                                                       str(obj))
 
     def update(self, obj, *args, **kwargs):
         print('Update Not Implemented!')
