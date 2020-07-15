@@ -17,6 +17,11 @@ class LsmodelsSubCommand(BaseSubCommand):
 
         apps = Request(self.netbox.base_url, self.netbox.http_session).get()
 
+        # for now only get apps pynetbox supports
+        for app in list(apps.keys()):
+            if not hasattr(self.netbox, app):
+                del apps[app]
+
         def get_models(item):
             app, url = item
             result = list()
