@@ -27,9 +27,10 @@ class Pynb():
         self.method = getattr(self.endpoint, method)
 
         if method == 'create':
-            pass
-
-        result = self.method(*args, **kwargs)
+            # TODO json.loads(args) and pass to create
+            result = self.method(**kwargs)
+        else:
+            result = self.method(*args, **kwargs)
 
         if (method == 'get') and isinstance(result, Record):
             if delete:
@@ -57,8 +58,8 @@ class Pynb():
                                                        str(obj))
 
     def update(self, obj, *args, **kwargs):
-        print('Update Not Implemented!')
-        self.result = obj
+        # TODO: json.loads(args) and pass to update 
+        self.result = obj.update(kwargs)
 
     def detail(self, obj, detail, method, *args, **kwargs):
         de = getattr(obj, detail)
