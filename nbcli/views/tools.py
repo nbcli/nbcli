@@ -1,3 +1,5 @@
+"""Define Classes and Functions for use by views."""
+
 import json
 from collections import OrderedDict
 from pynetbox.core.response import Record
@@ -5,9 +7,10 @@ from nbcli.core.utils import app_model_loc, is_list_of_records
 
 
 class BaseView():
+    """Base (default) view used to create other netbox object views."""
 
     def __init__(self, obj, cols=list()):
-
+        """Populate _view based on defined table_view of passed cols."""
         assert isinstance(obj, Record)
         self._obj = obj
         self._view = OrderedDict()
@@ -22,20 +25,26 @@ class BaseView():
 
     @property
     def obj(self):
+        """Return object associated with view instance."""
         return self._obj
 
     @property
     def view(self):
+        """Return populated OrderedDict."""
         return self._view
 
     def add_col(self, header, value):
-        
+        """Convert header/value to string and add to view."""
         if str(value).lower() in ['none', '']:
             value = '-'
 
         self._view[str(header)] = str(value)
 
     def get_attr(self, attribute):
+        """Resolve attribute of assigned object.
+
+        Return the value, or None if it does not exist.
+        """
         assert isinstance(attribute, str)
 
         obj = self.obj
@@ -49,48 +58,41 @@ class BaseView():
         return obj
 
     def table_view(self):
+        """Define headers and values for table view of object."""
         self.add_col('ID', self.get_attr('id'))
         self.add_col(get_view_name(self.obj).replace('View', ''),
                      str(self.obj))
 
     def detail_view(self):
+        """Define detail view of object."""
         lines = list()
         for attr in dict(self.obj).keys():
             lines.append(attr + ': ' + str(self.get_attr(attr)))
         return '\n'.join(lines)
 
     def items(self):
+        """Return items of OrderedDict."""
         return self.view.items()
 
     def keys(self):
+        """Return keys of OrderedDict."""
         return self.view.keys()
 
     def values(self):
+        """Get values of OrderedDict."""
         return self.view.values()
 
     def __iter__(self):
+        """Get iterator of OrderedDict."""
         return iter(self.view)
 
     def __repr__(self):
+        """Meaningful repr."""
         return 'View' + repr(list(self.items()))
 
 
-# def get_json(result):
-# 
-#     def build(data):
-#         if isinstance(data, Record):
-#             data = dict(data)
-#         elif isinstance(data, list):
-#             data = [build(d) for d in data]
-#         return data
-# 
-#     data = build(result)
-# 
-#     return json.dumps(data)
-
-
 def get_view_name(obj):
-
+    """Generate view name based on class, url, or endpoint url."""
     assert isinstance(obj, Record)
 
     class_name = obj.__class__.__name__
@@ -102,78 +104,8 @@ def get_view_name(obj):
     return model_loc.title().replace('_', '').replace('.', '') + 'View'
 
 
-# def get_view(obj, cols=list()):
-#     
-#     for view in reversed(BaseView.__subclasses__()):
-# 
-#         if view.__name__ == get_view_name(obj):
-#             return view(obj, cols=cols)
-# 
-#     return BaseView(obj, cols=cols)
-
-
-# def build_table(result, cols=list()):
-# 
-#     display = list()
-# 
-#     if isinstance(result, Record):
-#         view = get_view(result, cols=cols)
-#         display.append([str(i) for i in view.keys()])
-#         display.append([str(i) for i in view.values()])
-# 
-#     if isinstance(result, list):
-#         assert len(result) > 0
-#         assert isinstance(result[0], Record)
-#         assert len(set(entry.__class__ for entry in result)) == 1
-#         display.append([i for i in get_view(result[0], cols=cols).keys()])
-#         for entry in result:
-#             view = get_view(entry, cols=cols)
-#             display.append([i for i in view.values()])
-# 
-#     return display
-
-
-# def get_table(result, disable_header=False, cols=list()):
-# 
-#     display = build_table(result, cols=cols)
-#     assert len(display) > 1
-#     if disable_header:
-#         display.pop(0)
-# 
-#     # get max width for each column
-#     colw = list()
-#     for col in range(len(display[0])):
-#         colw.append(max([len(row[col]) for row in display]))
-# 
-#     # build template based on max with for each column
-#     template = ''
-#     buff = 2
-#     for w in colw:
-#         template += '{:<' + str(w + buff) + 's}'
-# 
-#     return '\n'.join([template.format(*entry) for entry in display])
-
-
-# def get_detail(result):
-# 
-#     display = list()
-# 
-#     if isinstance(result, Record):
-#         view = get_view(result)
-#         display.append(view.detail_view())
-# 
-#     if isinstance(result, list):
-#         assert len(result) > 0
-#         assert isinstance(result[0], Record)
-#         assert len(set(entry.__class__ for entry in result)) == 1
-#         for entry in result:
-#             view = get_view(entry)
-#             display.append(view.detail_view())
-# 
-#     return ('\n\n' + ('#' * 80) + '\n\n').join(display)
-
-
 class Display():
+    """Format result from pynetbox based on given peramiters."""
 
     def __init__(self,
                  result,
@@ -181,7 +113,7 @@ class Display():
                  view_model=None,
                  cols=list(),
                  disable_header=False):
-
+        """Initialize Display instance."""
         self.result = result
         self.view = view
         self.view_model = view_model
@@ -193,9 +125,10 @@ class Display():
 
         display = list()
 
-        display.append([i for i in self.view_model(self.result[0], cols=self.cols).keys()])
-        for entry in self.result:
+        for i, entry in enumerate(self.result):
             view = self.view_model(entry, cols=self.cols)
+            if i == 0:
+                display.append([i for i in view.keys()])
             display.append([i for i in view.values()])
 
         return display
@@ -220,7 +153,6 @@ class Display():
 
         self._string = json.dumps(build(self.result))
 
-
     def _get_table(self):
 
         display = self._build_table()
@@ -239,14 +171,13 @@ class Display():
         for w in colw:
             template += '{:<' + str(w + buff) + 's}'
 
-        self._string =  '\n'.join([template.format(*entry) for entry in display])
-
+        self._string = '\n'.join([template.format(*row) for row in display])
 
     def _get_view(self):
 
         if not self.view_model:
             self.view_model = get_view_name(self.result[0])
-   
+
         if isinstance(self.view_model, str):
 
             if self.view_model == 'BaseView':
@@ -263,12 +194,11 @@ class Display():
                     self.view_model = view
                     return
 
-        self.view_model =  BaseView
-
+        self.view_model = BaseView
 
     @property
     def string(self):
-
+        """Generate string based on peramiters passed to Display."""
         if self.view == 'json':
             self._get_json()
             return self._string
@@ -288,8 +218,12 @@ class Display():
         return self._string
 
 
-def nbprint(result, view='table', view_model=None, cols=list(), disable_header=False):
-
+def nbprint(result,
+            view='table',
+            view_model=None,
+            cols=list(),
+            disable_header=False):
+    """Print result from pynetbox."""
     disp = Display(result,
                    view=view,
                    view_model=view_model,
