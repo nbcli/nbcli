@@ -20,7 +20,7 @@ setuptools.setup(
     license="GPLv3",
     packages=setuptools.find_packages(),
     package_data={
-        'user_defaults': ['*.default']
+        'nbcli': ['user_defaults/*.default']
     },
     install_requires=["pynetbox>=5.0.3"],
     classifiers=[
