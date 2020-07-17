@@ -3,17 +3,17 @@ from pynetbox.core.query import Request
 from nbcli.commands.base import BaseSubCommand
 
 
-class LsmodelsSubCommand(BaseSubCommand):
+class NbmodelsSubCommand(BaseSubCommand):
     """Poll Netbox instance and list avaiable models."""
 
-    name = 'lsmodels'
+    name = 'nbmodels'
     parser_kwargs = dict(help='List Netbox Models')
 
     def run(self):
         """Poll Netbox instance and list available models.
 
         example usage:
-          $ nbcli lsmodels"""
+          $ nbcli nbmodels"""
 
         apps = Request(self.netbox.base_url, self.netbox.http_session).get()
 

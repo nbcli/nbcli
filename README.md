@@ -2,6 +2,7 @@
 
 Extensible command-line interface for Netbox using pynetbox module. 
 
+[![asciicast](https://asciinema.org/a/348204.svg)](https://asciinema.org/a/348204)
 
 ```
 $ pip install nbcli
@@ -27,7 +28,7 @@ Commands:
     show      Show detail view of Netbox Object
     shell     Launch interactive shell
     pynb      Wrapper for pynetbox
-    lsmodels  List Netbox Models
+    nbmodels  List Netbox Models
     hello     Say hello
 
 General Options:
