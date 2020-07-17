@@ -57,6 +57,7 @@ class Config():
             else:
                 ufile.touch()
                 default = ufile.name.replace('.py', '.default')
+                logger.debug(default)
                 with open(str(ufile), 'w') as fh:
                     fh.write(resource_string('nbcli.user_defaults', default).decode())
 
