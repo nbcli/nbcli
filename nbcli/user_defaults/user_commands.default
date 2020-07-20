@@ -53,8 +53,13 @@
 #        You can override this behavior by setting an epilog
 #        in the parser_kwargs dict.
 #
-#        usage:
-#            nbcli hello --name John
+#        Usage Examples:
+#
+#        - Say hello to the world
+#          $ nbcli hello
+#
+#        - Say hello to John
+#          $ nbcli hello --name John
 #        """
 #
 #        # self.netbox is the pre-configured root pynetbox api object

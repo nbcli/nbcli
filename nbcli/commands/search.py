@@ -27,11 +27,14 @@ class SearchSubCommand(BaseSubCommand):
     def run(self):
         """Run a search of Netbox objects and show a table view of results.
 
-        example usage:
-        - search all search modelss for 'server1':
+        Usage Examples:
+
+        - Search all search modelss for 'server1':
           $ nbcli search server1
-        - search the dcim.interfaces model for 'eth 1':
-          $ nbcli search dcim.interfaces 'eth 1'"""
+
+        - Search the dcim.interfaces model for 'eth 1':
+          $ nbcli search dcim.interfaces 'eth 1'
+        """
 
         if hasattr(self.netbox.nbcli_conf, 'nbcli') and \
             ('search_models' in self.netbox.nbcli_conf.nbcli.keys()):

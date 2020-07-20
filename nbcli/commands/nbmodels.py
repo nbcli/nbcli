@@ -12,8 +12,11 @@ class NbmodelsSubCommand(BaseSubCommand):
     def run(self):
         """Poll Netbox instance and list available models.
 
-        example usage:
-          $ nbcli nbmodels"""
+        Usage Examples:
+
+        - List available NetBox models
+          $ nbcli nbmodels
+        """
 
         apps = Request(self.netbox.base_url, self.netbox.http_session).get()
 
