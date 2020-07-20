@@ -4,26 +4,6 @@ from nbcli.commands.base import BaseSubCommand, ProcKWArgsAction
 from nbcli.core.utils import app_model_by_loc
 from nbcli.views.tools import nbprint
 
-SEARCH_MODELS = ['circuits.providers',
-                    'circuits.circuits',
-                    'dcim.sites',
-                    'dcim.racks',
-                    'dcim.rack_groups',
-                    'dcim.device_types',
-                    'dcim.devices',
-                    'dcim.virtual_chassis',
-                    'dcim.cables',
-                    'dcim.power_feeds',
-                    'ipam.vrfs',
-                    'ipam.aggregates',
-                    'ipam.prefixes',
-                    'ipam.ip_addresses',
-                    'ipam.vlans',
-                    'secrets.secrets',
-                    'tenancy.tenants',
-                    'virtualization.clusters',
-                    'virtualization.virtual_machines']
-
 
 class SearchSubCommand(BaseSubCommand):
     """Search Netbox objects with the given searchterm.
@@ -53,6 +33,30 @@ class SearchSubCommand(BaseSubCommand):
         - search the dcim.interfaces model for 'eth 1':
           $ nbcli search dcim.interfaces 'eth 1'"""
 
+        if hasattr(self.netbox.nbcli_conf, 'nbcli') and \
+            ('search_models' in self.netbox.nbcli_conf.nbcli.keys()):
+            self.search_models = self.netbox.nbcli_conf.nbcli['search_models']
+        else:
+            self.search_models = ['circuits.providers',
+                                  'circuits.circuits',
+                                  'dcim.sites',
+                                  'dcim.racks',
+                                  'dcim.rack_groups',
+                                  'dcim.device_types',
+                                  'dcim.devices',
+                                  'dcim.virtual_chassis',
+                                  'dcim.cables',
+                                  'dcim.power_feeds',
+                                  'ipam.vrfs',
+                                  'ipam.aggregates',
+                                  'ipam.prefixes',
+                                  'ipam.ip_addresses',
+                                  'ipam.vlans',
+                                  'secrets.secrets',
+                                  'tenancy.tenants',
+                                  'virtualization.clusters',
+                                  'virtualization.virtual_machines']
+
         def search(ep):
             req = Request(filters=dict(q=self.args.searchterm),
                           base=ep.url,
@@ -75,7 +79,7 @@ class SearchSubCommand(BaseSubCommand):
         if self.args.app_model:
             modellist = [self.args.app_model]
         else:
-            modellist = SEARCH_MODELS
+            modellist = self.search_models
 
         result_count = 0
 

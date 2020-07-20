@@ -2,6 +2,7 @@
 
 Extensible command-line interface for Netbox using pynetbox module. 
 
+[![asciicast](https://asciinema.org/a/348204.svg)](https://asciinema.org/a/348204)
 
 ```
 $ pip install nbcli
@@ -12,10 +13,9 @@ Edit pynetbox 'url' and 'token' entries in user_config.py:
 ```
 
 ```
-$ nbcli -h
 usage: nbcli [-h] <command> ...
 
-Run main cli app with sys.argv from command line.
+Extensible CLI for Netbox
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -27,8 +27,7 @@ Commands:
     show      Show detail view of Netbox Object
     shell     Launch interactive shell
     pynb      Wrapper for pynetbox
-    lsmodels  List Netbox Models
-    hello     Say hello
+    nbmodels  List Netbox Models
 
 General Options:
   -h, --help           show this help message and exit
