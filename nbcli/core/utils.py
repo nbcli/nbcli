@@ -6,10 +6,12 @@ from pynetbox.core.response import Record
 from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
 from pynetbox.models.dcim import Cables, Termination
 
+
 def get_nbcli_dir():
 
     default = Path.home().joinpath('.nbcli')
     return Path(os.environ.get('NBCLI_DIR', str(default)))
+
 
 def get_nbcli_logger():
 
@@ -21,6 +23,17 @@ def get_nbcli_logger():
     logger.debug('Log level DEBUG set by enviornment.')
     return logger
 
+
+def auto_cast(string):
+    """Convert True, False, and None strings to their type"""
+    assert isinstance(string, str)
+    if string.lower() == 'none':
+        return None
+    if string.lower() == 'true':
+        return True
+    if string.lower() == 'false':
+        return False
+    return string
 
 class Trace(Record):
     """Model to use as custom_return for trace DetailEndpoint."""

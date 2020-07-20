@@ -21,7 +21,7 @@ class CLI():
                  -q, --quiet          Show fewer logging messages'''
 
         self.parser = ArgumentParser(prog='nbcli',
-                                     description=dedent(getdoc(main)),
+                                     description='Extensible CLI for Netbox',
                                      epilog=dedent(epilog),
                                      formatter_class=RawTextHelpFormatter)
         self.parser.set_defaults(func=None)

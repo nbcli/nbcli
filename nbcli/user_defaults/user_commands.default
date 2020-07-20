@@ -1,0 +1,39 @@
+## User defined sub-commands should be defined in this file,
+## or imported in from another file.
+## 
+## For a user defined subcommand to be loaded into nbcli
+## it must be a subclass of BaseSubCommand, found in nbcli.commands.base
+#
+#from nbcli.commands.base import BaseSubCommand
+#
+#class ExampleSubCommand(BaseSubCommand):
+#    """This docstring will automatically be used as the command description.
+#
+#    You can override this behavior by setting a description
+#    in the parser_kwargs dict.
+#    """
+#
+#    name = 'hello'
+#    parser_kwargs = dict(help='Say hello',
+#                         #description=None,
+#                         #epilog=None,
+#                         )
+#
+#    def setup(self):
+#
+#        self.parser.add_argument('--name',
+#                                 type=str,
+#                                 default='World',
+#                                 help='Who are you saying hello to?')
+#
+#    def run(self):
+#        """This docstring will automatically be used as the command epilog.
+#
+#        You can override this behavior by setting a description
+#        in the parser_kwargs dict.
+#
+#        usage:
+#            nbcli hello --name John
+#        """
+#
+#        print('Hello, {}!'.format(self.args.name))

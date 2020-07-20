@@ -13,10 +13,9 @@ Edit pynetbox 'url' and 'token' entries in user_config.py:
 ```
 
 ```
-$ nbcli -h
 usage: nbcli [-h] <command> ...
 
-Run main cli app with sys.argv from command line.
+Extensible CLI for Netbox
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -29,7 +28,6 @@ Commands:
     shell     Launch interactive shell
     pynb      Wrapper for pynetbox
     nbmodels  List Netbox Models
-    hello     Say hello
 
 General Options:
   -h, --help           show this help message and exit

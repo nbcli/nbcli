@@ -5,7 +5,7 @@ import pynetbox
 import requests
 import urllib3
 from nbcli import logger
-from nbcli.core.utils import get_nbcli_dir
+from nbcli.core.utils import auto_cast, get_nbcli_dir
 
 class Config():
     """Namespace to hold config options that will be passed to pynetbox."""
@@ -59,7 +59,8 @@ class Config():
                 default = ufile.name.replace('.py', '.default')
                 logger.debug(default)
                 with open(str(ufile), 'w') as fh:
-                    fh.write(resource_string('nbcli.user_defaults', default).decode())
+                    fh.write(resource_string('nbcli.user_defaults',
+                                             default).decode())
 
         print("Edit pynetbox 'url' and 'token' entries in user_config.py:")
         print('\t{}'.format(str(self.user_files.user_config.absolute())))
@@ -79,7 +80,8 @@ class Config():
             raise e
 
         for key, value in user_config.items():
-            setattr(self, key, value)
+            if isinstance(value, dict):
+                setattr(self, key, value)
 
             # get envars
             prefix = key.upper() + '_'
@@ -89,21 +91,8 @@ class Config():
 
             for envkey in filter(has_prefix, os.environ.keys()):
                 attr = envkey[len(prefix):].lower()
-                getattr(self, key)[attr] = os.environ.get(envkey)
-
-
-    def __setattr__(self, name, value):
-        """Override strings to None and bool types."""
-        if str(value).lower() in ['', 'none']:
-            value = None
-
-        if str(value).lower() == 'true':
-            value = True
-
-        if str(value).lower() == 'false':
-            value = False
-
-        super().__setattr__(name, value)
+                envval = auto_cast(os.environ.get(envkey))
+                getattr(self, key)[attr] = envval
 
 
 def get_session(init=False):
