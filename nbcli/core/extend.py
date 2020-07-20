@@ -18,6 +18,8 @@ def load_extensions():
     extensions.append('user_views')
     extensions.append('user_commands')
 
+    sys.dont_write_bytecode = True
+
     for ext in extensions:
 
         try:
@@ -28,3 +30,5 @@ def load_extensions():
             logger.error('%s: %s', type(e).__name__, str(e))
             if 0 < logger.level <= 10:
                 raise e
+
+    sys.dont_write_bytecode = True
