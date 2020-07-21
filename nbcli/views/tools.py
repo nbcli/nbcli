@@ -187,7 +187,8 @@ class Formatter():
             view_names = [view.__name__ for view in BaseView.__subclasses__()]
 
             if self.view_model not in view_names:
-                self.view_model = get_view_name(self.result[0])
+                self.view_model = BaseView
+                return
 
             for view in reversed(BaseView.__subclasses__()):
                 if view.__name__ == self.view_model:
