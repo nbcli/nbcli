@@ -1,6 +1,6 @@
 pynetbox = dict(
-                url='https://your.netbox.url',
-                token='yournetboxapitoken',
+                url='http://localhost:8080',                        # required
+                token='0123456789abcdef0123456789abcdef01234567',   # required
 #                private_key_file = None,
 #                private_key = None,
 #                threading=False

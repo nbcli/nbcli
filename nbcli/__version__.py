@@ -1,3 +1,3 @@
-"""Declare version number form nbcli."""
+"""Declare version number for nbcli."""
 
-__version__ = '1.0.1a1'
+__version__ = '0.5.0.dev1'

@@ -22,7 +22,9 @@ class InitSubCommand(BaseSubCommand):
     def run(self):
         """Create nbcli config directory and related files.
 
-        example usage:
-        $ nbcli init"""
+        Example Usage:
+
+        $ nbcli init
+        """
 
         self.netbox = get_session(init=True)

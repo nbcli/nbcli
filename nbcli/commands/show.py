@@ -21,7 +21,19 @@ class ShowSubCommand(BaseSubCommand):
 
 
     def run(self):
-        
+        """Show Detail view of object.
+
+        Usage Examples:
+
+        - Show Site with id 1
+          $ nbcli show dcim.sites 1
+
+        - Show Device with name server01
+          $ nbcli show dcim.devices name=server01
+
+        - Show Prefix 10.1.1.0/24
+          $ nbcli show ipam.prefixes prefix=10.1.1.0/24
+        """
         self.nbprint = nbprint
 
         ep = app_model_by_loc(self.netbox, self.args.app_model)

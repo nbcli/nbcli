@@ -13,7 +13,7 @@ class CLI():
     """Command Line Interface for Netbox."""
 
     def __init__(self):
-        """Set up argumenmt parser and load sub-commamnds."""
+        """Set up argument parser and load sub-commands."""
         epilog = '''
                General Options:
                  -h, --help           show this help message and exit

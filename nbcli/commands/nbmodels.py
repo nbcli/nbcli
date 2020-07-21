@@ -1,19 +1,32 @@
 import concurrent.futures
+import re
 from pynetbox.core.query import Request
 from nbcli.commands.base import BaseSubCommand
 
 
 class NbmodelsSubCommand(BaseSubCommand):
-    """Poll Netbox instance and list avaiable models."""
+    """Poll Netbox instance and list available models."""
 
     name = 'nbmodels'
     parser_kwargs = dict(help='List Netbox Models')
 
+    def setup(self):
+
+        self.parser.add_argument('--view-name',
+                                 action='store_true',
+                                 help='Display view name')
+
     def run(self):
         """Poll Netbox instance and list available models.
 
-        example usage:
-          $ nbcli nbmodels"""
+        Usage Examples:
+
+        - List available NetBox models
+          $ nbcli nbmodels
+
+        - Show view names instead of models
+          $ nbcli nbmodels --view-name
+        """
 
         apps = Request(self.netbox.base_url, self.netbox.http_session).get()
 
@@ -29,7 +42,14 @@ class NbmodelsSubCommand(BaseSubCommand):
             models = Request(url, self.netbox.http_session).get()
             for model in models.keys():
                 if model[0] != '_':
-                    result.append('  ' + app + '.' + model.replace('-', '_'))
+                    loc = app + '.' + model.replace('-', '_')
+                    name = re.sub('\.|_', '', loc.title()) + 'View'
+
+                    if self.args.view_name:
+                        loc = name
+
+                    result.append('  {}'.format(loc))
+
             return '\n'.join(result)
 
         if self.netbox.threading:

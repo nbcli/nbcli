@@ -104,7 +104,7 @@ def get_view_name(obj):
     return model_loc.title().replace('_', '').replace('.', '') + 'View'
 
 
-class Display():
+class Formatter():
     """Format result from pynetbox based on given peramiters."""
 
     def __init__(self,
@@ -187,12 +187,16 @@ class Display():
             view_names = [view.__name__ for view in BaseView.__subclasses__()]
 
             if self.view_model not in view_names:
-                self.view_model = get_view_name(self.result[0])
+                self.view_model = BaseView
+                return
 
             for view in reversed(BaseView.__subclasses__()):
                 if view.__name__ == self.view_model:
                     self.view_model = view
                     return
+
+        if isinstance(self.view_model.__class__, BaseView.__class__):
+            return
 
         self.view_model = BaseView
 
@@ -224,10 +228,10 @@ def nbprint(result,
             cols=list(),
             disable_header=False):
     """Print result from pynetbox."""
-    disp = Display(result,
-                   view=view,
-                   view_model=view_model,
-                   cols=cols,
-                   disable_header=disable_header)
+    formatted_result = Formatter(result,
+                                 view=view,
+                                 view_model=view_model,
+                                 cols=cols,
+                                 disable_header=disable_header)
 
-    print(disp.string)
+    print(formatted_result.string)
