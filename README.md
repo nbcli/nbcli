@@ -34,8 +34,8 @@ General Options:
 - [pynb](https://github.com/ericgeldmacher/nbcli/blob/release/docs/pynb.md) Command line wrapper for pynetbox
 - [Shell](https://github.com/ericgeldmacher/nbcli/blob/release/docs/shell.md) with preloaded pynetbox endpoints
     - Run scripts in shell environment.
-- [Coustemizable](https://github.com/ericgeldmacher/nbcli/blob/release/docs/views.md) table/detail views
-- [Extensable](https://github.com/ericgeldmacher/nbcli/blob/release/docs/commands.md) by adding custom commands
+- [Customizable](https://github.com/ericgeldmacher/nbcli/blob/release/docs/views.md) table/detail views
+- [Extensible](https://github.com/ericgeldmacher/nbcli/blob/release/docs/commands.md) by adding custom commands
 
 ## Quickstart
 
@@ -54,11 +54,13 @@ pynetbox = dict(
     token='0123456789abcdef0123456789abcdef01234567')   # your API token
 ```
 
-If you need to disable SSL verification
+If you need to disable SSL verification, add (or uncomment) the following to your user_config.py file. 
 
 ```python
 requests = dict(verify=False)
 ```
+
+More configuration options can be found [here](https://github.com/ericgeldmacher/nbcli/blob/release/docs/init.md).
 
 ## Testing
 

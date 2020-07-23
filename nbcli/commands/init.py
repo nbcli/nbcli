@@ -24,7 +24,8 @@ class InitSubCommand(BaseSubCommand):
 
         Example Usage:
 
-        $ nbcli init
+        - Initialize nbcli
+          $ nbcli init
         """
 
         self.netbox = get_session(init=True)
