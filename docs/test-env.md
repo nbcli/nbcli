@@ -44,7 +44,8 @@ $ cp -r tests/dev-env-files/* netbox-docker/
 ```
 
 * Start test Netbox service and wait for service to be ready
-  (service usually take ~1 min to come up, wait_for_service.py will time out after 5 min)
+  - service usually take ~1 min to come up
+  - wait_for_service.py will time out after 5 min)
 ```
 $ cd netbox-docker
 $ docker-compose pull
@@ -52,7 +53,7 @@ $ docker-compose up -d
 $ python3 wait_for_service.py
 ```
 
-The test Netbox instance should now be ready for testing!
+**The test Netbox instance should now be ready for testing!**
 
 * After testing, bring down test Netbox service and deactivate virtual environment 
 ```

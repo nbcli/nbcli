@@ -27,6 +27,16 @@ General Options:
   -q, --quiet          Show fewer logging messages
 ```
 
+## Notable Features
+
+- [Search](https://github.com/ericgeldmacher/nbcli/blob/release/docs/search.md) Netbox instance from command line
+- [Show](https://github.com/ericgeldmacher/nbcli/blob/release/docs/show.md) detail view of objects
+- [pynb](https://github.com/ericgeldmacher/nbcli/blob/release/docs/pynb.md) Command line wrapper for pynetbox
+- [Shell](https://github.com/ericgeldmacher/nbcli/blob/release/docs/shell.md) with preloaded pynetbox endpoints
+    - Run scripts in shell environment.
+- [Coustemizable](https://github.com/ericgeldmacher/nbcli/blob/release/docs/views.md) table/detail views
+- [Extensable](https://github.com/ericgeldmacher/nbcli/blob/release/docs/commands.md) by adding custom commands
+
 ## Quickstart
 
 ```
@@ -50,12 +60,6 @@ If you need to disable SSL verification
 requests = dict(verify=False)
 ```
 
-## Notable Features
+## Testing
 
-- [Search](https://github.com/ericgeldmacher/nbcli/blob/release/docs/search.md) Netbox instance from command line
-- [Show](https://github.com/ericgeldmacher/nbcli/blob/release/docs/show.md) detail view of objects
-- [pynb](https://github.com/ericgeldmacher/nbcli/blob/release/docs/pynb.md) Command line wrapper for pynetbox
-- [Shell](https://github.com/ericgeldmacher/nbcli/blob/release/docs/shell.md) with preloaded pynetbox endpoints
-    - Run scripts in shell environment.
-- [Coustemizable](https://github.com/ericgeldmacher/nbcli/blob/release/docs/views.md) table/detail views
-- [Extensable](https://github.com/ericgeldmacher/nbcli/blob/release/docs/commands.md) by adding custom commands
+Instructions for setting up a test environment are [here](https://github.com/ericgeldmacher/nbcli/blob/release/docs/test-env.md).
