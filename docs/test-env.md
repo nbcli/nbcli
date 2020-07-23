@@ -37,17 +37,14 @@ $ export NBCLI_DIR=$(pwd)/.nbcli_dev
 $ nbcli init
 ```
 
-* Clone netbox-docker repo
+* Clone netbox-docker repo and copy needed files into netbox-docker directory
 ```
 $ git clone https://github.com/netbox-community/netbox-docker.git
-```
-
-* Copy needed files into netbox-docker directory
-```
-$ cp -r test/dev-env-files/* netbox-docker/
+$ cp -r tests/dev-env-files/* netbox-docker/
 ```
 
 * Start test Netbox service and wait for service to be ready
+  (service usually take ~1 min to come up, wait_for_service.py will time out after 5 min)
 ```
 $ cd netbox-docker
 $ docker-compose pull
@@ -55,7 +52,9 @@ $ docker-compose up -d
 $ python3 wait_for_service.py
 ```
 
-* Bring down test Netbox service and deactivate virtual environment 
+The test Netbox instance should now be ready for testing!
+
+* After testing, bring down test Netbox service and deactivate virtual environment 
 ```
 $ docker-compose down -v
 $ deactivate
