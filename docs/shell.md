@@ -11,6 +11,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -v, --verbose         Show more logging messages
   -q, --quiet           Show fewer logging messages
+  -c cmd                Program passed in as string
   -i                    inspect interactively after running script
   -s {python,ipython}, --interactive-shell {python,ipython}
                         Specifies interactive shell to use

@@ -19,7 +19,6 @@ Commands:
     show      Show detail view of Netbox Object
     shell     Launch interactive shell
     pynb      Wrapper for pynetbox
-    nbmodels  List Netbox Models
 
 General Options:
   -h, --help           show this help message and exit
