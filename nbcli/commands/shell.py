@@ -3,15 +3,18 @@ import pkgutil
 import sys
 import pynetbox
 from pynetbox.core.endpoint import Endpoint
+from pynetbox.core.response import Record
 from pynetbox.core.query import Request
 from nbcli.commands.base import BaseSubCommand
-from nbcli.views.tools import nbprint
+from nbcli.core.utils import app_model_loc
+from nbcli.views.tools import nbprint, get_view_name
 
 class Shell():
 
     def __init__(self, netbox,
                  interactive_shell=None,
                  script=None,
+                 cmd=None,
                  interact=False,
                  skip_models=False,
                  logger=None):
@@ -21,6 +24,7 @@ class Shell():
 
         self.interactive_shell = interactive_shell
         self.script = script
+        self.cmd = cmd
         self.interact = interact
         self.netbox = netbox
         self.logger = logger
@@ -69,7 +73,7 @@ class Shell():
 
             nbns = dict(self.ns)
 
-            def nbmodels():
+            def nbmodels(display='model'):
                 """List available pynetbox models"""
                 modeldict = dict()
 
@@ -77,15 +81,22 @@ class Shell():
                     if isinstance(value, Endpoint):
                         app = value.url.split('/')[-2].title()
                         if app in modeldict.keys():
-                            modeldict[app].append(key)
+                            modeldict[app].append((key, value))
                         else:
                             modeldict[app] = list()
-                            modeldict[app].append(key)
+                            modeldict[app].append((key, value))
 
                 for app, modellist in sorted(modeldict.items()):
                     print(app + ':')
                     for model in sorted(modellist):
-                        print('  ' + model)
+                        if display == 'loc':
+                            obj = Record({}, model[1].api, model[1])
+                            print('  ' + app_model_loc(obj))
+                        elif display == 'view':
+                            obj = Record({}, model[1].api, model[1])
+                            print('  ' + get_view_name(obj))
+                        else:
+                            print('  ' + model[0])
 
             self.ns['nbmodels'] = nbmodels
             self.banner += 'nbmodels(), '
@@ -106,7 +117,9 @@ class Shell():
             pass
 
         console = InteractiveConsole(locals=self.ns)
-        if self.script:
+        if self.cmd:
+            console.runcode(self.cmd)
+        elif self.script:
             console.runcode(open(self.script).read())
             if self.interact:
                 console.interact(banner='')
@@ -122,8 +135,10 @@ class Shell():
         c = Config()
         c.TerminalInteractiveShell.banner1 = banner
         argv=[]
-
-        if self.script:
+        if self.cmd:
+            argv.append('-c')
+            argv.append(self.cmd)
+        elif self.script:
             if self.interact:
                 c.TerminalInteractiveShell.banner1 = ''
                 argv.append('-i')
@@ -147,6 +162,7 @@ class ShellSubCommand(BaseSubCommand):
     def setup(self):
 
         self.parser.add_argument('script', nargs='?', type=str, help='Script to run')
+        self.parser.add_argument('-c', metavar='cmd', type=str, help='Program passed in as string')
         self.parser.add_argument('-i', action='store_true',
                       help='inspect interactively after running script')
         self.parser.add_argument('-s', '--interactive-shell', choices=['python', 'ipython'],
@@ -166,6 +182,7 @@ class ShellSubCommand(BaseSubCommand):
         shell = Shell(self.netbox,
                       interactive_shell=self.args.interactive_shell,
                       script=self.args.script,
+                      cmd=self.args.c,
                       interact=self.args.i,
                       skip_models=self.args.skip,
                       logger=self.logger)

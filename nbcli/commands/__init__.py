@@ -4,4 +4,3 @@ from nbcli.commands.search import SearchSubCommand
 from nbcli.commands.show import ShowSubCommand
 from nbcli.commands.pynb import PynbSubCommand
 from nbcli.commands.shell import ShellSubCommand
-from nbcli.commands.nbmodels import NbmodelsSubCommand

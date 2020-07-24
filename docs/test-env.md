@@ -1,6 +1,5 @@
 # Setting up a test environment
 
-Below are instructions for setting up a test environment for nbcli.  
 Instructions should work on Mac and Linux.  
 Instructions require git and docker-compose to be installed.
 
@@ -21,7 +20,7 @@ $ source venv/bin/activate
   ```
   $ pip install nbcli
   ```
-  or
+  OR
   - From source
   ```
   $ pip install -e .
@@ -29,10 +28,11 @@ $ source venv/bin/activate
 
 * Optionally set an alternate nbcli directory
 ```
-$ export NBCLI_DIR=$(pwd)/.nbcli_dev
+$ export NBCLI_DIR=$(pwd)/.nbcli_testing
 ```
 
 * Initialize nbcli
+  - The default values in user_config.py should work.
 ```
 $ nbcli init
 ```
@@ -45,7 +45,7 @@ $ cp -r tests/dev-env-files/* netbox-docker/
 
 * Start test Netbox service and wait for service to be ready
   - service usually take ~1 min to come up
-  - wait_for_service.py will time out after 5 min)
+  - wait_for_service.py will time out after 5 min
 ```
 $ cd netbox-docker
 $ docker-compose pull
