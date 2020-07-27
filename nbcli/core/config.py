@@ -63,7 +63,7 @@ class Config():
                     fh.write(resource_string('nbcli.user_defaults',
                                              default).decode())
 
-        print("Edit pynetbox 'url' and 'token' entries in user_config.py:")
+        print("Edit pynetbox 'url' and 'token' entries in user_config.yml:")
         print('\t{}'.format(str(self.user_files.user_config.absolute())))
 
 

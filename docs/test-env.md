@@ -32,7 +32,7 @@ $ export NBCLI_DIR=$(pwd)/.nbcli_testing
 ```
 
 * Initialize nbcli
-  - The default values in user_config.py should work.
+  - The default values in user_config.yml should work.
 ```
 $ nbcli init
 ```
