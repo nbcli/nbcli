@@ -22,7 +22,7 @@ setuptools.setup(
     package_data={
         'nbcli': ['user_defaults/*.default']
     },
-    install_requires=["pynetbox>=5.0.3"],
+    install_requires=["pynetbox>=5.0.3", 'pyyaml'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",

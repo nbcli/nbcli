@@ -41,22 +41,23 @@ General Options:
 ```
 $ pip install nbcli
 $ nbcli init
-Edit pynetbox 'url' and 'token' entries in user_config.py:
-        ~/.nbcli/user_config.py
+Edit pynetbox 'url' and 'token' entries in user_config.yml:
+        ~/.nbcli/user_config.yml
 ```
 
-At the very minimum, you need to specify a url and token in the user_config.py file
+At the very minimum, you need to specify a url and token in the user_config.yml file
 
-```python
-pynetbox = dict(
-    url='http://localhost:8080',                        # your netbox url
-    token='0123456789abcdef0123456789abcdef01234567')   # your API token
+```yaml
+pynetbox:
+  url: http://localhost:8080
+  token: 0123456789abcdef0123456789abcdef01234567
 ```
 
-If you need to disable SSL verification, add (or uncomment) the following to your user_config.py file. 
+If you need to disable SSL verification, add (or uncomment) the following to your user_config.yml file. 
 
-```python
-requests = dict(verify=False)
+```yaml
+requests:
+  verify: false
 ```
 
 More configuration options can be found [here](https://github.com/ericgeldmacher/nbcli/blob/release/docs/init.md).

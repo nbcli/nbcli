@@ -4,6 +4,7 @@ import sys
 import pynetbox
 import requests
 import urllib3
+import yaml
 from nbcli import logger
 from nbcli.core.utils import auto_cast, get_nbcli_dir
 
@@ -20,7 +21,7 @@ class Config():
         uf = type('tree', (), {})()
 
         uf.dir = get_nbcli_dir()
-        uf.user_config = uf.dir.joinpath('user_config.py')
+        uf.user_config = uf.dir.joinpath('user_config.yml')
         uf.extdir = uf.dir.joinpath('user_extensions')
         uf.user_commands = uf.extdir.joinpath('user_commands.py')
         uf.user_views = uf.extdir.joinpath('user_views.py')
@@ -56,13 +57,13 @@ class Config():
                 logger.info('%s already exists. Skiping.', str(ufile))
             else:
                 ufile.touch()
-                default = ufile.name.replace('.py', '.default')
+                default = ufile.name + '.default'
                 logger.debug(default)
                 with open(str(ufile), 'w') as fh:
                     fh.write(resource_string('nbcli.user_defaults',
                                              default).decode())
 
-        print("Edit pynetbox 'url' and 'token' entries in user_config.py:")
+        print("Edit pynetbox 'url' and 'token' entries in user_config.yml:")
         print('\t{}'.format(str(self.user_files.user_config.absolute())))
 
 
@@ -71,9 +72,10 @@ class Config():
 
         conffile = self.user_files.user_config
         try:
-            user_config = dict()
-            with open(str(conffile), 'r') as fh:
-                exec(fh.read(), dict(), user_config)
+            user_config = yaml.safe_load(open(str(conffile)))
+            #user_config = dict()
+            #with open(str(conffile), 'r') as fh:
+            #    exec(fh.read(), dict(), user_config)
         except Exception as e:
             logger.critical('Error loading user_config!')
             logger.critical("Run: 'nbcli init' to create a user_config file")

@@ -5,8 +5,8 @@ from nbcli.core.config import get_session
 class InitSubCommand(BaseSubCommand):
     """Initialize nbcli.
 
-    Default confg directory location $HOME/.nbcli.d
-    After running edit $HOME/.nbcli.d/config.py with your credentials."""
+    Default confg directory location $HOME/.nbcli
+    After running edit $HOME/.nbcli/user_config.yml with your credentials."""
 
     name = 'init'
     parser_kwargs = dict(help='Initialize nbcli.')

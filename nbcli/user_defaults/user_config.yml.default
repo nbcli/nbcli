@@ -1,0 +1,31 @@
+pynetbox:
+  url: http://localhost:8080
+  token: 0123456789abcdef0123456789abcdef01234567
+#  private_key_file: null
+#  private_jey: null
+#  threading: false
+
+#requests:
+#  verify: false
+
+#nbcli:
+#  search_models:
+#    - circuits.providers
+#    - circuits.circuits
+#    - dcim.sites
+#    - dcim.racks
+#    - dcim.rack_groups
+#    - dcim.device_types
+#    - dcim.devices
+#    - dcim.virtual_chassis
+#    - dcim.cables
+#    - dcim.power_feeds
+#    - ipam.vrfs
+#    - ipam.aggregates
+#    - ipam.prefixes
+#    - ipam.ip_addresses
+#    - ipam.vlans
+#    - secrets.secrets
+#    - tenancy.tenants
+#    - virtualization.clusters
+#    - virtualization.virtual_machines
