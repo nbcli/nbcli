@@ -47,11 +47,26 @@ class BaseView():
         """
         assert isinstance(attribute, str)
 
+        def get_val(obj, key):
+
+            if isinstance(obj, dict) and (key in obj):
+                return obj[key]
+            elif isinstance(obj, list) and key.isdigit() and (len(obj) > int(key)):
+                return obj[int(key)]
+            else:
+                return None
+
         obj = self.obj
 
-        for attr in attribute.lower().split('.'):
-            if hasattr(obj, attr):
-                obj = getattr(obj, attr)
+        for attr in attribute.split('.'):
+
+            keys = attr.split(':')[1:]
+            attr = attr.split(':')[0]
+
+            if hasattr(obj, attr.lower()):
+                obj = getattr(obj, attr.lower())
+                for key in keys:
+                    obj = get_val(obj, key)
             else:
                 return None
 
