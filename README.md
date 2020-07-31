@@ -1,10 +1,10 @@
-# NetBox Client
+# nbcli NetBox Command-line Client
 
 Extensible command-line interface for Netbox using pynetbox module. 
 
 [![asciicast](https://asciinema.org/a/348204.svg)](https://asciinema.org/a/348204)
 
-## Notable Features
+## Core Commands
 
 - [init](https://nbcli.readthedocs.io/en/release/init.html)
 - [search](https://nbcli.readthedocs.io/en/release/nbsearch.html)
