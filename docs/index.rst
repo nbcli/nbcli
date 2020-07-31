@@ -7,7 +7,7 @@ nbcli: NetBox Command-line Client
 
 Extensible command-line interface for Netbox using pynetbox module. 
 
-.. code:: text
+.. code:: none
 
     usage: nbcli [-h] <command> ...
 
@@ -70,9 +70,15 @@ Notable Features
 ----------------
 
 - Search Netbox instance from command line
+
 - Show detail view of objects
+
 - Command line wrapper for pynetbox
+
 - Shell with preloaded pynetbox endpoints
-    - Run scripts in shell environment.
+
+    - Run scripts in shell environment
+
 - Customizable table/detail views
+
 - Extensible by adding custom commands
