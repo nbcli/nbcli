@@ -28,13 +28,13 @@ General Options:
 
 ## Notable Features
 
-- [Search](docs/nbsearch.md) Netbox instance from command line
-- [Show](docs/show.md) detail view of objects
-- [pynb](docs/pynb.md) Command line wrapper for pynetbox
-- [Shell](docs/shell.md) with preloaded pynetbox endpoints
+- [Search](nbsearch) Netbox instance from command line
+- [Show](show) detail view of objects
+- [pynb](pynb) Command line wrapper for pynetbox
+- [Shell](shell) with preloaded pynetbox endpoints
     - Run scripts in shell environment.
-- [Customizable](docs/views.md) table/detail views
-- [Extensible](docs/commands.md) by adding custom commands
+- [Customizable](views) table/detail views
+- [Extensible](commands) by adding custom commands
 
 ## Quickstart
 
@@ -60,8 +60,8 @@ requests:
   verify: false
 ```
 
-More configuration options can be found [here](docs/init.md).
+More configuration options can be found [here](init).
 
 ## Testing
 
-Instructions for setting up a test environment are [here](docs/test-env.md).
+Instructions for setting up a test environment are [here](test-env).

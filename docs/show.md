@@ -1,3 +1,5 @@
+# nbcli show
+
 ```
 $ nbcli show -h
 usage: nbcli show [-h] [-v] [-q] app_model args [args ...]

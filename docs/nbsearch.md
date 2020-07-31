@@ -1,3 +1,5 @@
+# nbcli search
+
 ```
 $ nbcli search -h
 usage: nbcli search [-h] [-v] [-q] [app_model] searchterm

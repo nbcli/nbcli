@@ -1,3 +1,5 @@
+# nbcli shell
+
 ```
 nbcli shell -h
 usage: nbcli shell [-h] [-v] [-q] [-i] [-s {python,ipython}] [--skip] [script]
