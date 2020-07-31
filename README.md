@@ -4,39 +4,22 @@ Extensible command-line interface for Netbox using pynetbox module.
 
 [![asciicast](https://asciinema.org/a/348204.svg)](https://asciinema.org/a/348204)
 
-```
-usage: nbcli [-h] <command> ...
-
-Extensible CLI for Netbox
-
-optional arguments:
-  -h, --help  show this help message and exit
-
-Commands:
-  <command>
-    init      Initialize nbcli.
-    search    Search Netbox Objects
-    show      Show detail view of Netbox Object
-    shell     Launch interactive shell
-    pynb      Wrapper for pynetbox
-
-General Options:
-  -h, --help           show this help message and exit
-  -v, --verbose        Show more logging messages
-  -q, --quiet          Show fewer logging messages
-```
-
 ## Notable Features
 
-- [Search](docs/nbsearch.md) Netbox instance from command line
-- [Show](docs/show.md) detail view of objects
-- [pynb](docs/pynb.md) Command line wrapper for pynetbox
-- [Shell](docs/shell.md) with preloaded pynetbox endpoints
-    - Run scripts in shell environment.
-- [Customizable](docs/views.md) table/detail views
-- [Extensible](docs/commands.md) by adding custom commands
+- [init](https://nbcli.readthedocs.io/en/release/init.html)
+- [search](https://nbcli.readthedocs.io/en/release/nbsearch.html)
+- [show](https://nbcli.readthedocs.io/en/release/show.html)
+- [pynb](https://nbcli.readthedocs.io/en/release/pynb.html)
+- [shell](https://nbcli.readthedocs.io/en/release/shell.html)
+
+## Extend and Customize
+
+- [Views](https://nbcli.readthedocs.io/en/release/views.html)
+- [Commands](https://nbcli.readthedocs.io/en/release/commands.html)
 
 ## Quickstart
+
+The full nbcli documentation on [Read the Docs](https://nbcli.readthedocs.io/en/release/)
 
 ```
 $ pip install nbcli
@@ -60,8 +43,10 @@ requests:
   verify: false
 ```
 
-More configuration options can be found [here](docs/init.md).
+## Basic Usage
+
+
 
 ## Testing
 
-Instructions for setting up a test environment are [here](docs/test-env.md).
+Instructions for setting up a test environment are [here](https://nbcli.readthedocs.io/en/release/test-env.html).
