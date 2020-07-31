@@ -5,7 +5,7 @@ nbcli pynb
 .. contents::
     :local:
 
-.. code:: text
+::
 
     $ nbcli pynb -h
     usage: nbcli pynb [-h] [-v] [-q] [--view {table,detail,json}]

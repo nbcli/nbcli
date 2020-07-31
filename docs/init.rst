@@ -5,7 +5,7 @@ nbcli init
 .. contents::
     :local:
 
-.. code:: text
+::
 
     $ nbcli init -h
     usage: nbcli init [-h] [-v] [-q]

@@ -5,7 +5,7 @@ nbcli show
 .. contents::
     :local:
 
-.. code:: text
+::
 
     $ nbcli show -h
     usage: nbcli show [-h] [-v] [-q] app_model args [args ...]

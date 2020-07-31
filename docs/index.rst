@@ -5,9 +5,10 @@ nbcli: NetBox Command-line Client
 .. contents::
     :local:
 
-Extensible command-line interface for Netbox using pynetbox module. 
+Extensible command-line interface for `Netbox <https://netbox.readthedocs.io/en/stable/>`_
+using the `pynetbox <https://pynetbox.readthedocs.io/en/latest/>`_ module. 
 
-.. code:: none
+::
 
     usage: nbcli [-h] <command> ...
 
