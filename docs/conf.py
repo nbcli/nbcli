@@ -20,7 +20,7 @@
 project = 'nbcli'
 copyright = '2020, Eric Geldmacher'
 author = 'Eric Geldmacher'
-
+master_doc = 'index'
 
 # -- General configuration ---------------------------------------------------
 
