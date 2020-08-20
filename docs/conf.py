@@ -22,6 +22,11 @@ copyright = '2020, Eric Geldmacher'
 author = 'Eric Geldmacher'
 master_doc = 'index'
 
+html_sidebars = { '**': ['globaltoc.html',
+                         'relations.html',
+                         'sourcelink.html',
+                         'searchbox.html'] }
+
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be

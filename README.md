@@ -1,42 +1,13 @@
-# NetBox Client
+# nbcli NetBox Command-line Client
 
-Extensible command-line interface for Netbox using pynetbox module. 
+Extensible command-line interface for [Netbox](https://netbox.readthedocs.io/en/stable/) 
+using the [pynetbox](https://pynetbox.readthedocs.io/en/latest/) module. 
 
 [![asciicast](https://asciinema.org/a/348204.svg)](https://asciinema.org/a/348204)
 
-```
-usage: nbcli [-h] <command> ...
-
-Extensible CLI for Netbox
-
-optional arguments:
-  -h, --help  show this help message and exit
-
-Commands:
-  <command>
-    init      Initialize nbcli.
-    search    Search Netbox Objects
-    show      Show detail view of Netbox Object
-    shell     Launch interactive shell
-    pynb      Wrapper for pynetbox
-
-General Options:
-  -h, --help           show this help message and exit
-  -v, --verbose        Show more logging messages
-  -q, --quiet          Show fewer logging messages
-```
-
-## Notable Features
-
-- [Search](docs/nbsearch.md) Netbox instance from command line
-- [Show](docs/show.md) detail view of objects
-- [pynb](docs/pynb.md) Command line wrapper for pynetbox
-- [Shell](docs/shell.md) with preloaded pynetbox endpoints
-    - Run scripts in shell environment.
-- [Customizable](docs/views.md) table/detail views
-- [Extensible](docs/commands.md) by adding custom commands
-
 ## Quickstart
+
+The full nbcli documentation on [Read the Docs](https://nbcli.readthedocs.io/en/release/)
 
 ```
 $ pip install nbcli
@@ -60,8 +31,116 @@ requests:
   verify: false
 ```
 
-More configuration options can be found [here](docs/init.md).
+## Core Commands
+
+- [init](docs/init.rst)
+- [search](docs/nbsearch.rst)
+- [show](docs/show.rst)
+- [pynb](docs/pynb.rst)
+- [shell](docs/shell.rst)
+
+## Extend and Customize
+
+- [Views](docs/views.rst)
+- [Commands](docs/commands.rst)
 
 ## Testing
 
-Instructions for setting up a test environment are [here](docs/test-env.md).
+Instructions for setting up a test environment are [here](docs/test-env.rst).
+
+## Basic Usage
+
+Run a search of Netbox objects and show a table view of results.
+
+```
+$ nbcli search server
+
+dcim.devices
+============
+ID  Name      Status  Tenant  Site    Rack     Role    Type   IP Address
+1   server01  Active  -       AMS 1   rack-01  server  Other  -
+2   server02  Active  -       AMS 2   rack-02  server  Other  -
+3   server03  Active  -       SING 1  rack-03  server  Other  -
+
+```
+
+Show device with id 2.
+
+```
+$ nbcli show dcim.devices 2
+server02
+========
+
+Device
+------
+Site:   AMS 2
+Rack:   rack-02
+Position:       2
+Tenant: None
+Device Type:    Other
+Serial Number:
+Asset Tag:      None
+
+Management
+----------
+Role:   None
+Platform:       None
+Status: Active
+Primary IPv4:   None
+Primary IPv6:   None
+
+Custom Fields
+-------------
+select_field:   None
+select_field_auto_weight:       None
+boolean_field:  None
+date_field:     None
+text_field:     Description
+
+Tags
+----
+
+
+Comments
+--------
+
+
+Interfaces
+----------
+Name         LAG  Description  MTU  Mode  Cable  Connection
+to-server01  -    -            -    -     -      -           -
+```
+
+Show Prefix 10.1.1.0/24
+
+```
+$ nbcli show ipam.prefixes prefix=10.1.1.0/24
+id: 1
+family: IPv4
+prefix: 10.1.1.0/24
+site: AMS 1
+vrf: None
+tenant: tenant1
+vlan: vlan1
+status: Active
+role: None
+is_pool: False
+description: prefix1
+tags: []
+custom_fields: {'text_field': None}
+created: 2020-07-31
+last_updated: 2020-07-31T21:09:11.947263Z
+```
+
+List all IP Addresses with pynb (pynetbox wrapper)
+
+```
+$ nbcli pynb ipam.ip_addresses all
+ID  IP Address              Vrf   Status    Role  Tenant   Parent    Interface    DNS Name  Description
+1   10.1.1.1/24             vrf1  Active    -     -        server01  to-server02  -         -
+3   10.1.1.2/24             -     Active    -     -        server02  to-server01  -         -
+5   10.1.1.10/24            -     Reserved  -     tenant1  -         -            -         reserved IP
+2   2001:db8:a000:1::1/64   vrf1  Active    -     -        server01  to-server02  -         -
+4   2001:db8:a000:1::2/64   -     Active    -     -        server02  to-server01  -         -
+6   2001:db8:a000:1::10/64  -     Reserved  -     tenant1  -         -            -         reserved IP
+```
