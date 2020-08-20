@@ -1,4 +1,5 @@
 """Define Classes and Functions used throughout nbcli."""
+import json
 import logging
 import os
 from pathlib import Path
@@ -33,6 +34,11 @@ def auto_cast(string):
         return True
     if string.lower() == 'false':
         return False
+    if ('{' in string) or ('[' in string):
+        try:
+            return json.loads(string)
+        except:
+            return string
     return string
 
 class Trace(Record):
