@@ -86,7 +86,7 @@ class Config():
                 setattr(self, key, value)
 
             # get envars
-            prefix = key.upper() + '_'
+            prefix = 'NBCLI_{}_'.format(key.upper())
 
             def has_prefix(ek):
                 return ek.find(prefix) == 0
