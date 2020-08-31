@@ -241,12 +241,15 @@ def nbprint(result,
             view='table',
             view_model=None,
             cols=list(),
-            disable_header=False):
+            disable_header=False,
+            string=False):
     """Print result from pynetbox."""
     formatted_result = Formatter(result,
                                  view=view,
                                  view_model=view_model,
                                  cols=cols,
                                  disable_header=disable_header)
-
-    print(formatted_result.string)
+    if string:
+        return formatted_result.string
+    else:
+        print(formatted_result.string)
