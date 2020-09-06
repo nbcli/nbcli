@@ -6,7 +6,7 @@ import requests
 import urllib3
 import yaml
 from nbcli import logger
-from nbcli.core.utils import auto_cast, get_nbcli_dir
+from nbcli.core.utils import Reference, auto_cast, get_nbcli_dir
 
 class Config():
     """Namespace to hold config options that will be passed to pynetbox."""
@@ -121,6 +121,10 @@ def get_session(init=False):
 
     if nb.http_session.verify is False:
         urllib3.disable_warnings()
+
+    nb.nbcli = type('nbcli', (), {})()
+    nb.nbcli.ref = Reference()
+    nb.nbcli.logger = logger
 
     nb.nbcli_conf = conf
 

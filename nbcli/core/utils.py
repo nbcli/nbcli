@@ -1,4 +1,5 @@
 """Define Classes and Functions used throughout nbcli."""
+from collections import namedtuple
 import json
 import logging
 import os
@@ -6,6 +7,44 @@ from pathlib import Path
 from pynetbox.core.response import Record
 from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
 from pynetbox.models.dcim import Cables, Termination
+
+class  Reference():
+
+    def __init__(self):
+
+        self.aliases = dict()
+        self.models = dict()
+
+        ident = [('dcim.devices', {}),
+                 ('dcim.device_roles', {}),
+                 ('dcim.device_types', {'lookup_key': 'model'}),
+                 ('dcim.interfaces', {}),
+                 ('dcim.sites', {}),
+                 ('dcim.racks', {}),
+                 ('tenancy.tenants', {})]
+
+        Ref = namedtuple('Ref', ['model', 'alias', 'answer', 'lookup', 'hook'])
+
+        for entry in ident:
+
+            alias = entry[0].strip('s').split('.')[-1]
+
+            r = Ref(entry[0],
+                    entry[1].get('alias') or alias,
+                    entry[1].get('answer') or 'id',
+                    entry[1].get('lookup') or 'name',
+                    entry[1].get('key') or '{}_id'.format(alias))
+
+            self.aliases[r.alias] = r
+            self.models[r.model] = r
+
+    def get(self, string):
+
+        if string in self.aliases:
+            return self.aliases[string]
+        elif string in self.models:
+            return self.models[string]
+        return None
 
 
 def get_nbcli_dir():
