@@ -37,6 +37,24 @@ def get_view_parser():
     return view_parser
 
 
+def proc_kw_str(kw_dict, string):
+
+    k, v = '', ''
+    kv = list()
+    if isinstance(string, str):
+        kv = string.split('=')
+    if len(kv) == 2:
+        key, value = kv[0], kv[1]
+    if (len(key) > 0) and (len(value) > 0):
+        if key in kw_dict:
+            if isinstance(kw_dict[key], list):
+                kw_dict[key].append(value)
+            else:
+                kw_dict[key] = [kw_dict[key], value]
+        else:
+            kw_dict[key] = value
+    
+
 class ProcKWArgsAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string):
         setattr(namespace, self.dest, list())
@@ -45,15 +63,7 @@ class ProcKWArgsAction(argparse.Action):
         for i in values:
             if i.find('=') > 0:
                 kwargs = getattr(namespace, kw_dest)
-                key = i.split('=')[0]
-                value = i.split('=')[1]
-                if key in kwargs:
-                    if isinstance(kwargs[key], list):
-                        kwargs[key].append(value)
-                    else:
-                        kwargs[key] = [kwargs[key], value]
-                else:
-                    kwargs[key] = value
+                proc_kw_str(kwargs, i)
             else:
                 getattr(namespace, self.dest).append(i)
 
