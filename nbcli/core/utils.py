@@ -1,4 +1,5 @@
 """Define Classes and Functions used throughout nbcli."""
+from collections import namedtuple
 import json
 import logging
 import os
@@ -6,6 +7,51 @@ from pathlib import Path
 from pynetbox.core.response import Record
 from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
 from pynetbox.models.dcim import Cables, Termination
+
+
+class  Reference():
+
+    def __init__(self):
+
+        self.Ref = namedtuple('Ref', ['model',
+                                      'alias',
+                                      'answer',
+                                      'lookup',
+                                      'hook'])
+
+        ident = [('dcim.devices', {}),
+                 ('dcim.device_roles', {}),
+                 ('dcim.device_types', {'lookup_key': 'model'}),
+                 ('dcim.interfaces', {}),
+                 ('dcim.sites', {}),
+                 ('dcim.racks', {}),
+                 ('ipam.ip_addresses', {'alias': 'address',
+                                        'lookup': 'address',
+                                        'hook': 'address'}),
+                 ('tenancy.tenants', {})]
+
+        refs = list()
+
+        for entry in ident:
+
+            alias = entry[0].strip('s').split('.')[-1]
+
+            r = self.Ref(entry[0],
+                         entry[1].get('alias') or alias,
+                         entry[1].get('answer') or 'id',
+                         entry[1].get('lookup') or 'name',
+                         entry[1].get('hook') or '{}_id'.format(alias))
+
+            refs.append(r)
+
+        self.refs = tuple(refs)
+
+    def get(self, string):
+
+        for ref in self.refs:
+            if ref.alias == string:
+                return ref
+        return None
 
 
 def get_nbcli_dir():
@@ -84,6 +130,9 @@ def app_model_by_loc(api, loc):
     """Return Endpoint defined by location"""
     assert isinstance(loc, str)
     loc = loc.lower().replace('-', '_')
+    ref = api.nbcli.ref.get(loc)
+    if ref:
+        loc = ref.model
     app_ep = loc.split('.')
     assert len(app_ep) == 2
     app = getattr(api, app_ep[0])
