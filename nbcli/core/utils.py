@@ -8,12 +8,16 @@ from pynetbox.core.response import Record
 from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
 from pynetbox.models.dcim import Cables, Termination
 
+
 class  Reference():
 
     def __init__(self):
 
-        self.aliases = dict()
-        self.models = dict()
+        self.Ref = namedtuple('Ref', ['model',
+                                      'alias',
+                                      'answer',
+                                      'lookup',
+                                      'hook'])
 
         ident = [('dcim.devices', {}),
                  ('dcim.device_roles', {}),
@@ -21,29 +25,32 @@ class  Reference():
                  ('dcim.interfaces', {}),
                  ('dcim.sites', {}),
                  ('dcim.racks', {}),
+                 ('ipam.ip_addresses', {'alias': 'address',
+                                        'lookup': 'address',
+                                        'hook': 'address'}),
                  ('tenancy.tenants', {})]
 
-        Ref = namedtuple('Ref', ['model', 'alias', 'answer', 'lookup', 'hook'])
+        refs = list()
 
         for entry in ident:
 
             alias = entry[0].strip('s').split('.')[-1]
 
-            r = Ref(entry[0],
-                    entry[1].get('alias') or alias,
-                    entry[1].get('answer') or 'id',
-                    entry[1].get('lookup') or 'name',
-                    entry[1].get('key') or '{}_id'.format(alias))
+            r = self.Ref(entry[0],
+                         entry[1].get('alias') or alias,
+                         entry[1].get('answer') or 'id',
+                         entry[1].get('lookup') or 'name',
+                         entry[1].get('hook') or '{}_id'.format(alias))
 
-            self.aliases[r.alias] = r
-            self.models[r.model] = r
+            refs.append(r)
+
+        self.refs = tuple(refs)
 
     def get(self, string):
 
-        if string in self.aliases:
-            return self.aliases[string]
-        elif string in self.models:
-            return self.models[string]
+        for ref in self.refs:
+            if ref.alias == string:
+                return ref
         return None
 
 
@@ -123,6 +130,9 @@ def app_model_by_loc(api, loc):
     """Return Endpoint defined by location"""
     assert isinstance(loc, str)
     loc = loc.lower().replace('-', '_')
+    ref = api.nbcli.ref.get(loc)
+    if ref:
+        loc = ref.model
     app_ep = loc.split('.')
     assert len(app_ep) == 2
     app = getattr(api, app_ep[0])
