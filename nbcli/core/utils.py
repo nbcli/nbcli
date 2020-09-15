@@ -21,11 +21,13 @@ class  Reference():
 
         ident = [('dcim.devices', {}),
                  ('dcim.device_roles', {}),
-                 ('dcim.device_types', {'lookup_key': 'model'}),
+                 ('dcim.device_types', {'lookup': 'model'}),
+                 ('dcim.manufacturers', {}),
                  ('dcim.interfaces', {}),
                  ('dcim.sites', {}),
                  ('dcim.racks', {}),
                  ('ipam.ip_addresses', {'alias': 'address',
+                                        'answer': 'address',
                                         'lookup': 'address',
                                         'hook': 'address'}),
                  ('tenancy.tenants', {})]
@@ -52,6 +54,7 @@ class  Reference():
             if ref.alias == string:
                 return ref
         return None
+
 
 
 def get_nbcli_dir():
