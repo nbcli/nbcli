@@ -145,15 +145,18 @@ def app_model_by_loc(api, loc):
 
 def is_list_of_records(result):
 
-    assert isinstance(result, list) and (len(result) > 0)
+    if isinstance(result, list) and (len(result) > 0):
 
-    # check all entries are an instance of Record
-    rc = [isinstance(e, Record) for e in result].count(True) == len(result)
+        # check all entries are an instance of Record
+        rc = [isinstance(e, Record) for e in result].count(True) == len(result)
 
-    # check all entries are the same type
-    tc = len(set(type(e) for e in result)) == 1
+        # check all entries are the same type
+        tc = len(set(type(e) for e in result)) == 1
 
-    return rc and tc
+        return rc and tc
+
+    else:
+        return False
 
 
 def add_detail_endpoint(model, name, RO=False, custom_return=None):
