@@ -31,8 +31,11 @@ class NbArgs():
 
         if ':' in string:
             args = list()
-            for res in reversed(string.split('::')):
-                args = self.resolve(*res.split(':'), **NbArgs(*args).kwargs)
+            for resol in reversed(string.split('::')):
+                al = list()
+                for res in resol.split('~'):
+                    al += self.resolve(*res.split(':'), **NbArgs(*args).kwargs)
+                args = al
             for arg in args:
                 self.update(*arg)
         elif '=' in string:
