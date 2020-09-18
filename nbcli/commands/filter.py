@@ -1,5 +1,6 @@
 from pynetbox.core.response import Record
 from nbcli.commands.base import BaseSubCommand, ProcKWArgsAction
+from nbcli.commands.tools import NbArgs
 from nbcli.core.utils import app_model_by_loc, is_list_of_records
 
 
@@ -9,7 +10,7 @@ class Filter():
                  netbox,
                  model,
                  args=list(),
-                 kwargs=dict(),
+                 #kwargs=dict(),
                  get=False,
                  count=False,
                  delete=False,
@@ -26,12 +27,14 @@ class Filter():
             method = 'get'
         elif count:
             method = 'count'
-        elif args or kwargs:
+        elif args:# or kwargs:
             method = 'filter'
 
         self.method = getattr(self.model, method)
 
-        result = self.method(*args, **kwargs)
+        #result = self.method(*args, **kwargs)
+        nba = NbArgs(*args)
+        result = self.method(*nba.args, **nba.kwargs)
 
         if isinstance(result, Record):
             result = [result]
@@ -113,7 +116,7 @@ class FilterSubCommand(BaseSubCommand):
     
         self.parser.add_argument('args',
                             nargs='*',
-                            action=ProcKWArgsAction,
+                            #action=ProcKWArgsAction,
                             help='Argumnet(s) to filter results.')
 
         self.parser.add_argument('-g', '--get',
@@ -158,7 +161,7 @@ class FilterSubCommand(BaseSubCommand):
         nbfilter = Filter(self.netbox,
                           self.args.model,
                           args=self.args.args,
-                          kwargs=self.args.args_kwargs,
+                          #kwargs=self.args.args_kwargs,
                           get=self.args.get,
                           count=self.args.count,
                           delete=self.args.delete,
