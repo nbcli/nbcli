@@ -4,12 +4,74 @@ import json
 import logging
 import os
 from pathlib import Path
+from inspect import getmembers, isclass, ismethod
+from textwrap import indent
+from pynetbox.core.endpoint import Endpoint
 from pynetbox.core.response import Record
-from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
-from pynetbox.models.dcim import Cables, Termination
 
 
-class  Reference():
+class NbNS:
+    """NameSpace object for nbcli."""
+    def __repr__(self):
+        """Print Info about Classes and methods in namespace."""
+        def pred(obj):
+            return isinstance(obj, NbNS) or ismethod(obj)
+
+        ml = getmembers(self, predicate=pred)
+        ht = list([self.__doc__ or ''])
+        for m in ml:
+            s = '{}.{}:\n{}'.format(type(self).__name__,
+                                      m[0],
+                                      indent(m[1].__doc__ or '', prefix='  '))
+            if not m[0].startswith('_'):
+                ht.append(indent(s, prefix='  '))
+        return '\n\n'.join(ht)
+
+
+class NbInfo(NbNS):
+    """Desplay information for nbcli."""
+
+    def __init__(self, netbox):
+
+        self._nb = netbox
+        self._models = {}
+
+    def models(self):
+        """Print model location, and alias."""
+        print(self._models)
+
+    def views(self):
+        """Print model view name."""
+        print(self._models)
+
+    def loaded(self):
+        """List pre-loaded models"""
+
+        modeldict = dict()
+
+        for key, value in self._models.items():
+            if isinstance(value, Endpoint):
+                app = value.url.split('/')[-2].title()
+                if app in modeldict.keys():
+                    modeldict[app].append((key, value))
+                else:
+                    modeldict[app] = list()
+                    modeldict[app].append((key, value))
+
+        for app, modellist in sorted(modeldict.items()):
+            print(app + ':')
+            for model in sorted(modellist):
+                #if display == 'loc':
+                #    obj = Record({}, model[1].api, model[1])
+                #    print('  ' + app_model_loc(obj))
+                #elif display == 'view':
+                #    obj = Record({}, model[1].api, model[1])
+                #    print('  ' + get_view_name(obj))
+                print('  ' + model[0])
+
+
+
+class  Reference(NbNS):
 
     def __init__(self):
 
@@ -90,34 +152,6 @@ def auto_cast(string):
             return string
     return string
 
-class Trace(Record):
-    """Model to use as custom_return for trace DetailEndpoint."""
-
-    near_end = Termination
-    cable = Cables
-    far_end = Termination
-
-    def __init__(self, values, api, endpoint):
-
-        data = dict(near_end = values[0],
-                    cable = values[1],
-                    far_end = values[2])
-        
-        super().__init__(data, api, endpoint)
-
-    def __str__(self):
-
-        if self.cable:
-            return '{}[{}] < #{} > {}[{}]'.format(self.near_end.device.name,
-                                             self.near_end.name,
-                                             self.cable.id,
-                                             self.far_end.device.name,
-                                             self.far_end.name)
-        else:
-            return '{}[{}] <'.format(self.near_end.device.name,
-                                             self.near_end.name)
-
-
 def app_model_loc(obj):
     """Derive pynetbox App and Endpoint names from url/endpoint.url."""
     assert isinstance(obj, Record)
@@ -157,21 +191,3 @@ def is_list_of_records(result):
 
     else:
         return False
-
-
-def add_detail_endpoint(model, name, RO=False, custom_return=None):
-
-    assert model in Record.__subclasses__(), 'model must b subclass of Record'
-
-    @property
-    def detail_ep(self):
-        return DetailEndpoint(self, name, custom_return=custom_return)
-
-    @property
-    def ro_detail_ep(self):
-        return RODetailEndpoint(self, name, custom_return=custom_return)
-
-    if RO:
-        setattr(model, name, ro_detail_ep)
-    else:
-        setattr(model, name, detail_ep)

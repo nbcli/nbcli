@@ -36,9 +36,9 @@ class SearchSubCommand(BaseSubCommand):
           $ nbcli search dcim.interfaces 'eth 1'
         """
 
-        if hasattr(self.netbox.nbcli_conf, 'nbcli') and \
-            ('search_models' in self.netbox.nbcli_conf.nbcli.keys()):
-            self.search_models = self.netbox.nbcli_conf.nbcli['search_models']
+        if hasattr(self.netbox.nbcli.conf, 'nbcli') and \
+            ('search_models' in self.netbox.nbcli.conf.nbcli.keys()):
+            self.search_models = self.netbox.nbcli.conf.nbcli['search_models']
         else:
             self.search_models = ['circuits.providers',
                                   'circuits.circuits',
