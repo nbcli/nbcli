@@ -20,7 +20,7 @@ setuptools.setup(
     license="GPLv3",
     packages=setuptools.find_packages(),
     package_data={
-        'nbcli': ['user_defaults/*.default']
+        'nbcli': ['user_defaults/*.default', 'core/resolve_reference.yml']
     },
     install_requires=["pynetbox>=5.0.3", 'pyyaml'],
     classifiers=[

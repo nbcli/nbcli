@@ -1,8 +1,10 @@
 """Define Classes and Functions used throughout nbcli."""
 from collections import namedtuple
+from pkg_resources import resource_string
 import json
 import logging
 import os
+import yaml
 from pathlib import Path
 from inspect import getmembers, isclass, ismethod
 from textwrap import indent
@@ -81,30 +83,34 @@ class  Reference(NbNS):
                                       'lookup',
                                       'hook'])
 
-        ident = [('dcim.devices', {}),
-                 ('dcim.device_roles', {}),
-                 ('dcim.device_types', {'lookup': 'model'}),
-                 ('dcim.manufacturers', {}),
-                 ('dcim.interfaces', {}),
-                 ('dcim.sites', {}),
-                 ('dcim.racks', {}),
-                 ('ipam.ip_addresses', {'alias': 'address',
-                                        'answer': 'address',
-                                        'lookup': 'address',
-                                        'hook': 'address'}),
-                 ('tenancy.tenants', {})]
+        #ident = [('dcim.devices', {}),
+        #         ('dcim.device_roles', {}),
+        #         ('dcim.device_types', {'lookup': 'model'}),
+        #         ('dcim.manufacturers', {}),
+        #         ('dcim.interfaces', {}),
+        #         ('dcim.sites', {}),
+        #         ('dcim.racks', {}),
+        #         ('ipam.ip_addresses', {'alias': 'address',
+        #                                'answer': 'address',
+        #                                'lookup': 'address',
+        #                                'hook': 'address'}),
+        #         ('tenancy.tenants', {})]
+
+        ident = yaml.safe_load(resource_string('nbcli.core', 'resolve_reference.yml').decode())
 
         refs = list()
 
-        for entry in ident:
+        for key, value in ident.items():
 
-            alias = entry[0].strip('s').split('.')[-1]
+            value = value or {}
 
-            r = self.Ref(entry[0],
-                         entry[1].get('alias') or alias,
-                         entry[1].get('answer') or 'id',
-                         entry[1].get('lookup') or 'name',
-                         entry[1].get('hook') or '{}_id'.format(alias))
+            alias = key.strip('s').split('.')[-1]
+
+            r = self.Ref(key,
+                         value.get('alias') or alias,
+                         value.get('answer') or 'id',
+                         value.get('lookup') or 'name',
+                         value.get('hook') or '{}_id'.format(alias))
 
             refs.append(r)
 

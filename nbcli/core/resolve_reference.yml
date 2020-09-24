@@ -1,0 +1,19 @@
+dcim.devices:
+dcim.device_roles:
+dcim.device_types:
+  lookup: model
+dcim.manufacturers:
+dcim.interfaces:
+dcim.sites:
+dcim.racks:
+ipam.ip_addresses:
+  alias: address
+  answer: address
+  lookup: address
+  hook: address
+ipam.prefixes:
+  alias: prefix
+  answer: prefix
+  lookup: prefix
+  hook: prefix
+tenancy.tenants:

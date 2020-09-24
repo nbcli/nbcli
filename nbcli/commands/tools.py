@@ -4,8 +4,8 @@ from nbcli.core.config import get_session
 
 class NbArgs():
 
-    _netbox = get_session()
-    _logger = _netbox.nbcli.logger
+    _nb = get_session()
+    _logger = _nb.nbcli.logger
 
     def __init__(self, *args, **kwargs):
 
@@ -60,12 +60,12 @@ class NbArgs():
 
     def resolve(self, refstr, *args, **kwargs):
 
-        ref = self._netbox.nbcli.ref.get(refstr)
+        ref = self._nb.nbcli.ref.get(refstr)
         if not ref:
             self._logger.warning("Could not resolve '%s'", string)
             return
 
-        ep = app_model_by_loc(self._netbox, ref.model)
+        ep = app_model_by_loc(self._nb, ref.model)
 
         nba = NbArgs(*args, *kwargs.items())
         for arg in nba.args:
