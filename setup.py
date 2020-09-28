@@ -1,6 +1,6 @@
 import setuptools
 
-with open("README.rst", "r") as fh:
+with open("README.md", "r") as fh:
     long_description = fh.read()
 
 version = dict()
@@ -15,6 +15,7 @@ setuptools.setup(
     author_email="egeldmacher@wustl.edu",
     description="CLI for netbox using pynetbox module",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/ericgeldmacher/nbcli",
     license="GPLv3",
     packages=setuptools.find_packages(),
