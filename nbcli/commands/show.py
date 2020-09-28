@@ -1,24 +1,27 @@
+"""Command to show detail view of object retrieved by arguments."""
+
+
 from nbcli.commands.base import BaseSubCommand, ProcKWArgsAction
 from nbcli.core.utils import app_model_by_loc
 from nbcli.views.tools import nbprint
 
 
 class ShowSubCommand(BaseSubCommand):
+    """Show detail view of object with given ID or arguments."""
 
     name = 'show'
     parser_kwargs = dict(help='Show detail view of Netbox Object')
 
     def setup(self):
-
+        """Add parser arguments to sub command."""
         self.parser.add_argument('app_model',
                                  type=str,
                                  help='Model location to search (app.model)')
 
         self.parser.add_argument('args',
-                            nargs='+',
-                            action=ProcKWArgsAction,
-                            help='Search argumnets')
-
+                                 nargs='+',
+                                 action=ProcKWArgsAction,
+                                 help='Search argumnets')
 
     def run(self):
         """Show Detail view of object.

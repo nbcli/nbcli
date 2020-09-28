@@ -1,6 +1,9 @@
+"""Search sub command to emulate Netbox main search bar."""
+
+
 from pynetbox.core.query import Request
 from pynetbox.core.endpoint import response_loader
-from nbcli.commands.base import BaseSubCommand, ProcKWArgsAction
+from nbcli.commands.base import BaseSubCommand
 from nbcli.core.utils import app_model_by_loc
 from nbcli.views.tools import nbprint
 
@@ -9,20 +12,21 @@ class SearchSubCommand(BaseSubCommand):
     """Search Netbox objects with the given searchterm.
 
     The List of search models can be modified in:
-    $HOME/$CONF_DIR/config.py"""
+    $HOME/$CONF_DIR/config.py
+    """
 
     name = 'search'
     parser_kwargs = dict(help='Search Netbox Objects')
 
     def setup(self):
-
+        """Add parser arguments to search sub command."""
         self.parser.add_argument('app_model',
                                  type=str,
                                  nargs='?',
                                  help='Model location to search (app.model)')
 
         self.parser.add_argument('searchterm',
-                            help='Search term')
+                                 help='Search term')
 
     def run(self):
         """Run a search of Netbox objects and show a table view of results.
@@ -35,9 +39,8 @@ class SearchSubCommand(BaseSubCommand):
         - Search the dcim.interfaces model for 'eth 1':
           $ nbcli search dcim.interfaces 'eth 1'
         """
-
         if hasattr(self.netbox.nbcli.conf, 'nbcli') and \
-            ('search_models' in self.netbox.nbcli.conf.nbcli.keys()):
+                ('search_models' in self.netbox.nbcli.conf.nbcli.keys()):
             self.search_models = self.netbox.nbcli.conf.nbcli['search_models']
         else:
             self.search_models = ['circuits.providers',
@@ -76,7 +79,6 @@ class SearchSubCommand(BaseSubCommand):
 
             return result
 
-
         self.nbprint = nbprint
 
         if self.args.app_model:
@@ -93,11 +95,11 @@ class SearchSubCommand(BaseSubCommand):
             full_count = model.count(self.args.searchterm)
             if len(result) > 0:
                 result_count += 1
-                print('{}\n{}'.format(app_model,'=' * len(app_model)))
+                print('{}\n{}'.format(app_model, '=' * len(app_model)))
                 self.nbprint(result)
                 if len(result) < full_count:
                     print('*** See all {} results: '.format(full_count) +
-                          "'$ nbcli pynb {} filter {}' ***". \
+                          "'$ nbcli pynb {} filter {}' ***".
                           format(app_model, self.args.searchterm))
                 print('')
         if result_count == 0:
