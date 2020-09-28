@@ -7,7 +7,7 @@ from pynetbox.core.response import Record
 from pynetbox.core.query import Request
 from nbcli.commands.base import BaseSubCommand
 from nbcli.core.utils import app_model_loc
-from nbcli.views.tools import nbprint, get_view_name
+from nbcli.views.tools import nbprint
 
 class Shell():
 

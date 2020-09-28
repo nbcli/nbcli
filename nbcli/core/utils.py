@@ -38,39 +38,53 @@ class NbInfo(NbNS):
         self._nb = netbox
         self._models = {}
 
-    def models(self):
-        """Print model location, and alias."""
-        print(self._models)
-
-    def views(self):
-        """Print model view name."""
-        print(self._models)
-
     def loaded(self):
         """List pre-loaded models"""
 
-        modeldict = dict()
+        table = list()
+        table.append(['Variable', 'Model Name', 'Alias', 'View Name'])
 
-        for key, value in self._models.items():
-            if isinstance(value, Endpoint):
-                app = value.url.split('/')[-2].title()
-                if app in modeldict.keys():
-                    modeldict[app].append((key, value))
-                else:
-                    modeldict[app] = list()
-                    modeldict[app].append((key, value))
+        for model in self._models.items():
+            var = model[0]
+            model_name = app_model_loc(model[1])
+            alias = '-'
+            ref = self._nb.nbcli.ref.get(model_name)
+            if ref:
+                alias = ref.alias
+            view = view_name(model[1])
+            table.append([var, model_name, alias, view])
 
-        for app, modellist in sorted(modeldict.items()):
-            print(app + ':')
-            for model in sorted(modellist):
-                #if display == 'loc':
-                #    obj = Record({}, model[1].api, model[1])
-                #    print('  ' + app_model_loc(obj))
-                #elif display == 'view':
-                #    obj = Record({}, model[1].api, model[1])
-                #    print('  ' + get_view_name(obj))
-                print('  ' + model[0])
+        print(rend_table(table))
 
+
+def view_name(obj):
+    """Generate view name based on class, url, or endpoint url."""
+    assert isinstance(obj, (Record, Endpoint))
+
+    class_name = obj.__class__.__name__
+    model_loc = app_model_loc(obj)
+
+    if class_name not in ['Record', 'Endpoint']:
+        return model_loc.split('.')[0].title() + class_name + 'View'
+
+    return model_loc.title().replace('_', '').replace('.', '') + 'View'
+
+
+def rend_table(table):
+    """Convert 2D array into printable string."""
+    assert len(table) > 1
+    # get max width for each column
+    colw = list()
+    for col in range(len(table[0])):
+        colw.append(max([len(row[col]) for row in table]))
+
+    # build template based on max with for each column
+    template = ''
+    buff = 2
+    for w in colw:
+        template += '{:<' + str(w + buff) + 's}'
+
+    return '\n'.join([template.format(*row) for row in table])
 
 
 class  Reference(NbNS):
@@ -82,19 +96,6 @@ class  Reference(NbNS):
                                       'answer',
                                       'lookup',
                                       'hook'])
-
-        #ident = [('dcim.devices', {}),
-        #         ('dcim.device_roles', {}),
-        #         ('dcim.device_types', {'lookup': 'model'}),
-        #         ('dcim.manufacturers', {}),
-        #         ('dcim.interfaces', {}),
-        #         ('dcim.sites', {}),
-        #         ('dcim.racks', {}),
-        #         ('ipam.ip_addresses', {'alias': 'address',
-        #                                'answer': 'address',
-        #                                'lookup': 'address',
-        #                                'hook': 'address'}),
-        #         ('tenancy.tenants', {})]
 
         ident = yaml.safe_load(resource_string('nbcli.core', 'resolve_reference.yml').decode())
 
@@ -120,6 +121,8 @@ class  Reference(NbNS):
 
         for ref in self.refs:
             if ref.alias == string:
+                return ref
+            if ref.model == string:
                 return ref
         return None
 
@@ -160,7 +163,7 @@ def auto_cast(string):
 
 def app_model_loc(obj):
     """Derive pynetbox App and Endpoint names from url/endpoint.url."""
-    assert isinstance(obj, Record)
+    assert isinstance(obj, (Record, Endpoint))
     if obj.url:
         url = obj.url
     else:

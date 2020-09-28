@@ -15,5 +15,5 @@ ipam.prefixes:
   alias: prefix
   answer: prefix
   lookup: prefix
-  hook: prefix
+  hook: parent
 tenancy.tenants:
