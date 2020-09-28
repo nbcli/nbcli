@@ -2,11 +2,14 @@
 nbcli: NetBox Command-line Client
 =================================
 
-.. contents::
-    :local:
-
 Extensible command-line interface for `Netbox <https://netbox.readthedocs.io/en/stable/>`_
 using the `pynetbox <https://pynetbox.readthedocs.io/en/latest/>`_ module. 
+
+The full nbcli documentation can be found on `Read the Docs <https://nbcli.readthedocs.io/en/release/>`_.
+
+.. warning::
+    | nbcli is still in development.  
+    | Syntax of commands are subject to change.
 
 ::
 
@@ -21,9 +24,9 @@ using the `pynetbox <https://pynetbox.readthedocs.io/en/latest/>`_ module.
       <command>
         init      Initialize nbcli.
         search    Search Netbox Objects
-        show      Show detail view of Netbox Object
+        filter    Filter NetBox objects.
+        create    Create/Update objects with YAML file.
         shell     Launch interactive shell
-        pynb      Wrapper for pynetbox
 
     General Options:
       -h, --help           show this help message and exit
@@ -36,11 +39,11 @@ Core Commands
 .. toctree::
     :maxdepth: 1
 
-    init
-    nbsearch
-    show
-    pynb
-    shell
+    commands/init
+    commands/nbsearch
+    commands/filter
+    commands/create
+    commands/shell
 
 Extend and Customize
 --------------------
@@ -48,8 +51,8 @@ Extend and Customize
 .. toctree::
     :maxdepth: 1
 
-    views
-    commands
+    extend/views
+    extend/commands
 
 Utilities
 ---------
@@ -70,11 +73,11 @@ Setting up a Test Environment
 Notable Features
 ----------------
 
-- Search Netbox instance from command line
+- Search Netbox instance
 
-- Show detail view of objects
+- Filter Netbox objects
 
-- Command line wrapper for pynetbox
+- Create and update Netbox objects with YAML file
 
 - Shell with preloaded pynetbox endpoints
 
