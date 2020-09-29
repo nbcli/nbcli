@@ -127,6 +127,25 @@ class  Reference(NbNS):
         return None
 
 
+    def list(self):
+        """List info on netbox Models."""
+        models = {key:value for (key,value) in globals().items() if isinstance(value, Endpoint)}
+        table = list()
+        table.append(['Variable', 'Model Name', 'Alias', 'View Name'])
+
+        for model in models.items():
+            var = model[0]
+            model_name = app_model_loc(model[1])
+            alias = '-'
+            ref = self.get(model_name)
+            if ref:
+                alias = ref.alias
+            view = view_name(model[1])
+            table.append([var, model_name, alias, view])
+
+        print(table)
+        #print(rend_table(table))
+
 
 def get_nbcli_dir():
 

@@ -62,7 +62,7 @@ class NbArgs():
 
         ref = self._nb.nbcli.ref.get(refstr)
         if not ref:
-            self._logger.warning("Could not resolve '%s'", string)
+            self._logger.warning("Could not resolve '%s'", refstr)
             return
 
         ep = app_model_by_loc(self._nb, ref.model)

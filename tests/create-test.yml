@@ -1,0 +1,70 @@
+---
+# Regions
+
+region:
+
+- name: USA
+  slug: usa
+
+- name: New York
+  slug: newyork
+  parent: USA
+
+- name: LA
+  slug: la
+  parent: USA
+
+- name: UK
+  slug: uk
+
+- name: London
+  slug: london
+  parent: Uk
+
+---
+# Sites
+
+site:
+
+- name: NY DC-1
+  slug: ny-dc-1
+  region: New York
+  status: active
+
+- name: LA DC-1
+  slug: la-dc-1
+  region: LA
+  status: active
+
+- name: London DC-1
+  slug: london-dc-1
+  region: London
+  status: active
+
+---
+# Manufacturers
+
+manufacturer:
+
+- name: Cisco
+  slug: cisco
+
+- name: Dell
+  slug: dell
+
+- name: Hitachi
+  slug: hitachi
+
+- name: IBM
+  slug: ibm
+
+---
+# Device Types
+
+device_type:
+
+- model: R640
+  manufacturer: Dell
+  slug: r640
+  u_height: 1
+
