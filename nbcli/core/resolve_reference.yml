@@ -4,9 +4,10 @@ tenancy.tenants:
 
 
 dcim.regions:
-  dcim.regions:
-    alias: parent
-    hook: parent_id
+#  dcim.regions:
+#    alias: parent
+#    answer:
+#    - [parent_id, id]
 
 dcim.sites:
 
@@ -50,7 +51,19 @@ dcim.inventory_items:
 dcim.console_connections:
 dcim.power_connections:
 #dcim.interface_connections:
+
 dcim.cables:
+  lookup: id
+#  dcim.interfaces:
+#  - alias: interface_a
+#    answer:
+#    - [termination_a_id, id]
+#    - [termination_a_type, dcim.interface]
+#  - alias: interface_b
+#    answer:
+#    - [termination_b_id, id]
+#    - [termination_b_type, dcim.interface]
+
 dcim.virtual_chassis:
 dcim.power_panels:
 dcim.power_feeds:
@@ -59,14 +72,16 @@ dcim.power_feeds:
 
 ipam.prefixes:
   alias: prefix
-  answer: prefix
   lookup: prefix
-  hook: parent
+  answer: prefix
+  hook: prefix
+#  answer:
+#  - [prefix, prefix]
 
 ipam.ip_addresses:
   alias: address
-  answer: address
   lookup: address
+  answer: address
   hook: address
-
-
+#  answer:
+#  - [address, address]

@@ -1,5 +1,6 @@
 """Define Classes and Functions used throughout nbcli."""
 from collections import namedtuple
+from typing import NamedTuple
 from pkg_resources import resource_string
 import json
 import logging
@@ -127,26 +128,6 @@ class  Reference(NbNS):
         return None
 
 
-    def list(self):
-        """List info on netbox Models."""
-        models = {key:value for (key,value) in globals().items() if isinstance(value, Endpoint)}
-        table = list()
-        table.append(['Variable', 'Model Name', 'Alias', 'View Name'])
-
-        for model in models.items():
-            var = model[0]
-            model_name = app_model_loc(model[1])
-            alias = '-'
-            ref = self.get(model_name)
-            if ref:
-                alias = ref.alias
-            view = view_name(model[1])
-            table.append([var, model_name, alias, view])
-
-        print(table)
-        #print(rend_table(table))
-
-
 def get_nbcli_dir():
 
     default = Path.home().joinpath('.nbcli')
@@ -219,3 +200,67 @@ def is_list_of_records(result):
 
     else:
         return False
+
+
+
+Ref = namedtuple('Ref', ['model', 'alias', 'lookup', 'answer'])
+
+#ident = yaml.safe_load(resource_string('nbcli.core', 'resolve_reference.yml').decode())
+
+class  RefMgr():
+    
+    def __init__(self, *args, **kwargs):
+
+        self._ref = None
+        self._refs = []
+
+        if args:
+            self._ref = Ref(*args)
+
+        for key, value in kwargs.items():
+
+            value = value or {}
+
+            if isinstance(value, dict):
+                self._proc_ref_data(key, value)
+            elif isinstance(value, list):
+                for data in value:
+                    self._proc_ref_data(key, data)
+
+        self._refs = tuple(self._refs)
+
+    def _proc_ref_data(self, key, data):
+
+            model = key
+            alias = data.pop('alias', model.strip('s').split('.')[-1])
+            lookup = data.pop('lookup', 'name')
+            answer = data.pop('answer', (('{}_id'.format(alias), 'id'),))
+            answer = tuple([tuple(i) for i in answer])
+
+            self._refs.append(RefMgr(model, alias, lookup, answer, **data))
+
+    def __repr__(self):
+
+        repstr = ''
+
+        if self._ref:
+            repstr = self._ref.model
+        else:
+            repstr = 'RefMgr'
+        if self._refs:
+            repstr = '{}:{}'.format(repstr, self._refs.__repr__())
+
+        return repstr
+
+    def __iter__(self):
+        return self._refs.__iter__()
+
+    def __getitem__(self, key):
+        return self._refs[key]
+
+    def __getattr__(self, key):
+
+        if (key in ['model', 'alias', 'lookup', 'answer']) and self._ref:
+            return getattr(self._ref, key)
+
+        object.__getattribute__(self, key)
