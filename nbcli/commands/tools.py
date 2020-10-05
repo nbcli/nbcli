@@ -48,29 +48,34 @@ class NbArgs():
             self.args.append(string)
 
     @staticmethod
-    def apply_ref(result, ref, create=False):
+    def apply_res(result, res, action='get'):
 
-        if create:
-            key = ref.alias
-        else:
-            key = ref.hook
+        assert action in res.reply._fields
+        rep_items = getattr(res.reply, action)
 
-        return [(key, getattr(obj, ref.answer)) for obj in result]
+        replyl = list()
 
+        if not rep_items:
+            return replyl
 
-    def resolve(self, refstr, *args, **kwargs):
+        for rep in rep_items:
+            replyl += [(rep[0], getattr(obj, rep[1])) for obj in result]
 
-        ref = self._nb.nbcli.ref.get(refstr)
-        if not ref:
-            self._logger.warning("Could not resolve '%s'", refstr)
+        return replyl
+
+    def resolve(self, resstr, *args, **kwargs):
+
+        res = self._nb.nbcli.rm.get(resstr)
+        if not res:
+            self._logger.warning("Could not resolve '%s'", resstr)
             return
 
-        ep = app_model_by_loc(self._nb, ref.model)
+        ep = app_model_by_loc(self._nb, res.model)
 
         nba = NbArgs(*args, *kwargs.items())
         for arg in nba.args:
-            nba.update(ref.lookup, arg)
+            nba.update(res.lookup, arg)
 
         result = ep.filter(**nba.kwargs)
 
-        return self.apply_ref(result, ref)
+        return self.apply_res(result, res)

@@ -203,64 +203,86 @@ def is_list_of_records(result):
 
 
 
-Ref = namedtuple('Ref', ['model', 'alias', 'lookup', 'answer'])
+Resolve = namedtuple('Resolve', ['model', 'alias', 'lookup', 'reply'])
+Reply = namedtuple('Reply', ['get', 'post', 'patch'])
 
 #ident = yaml.safe_load(resource_string('nbcli.core', 'resolve_reference.yml').decode())
 
-class  RefMgr():
+class  ResMgr():
     
     def __init__(self, *args, **kwargs):
 
-        self._ref = None
-        self._refs = []
+        self._res = None
+        self._resl = []
 
         if args:
-            self._ref = Ref(*args)
+            self._res = Resolve(*args)
 
         for key, value in kwargs.items():
 
             value = value or {}
 
             if isinstance(value, dict):
-                self._proc_ref_data(key, value)
+                self._proc_res_data(key, value)
             elif isinstance(value, list):
                 for data in value:
-                    self._proc_ref_data(key, data)
+                    self._proc_res_data(key, data)
 
-        self._refs = tuple(self._refs)
+        self._resl = tuple(self._resl)
 
-    def _proc_ref_data(self, key, data):
+    def _proc_res_data(self, key, data):
 
             model = key
             alias = data.pop('alias', model.strip('s').split('.')[-1])
             lookup = data.pop('lookup', 'name')
-            answer = data.pop('answer', (('{}_id'.format(alias), 'id'),))
-            answer = tuple([tuple(i) for i in answer])
+            #reply = data.pop('reply', (('{}_id'.format(alias), 'id'),))
+            reply = data.pop('reply', {})
+            if isinstance(reply, list):
+                reply = Reply(tuple([tuple(i) for i in reply]),
+                              tuple([tuple(i) for i in reply]),
+                              tuple([tuple(i) for i in reply]))
+            elif isinstance(reply, dict):
+                # tuple-fy
+                get = reply.pop('get', (('{}_id'.format(alias), 'id'),))
+                post = reply.pop('post', ((alias, 'id'),))
+                patch = reply.pop('patch', get)
+                reply = Reply(get, post, patch)
 
-            self._refs.append(RefMgr(model, alias, lookup, answer, **data))
+            self._resl.append(ResMgr(model, alias, lookup, reply, **data))
 
     def __repr__(self):
 
         repstr = ''
 
-        if self._ref:
-            repstr = self._ref.model
+        if self._res:
+            return str(self._res)
         else:
-            repstr = 'RefMgr'
-        if self._refs:
-            repstr = '{}:{}'.format(repstr, self._refs.__repr__())
-
-        return repstr
+            rl = list()
+            for res in self._resl:
+                if res._resl:
+                    rl.append('{}*'.format(res.model))
+                else:
+                    rl.append(res.model)
+            return '{}({})'.format('ResMgr', ', '.join(rl))
 
     def __iter__(self):
-        return self._refs.__iter__()
+        return self._resl.__iter__()
 
     def __getitem__(self, key):
-        return self._refs[key]
+        return self._resl[key]
 
     def __getattr__(self, key):
 
-        if (key in ['model', 'alias', 'lookup', 'answer']) and self._ref:
-            return getattr(self._ref, key)
+        if (key in Resolve._fields) and self._res:
+            return getattr(self._res, key)
 
         object.__getattribute__(self, key)
+
+    def get(self, string):
+
+        for res in self:
+            if res.alias == string:
+                return res
+            if res.model == string:
+                return res
+        return None
