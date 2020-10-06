@@ -90,4 +90,4 @@ class NbArgs():
 
         self.apply_res(result, res)
 
-        return result
+        return nba, result

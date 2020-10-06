@@ -121,7 +121,6 @@ def get_session(init=False):
         urllib3.disable_warnings()
 
     nb.nbcli = type('nbcli', (NbNS,), dict(__doc__='Main nbcli NameSpace.'))()
-    #nb.nbcli.ref = Reference()
 
     resstr = resource_string('nbcli.core', 'resolve_reference.yml').decode()
     resdict = yaml.safe_load(resstr)

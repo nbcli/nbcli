@@ -49,9 +49,9 @@ class NbInfo(NbNS):
             var = model[0]
             model_name = app_model_loc(model[1])
             alias = '-'
-            ref = self._nb.nbcli.ref.get(model_name)
-            if ref:
-                alias = ref.alias
+            res = self._nb.nbcli.rm.get(model_name)
+            if res:
+                alias = res.alias
             view = view_name(model[1])
             table.append([var, model_name, alias, view])
 
@@ -86,46 +86,6 @@ def rend_table(table):
         template += '{:<' + str(w + buff) + 's}'
 
     return '\n'.join([template.format(*row) for row in table])
-
-
-#class  Reference(NbNS):
-#
-#    def __init__(self):
-#
-#        self.Ref = namedtuple('Ref', ['model',
-#                                      'alias',
-#                                      'answer',
-#                                      'lookup',
-#                                      'hook'])
-#
-#        ident = yaml.safe_load(resource_string('nbcli.core', 'resolve_reference.yml').decode())
-#
-#        refs = list()
-#
-#        for key, value in ident.items():
-#
-#            value = value or {}
-#
-#            alias = key.strip('s').split('.')[-1]
-#
-#            r = self.Ref(key,
-#                         value.get('alias') or alias,
-#                         value.get('answer') or 'id',
-#                         value.get('lookup') or 'name',
-#                         value.get('hook') or '{}_id'.format(alias))
-#
-#            refs.append(r)
-#
-#        self.refs = tuple(refs)
-#
-#    def get(self, string):
-#
-#        for ref in self.refs:
-#            if ref.alias == string:
-#                return ref
-#            if ref.model == string:
-#                return ref
-#        return None
 
 
 def get_nbcli_dir():
@@ -243,7 +203,7 @@ class  ResMgr():
                 # tuple-fy
                 get = reply.pop('get', (('{}_id'.format(alias), 'id'),))
                 post = reply.pop('post', ((alias, 'id'),))
-                patch = reply.pop('patch', get)
+                patch = reply.pop('patch', post)
                 reply = Reply(get, post, patch)
 
             self._resl.append(ResMgr(model, alias, lookup, reply, **data))

@@ -74,6 +74,11 @@ dcim.power_feeds:
 #dcim.connected_device:
 
 
+ipam.vrfs:
+ipam.rirs:
+ipam.aggregates:
+ipam.roles:
+
 ipam.prefixes:
   alias: prefix
   lookup: prefix
@@ -85,3 +90,33 @@ ipam.ip_addresses:
   lookup: address
   reply:
   - [address, address]
+
+ipam.vlan_groups:
+ipam.vlans:
+ipam.services:
+
+virtualization.cluster_types:
+virtualization.cluster_groups:
+virtualization.clusters:
+virtualization.virtual_machines:
+virtualization.interfaces:
+  alias: virtual_interface
+
+circuits.providers:
+circuits.circuit_types:
+circuits.circuits:
+circuits.circuit_terminations:
+
+extras.graphs:
+extras.export_templates:
+extras.tags:
+extras.image_attachments:
+extras.config_contexts:
+extras.reports:
+extras.scripts:
+extras.object_changes:
+
+secrets.secret_roles:
+secrets.secrets:
+#secrets.get_session_key:
+#secrets.generate_rsa_key_pair:
