@@ -1,16 +1,21 @@
 from nbcli.core.utils import app_model_by_loc
-from nbcli.core.config import get_session
 
 
 class NbArgs():
 
-    _nb = get_session()
-    _logger = _nb.nbcli.logger
+    def __init__(self, netbox, kwargs=None, action='get'):
 
-    def __init__(self, *args, **kwargs):
-
+        assert action in ['get', 'post', 'patch']
+        self._nb = netbox
+        self._logger = self._nb.nbcli.logger
         self.args = list()
-        self.kwargs = kwargs
+        self.kwargs = kwargs or {}
+        self.action = action
+
+    def __bool__(self):
+        return bool(self.args) or bool(self.kwargs)
+
+    def proc(self, *args):
 
         for arg in args:
             if isinstance(arg, tuple) and (len(arg) == 2):
@@ -34,7 +39,10 @@ class NbArgs():
             for resol in reversed(string.split('::')):
                 al = list()
                 for res in resol.split('~'):
-                    al += self.resolve(*res.split(':'), **NbArgs(*args).kwargs)
+                    nba = NbArgs(self._nb)
+                    nba.proc(*args)
+                    nba.resolve(*res.split(':'))
+                    al += list(nba.kwargs.items())
                 args = al
             for arg in args:
                 self.update(*arg)
@@ -47,11 +55,9 @@ class NbArgs():
         else:
             self.args.append(string)
 
-    @staticmethod
-    def apply_res(result, res, action='get'):
+    def apply_res(self, result, res):
 
-        assert action in res.reply._fields
-        rep_items = getattr(res.reply, action)
+        rep_items = getattr(res.reply, self.action)
 
         replyl = list()
 
@@ -61,21 +67,24 @@ class NbArgs():
         for rep in rep_items:
             replyl += [(rep[0], getattr(obj, rep[1])) for obj in result]
 
-        return replyl
+        self.proc(*tuple(replyl))
 
-    def resolve(self, resstr, *args, **kwargs):
+    def resolve(self, resstr, *args, kwargs=None, res=None):
 
-        res = self._nb.nbcli.rm.get(resstr)
+        res = res or self._nb.nbcli.rm.get(resstr)
         if not res:
             self._logger.warning("Could not resolve '%s'", resstr)
             return
 
         ep = app_model_by_loc(self._nb, res.model)
 
-        nba = NbArgs(*args, *kwargs.items())
+        nba = NbArgs(self._nb, kwargs=kwargs)
+        nba.proc(*args)
         for arg in nba.args:
             nba.update(res.lookup, arg)
 
         result = ep.filter(**nba.kwargs)
 
-        return self.apply_res(result, res)
+        self.apply_res(result, res)
+
+        return result

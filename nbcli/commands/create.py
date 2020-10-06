@@ -1,38 +1,22 @@
 import yaml
 from nbcli.core.utils import app_model_by_loc
-from nbcli.commands.base import BaseSubCommand, proc_kw_str
-
-
-def resolve_ref(netbox, kwargs, key, value, create=False):
-    ref = netbox.nbcli.ref.get(key)
-    if ref.answer == ref.lookup:
-        proc_kw_str(kwargs, '{}={}'.format(ref.hook, value))
-        return
-    ep = app_model_by_loc(netbox, ref.model)
-    obj = ep.get(**{ref.lookup: value})
-    if hasattr(obj, ref.answer):
-        if create:
-            proc_kw_str(kwargs, '{}={}'.format(ref.alias, getattr(obj, ref.answer)))
-        else:
-            proc_kw_str(kwargs, '{}={}'.format(ref.hook, getattr(obj, ref.answer)))
-    else:
-        netbox.nbcli.logger.warning('Could not resolve {}: {}, Skipping',
-                                    key, value)
+from nbcli.commands.base import BaseSubCommand
+from nbcli.commands.tools import NbArgs
 
 
 class Upsert():
 
     def __init__(self, netbox, logger, model, data,
+                 res=None,
                  dr=False,      # dry run
                  ud=False,      # update only
-                 gp=True,       # ref parent hook on get request for update
                  parent=None):
 
         assert (parent == None) or isinstance(parent, Upsert)
 
         if isinstance(data, list):
             for d in data:
-                Upsert(netbox, logger, model, d, dr=dr, ud=ud, gp=False, parent=parent)
+                Upsert(netbox, logger, model, d, dr=dr, ud=ud, parent=parent)
             return
 
         self.netbox = netbox
@@ -41,105 +25,99 @@ class Upsert():
         self.data = data
         self.dr = dr
         self.ud = ud
-        self.gp = gp
         self.parent = parent
-        self.ref = netbox.nbcli.ref.get(model.split(':')[0])
-        self.kwargs = dict()
-        self.get_kwargs = dict()
-        self.children = list()  # list of tuples (model, data)
 
-        assert self.ref
+        self.res = res or netbox.nbcli.rm.get(self.model.split(':')[0])
+        self.ep = app_model_by_loc(self.netbox, self.res.model)
+        self.args = None
+        self.obj = None
+        self.children = list()  # list of tuples (model, data, res)
+
+        assert self.res
 
         self.obj = None
 
         self.proc_model()
 
-        self.get()
-
         self.action()
 
         self.proc_children()
 
-    def get(self):
+    def _add_parent_arg(self):
+        if self.parent:
+            self.args.apply_res([self.parent.obj], self.parent.res)
 
-        if self.get_kwargs:
-            self.obj = self.model.get(**self.get_kwargs)
-        if not self.obj:
-            self.kwargs.update(self.get_kwargs)
-
-    def action(self):
-        
-        if self.obj:
-            for key, value in self.data.items():
-                self.proc_data_items(key, value)
-            self.logger.info('Updating %s with data: %s',
-                             str(self.obj), str(self.kwargs))
-            self.obj.update(self.kwargs)
-        else:
-            for key, value in self.data.items():
-                self.proc_data_items(key, value, create=True)
-            self.logger.info('Creating %s with data: %s',
-                             self.ref.alias, str(self.kwargs))
-            self.obj = self.model.create(**self.kwargs)
 
     def proc_model(self):
 
+        gp = True
+        kws = None
+
         if self.model.endswith('^'):
-            self.gp = False
+            gp = False
             self.model = self.model[:-1]
     
-        if '@' in self.model:
-            self.model, up_ref = self.model.split('@', 1)
-            self._update_ref(up_ref.split('@')[0])
-
         if ':' in self.model:
-            self.model, kws = self.model.split(':', 1)
-            kwlist = kws.split(':')
-            for kw in kwlist:
-                if '=' in kw:
-                    proc_kw_str(self.get_kwargs, kw)
-                else:
-                    proc_kw_str(self.get_kwargs,
-                                '{}={}'.format(self.ref.lookup, kw))
+            self.args = NbArgs(self.netbox)
+            alias, kws = self.model.split(':', 1)
+            if gp:
+                self._add_parent_arg()
 
-        if self.parent:
-            d = dict()
-            d[self.parent.ref.hook] = getattr(self.parent.obj,
-                                              self.parent.ref.answer)
-
-            if self.get_kwargs and self.gp:
-                self.get_kwargs.update(d)
+            self.obj = self.args.resolve(alias, kws, res=self.res)
+            if self.obj:
+                assert len(self.obj) == 1
+                self.obj = self.obj[0]
+                self.args = NbArgs(self.netbox, action='patch')
+                if not gp:
+                    self._add_parent_args()
             else:
-                self.kwargs.update(d)
+                self.obj = None
+                self.args = NbArgs(self.netbox, action='post')
+        else:
+            self.args = NbArgs(self.netbox, action='post')
 
-        self.model = app_model_by_loc(self.netbox, self.model)
+        self._add_parent_arg()
+
+    def action(self):
+
+        for key, value in self.data.items():
+            self.proc_data_items(key, value)
+        
+        if self.obj:
+            self.logger.info('Updating %s with data: %s',
+                             str(self.obj), str(self.args.kwargs))
+            self.obj.update(self.args.kwargs)
+        else:
+            self.logger.info('Creating %s with data: %s',
+                             self.res.alias, str(self.args.kwargs))
+            self.obj = self.ep.create(**self.args.kwargs)
 
     def proc_data_items(self, key, value, create=False):
 
-        if self.netbox.nbcli.ref.get(key.split(':')[0]):
+        rstr = key.split(':')[0]
+        res = self.res.get(rstr) or self.netbox.nbcli.rm.get(rstr)
+
+        if res:
             if  (':' in key) and (value is None):
-                self.children.append((key, {}))
+                self.children.append((key, {}, res))
             elif isinstance(value, (dict, list)):
-                self.children.append((key, value))
+                self.children.append((key, value, res))
             else:
-                resolve_ref(self.netbox, self.kwargs, key, value, create=create)
+                self.args.resolve(key, value, res=res)
         else:
-            self.kwargs[key] = value
+            self.args.update(key, value)
 
     def proc_children(self):
 
         for child in self.children:
 
-            model, data = child
+            model, data, res = child
 
             Upsert(self.netbox, self.logger, model, data,
+                   res=res,
                    dr=self.dr,
                    ud=self.ud,
                    parent=self)
-
-
-    def _update_ref(self, string):
-        pass
 
 
 class CreateSubCommand(BaseSubCommand):
@@ -147,6 +125,7 @@ class CreateSubCommand(BaseSubCommand):
 
     name = 'create'
     parser_kwargs = dict(help='Create/Update objects with YAML file.')
+    default_loglevel = 20
 
     def setup(self):
 
@@ -178,9 +157,8 @@ class CreateSubCommand(BaseSubCommand):
 
         for data in data_stream:
             for key, value in data.items():
-                assert self.netbox.nbcli.ref.get(key.split(':')[0])
+                assert self.netbox.nbcli.rm.get(key.split(':')[0])
                 Upsert(self.netbox, self.logger, key, value,
                        dr=self.args.dr,
                        ud=self.args.update_only,
-                       gp=False,
                        parent=None)

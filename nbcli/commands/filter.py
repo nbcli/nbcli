@@ -33,7 +33,8 @@ class Filter():
         self.method = getattr(self.model, method)
 
         #result = self.method(*args, **kwargs)
-        nba = NbArgs(*args)
+        nba = NbArgs(netbox)
+        nba.proc(*args)
         result = self.method(*nba.args, **nba.kwargs)
 
         if isinstance(result, Record):

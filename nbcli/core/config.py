@@ -6,7 +6,7 @@ import requests
 import urllib3
 import yaml
 from nbcli import logger
-from nbcli.core.utils import NbNS, NbInfo, Reference, ResMgr, auto_cast, get_nbcli_dir
+from nbcli.core.utils import NbNS, NbInfo, ResMgr, auto_cast, get_nbcli_dir
 
 class Config(NbNS):
     """nbcli config Namespace."""
@@ -121,7 +121,7 @@ def get_session(init=False):
         urllib3.disable_warnings()
 
     nb.nbcli = type('nbcli', (NbNS,), dict(__doc__='Main nbcli NameSpace.'))()
-    nb.nbcli.ref = Reference()
+    #nb.nbcli.ref = Reference()
 
     resstr = resource_string('nbcli.core', 'resolve_reference.yml').decode()
     resdict = yaml.safe_load(resstr)

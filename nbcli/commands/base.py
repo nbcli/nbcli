@@ -80,6 +80,7 @@ class BaseSubCommand():
     name = 'base'
     parser_kwargs = dict(help='')
     view_options = False
+    default_loglevel = logging.WARNING
 
     def __init__(self, subparser):
         """Add sub-command parser to subparser object."""
@@ -142,18 +143,19 @@ class BaseSubCommand():
 
     def _set_log_level_(self):
         """Set the loglevel based on the arguments passed."""
+        level = self.default_loglevel
+
         if self.args.quiet:
-            if self.args.quiet == 1:
-                self.logger.parent.setLevel(logging.ERROR)
-            elif self.args.quiet == 2:
-                self.logger.parent.setLevel(logging.CRITICAL)
-            elif self.args.quiet > 2:
-                self.logger.parent.setLevel(100)
+            level = level + (10 * self.args.quiet)
+            if level > 100:
+                level = 100
+
         if self.args.verbose:
-            if self.args.verbose == 1:
-                self.logger.parent.setLevel(logging.INFO)
-            elif self.args.verbose > 1:
-                self.logger.parent.setLevel(logging.DEBUG)
+            level = level - (10 * self.args.verbose)
+            if level < 1:
+                level = 1
+
+        self.logger.parent.setLevel(level)
 
     def setup(self):
         """Define additional parser options for sub command."""

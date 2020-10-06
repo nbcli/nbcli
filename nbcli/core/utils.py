@@ -88,44 +88,44 @@ def rend_table(table):
     return '\n'.join([template.format(*row) for row in table])
 
 
-class  Reference(NbNS):
-
-    def __init__(self):
-
-        self.Ref = namedtuple('Ref', ['model',
-                                      'alias',
-                                      'answer',
-                                      'lookup',
-                                      'hook'])
-
-        ident = yaml.safe_load(resource_string('nbcli.core', 'resolve_reference.yml').decode())
-
-        refs = list()
-
-        for key, value in ident.items():
-
-            value = value or {}
-
-            alias = key.strip('s').split('.')[-1]
-
-            r = self.Ref(key,
-                         value.get('alias') or alias,
-                         value.get('answer') or 'id',
-                         value.get('lookup') or 'name',
-                         value.get('hook') or '{}_id'.format(alias))
-
-            refs.append(r)
-
-        self.refs = tuple(refs)
-
-    def get(self, string):
-
-        for ref in self.refs:
-            if ref.alias == string:
-                return ref
-            if ref.model == string:
-                return ref
-        return None
+#class  Reference(NbNS):
+#
+#    def __init__(self):
+#
+#        self.Ref = namedtuple('Ref', ['model',
+#                                      'alias',
+#                                      'answer',
+#                                      'lookup',
+#                                      'hook'])
+#
+#        ident = yaml.safe_load(resource_string('nbcli.core', 'resolve_reference.yml').decode())
+#
+#        refs = list()
+#
+#        for key, value in ident.items():
+#
+#            value = value or {}
+#
+#            alias = key.strip('s').split('.')[-1]
+#
+#            r = self.Ref(key,
+#                         value.get('alias') or alias,
+#                         value.get('answer') or 'id',
+#                         value.get('lookup') or 'name',
+#                         value.get('hook') or '{}_id'.format(alias))
+#
+#            refs.append(r)
+#
+#        self.refs = tuple(refs)
+#
+#    def get(self, string):
+#
+#        for ref in self.refs:
+#            if ref.alias == string:
+#                return ref
+#            if ref.model == string:
+#                return ref
+#        return None
 
 
 def get_nbcli_dir():
@@ -176,9 +176,9 @@ def app_model_by_loc(api, loc):
     """Return Endpoint defined by location"""
     assert isinstance(loc, str)
     loc = loc.lower().replace('-', '_')
-    ref = api.nbcli.ref.get(loc)
-    if ref:
-        loc = ref.model
+    res = api.nbcli.rm.get(loc)
+    if res:
+        loc = res.model
     app_ep = loc.split('.')
     assert len(app_ep) == 2
     app = getattr(api, app_ep[0])
@@ -206,7 +206,6 @@ def is_list_of_records(result):
 Resolve = namedtuple('Resolve', ['model', 'alias', 'lookup', 'reply'])
 Reply = namedtuple('Reply', ['get', 'post', 'patch'])
 
-#ident = yaml.safe_load(resource_string('nbcli.core', 'resolve_reference.yml').decode())
 
 class  ResMgr():
     
@@ -235,7 +234,6 @@ class  ResMgr():
             model = key
             alias = data.pop('alias', model.strip('s').split('.')[-1])
             lookup = data.pop('lookup', 'name')
-            #reply = data.pop('reply', (('{}_id'.format(alias), 'id'),))
             reply = data.pop('reply', {})
             if isinstance(reply, list):
                 reply = Reply(tuple([tuple(i) for i in reply]),

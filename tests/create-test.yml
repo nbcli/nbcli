@@ -19,7 +19,7 @@ region:
 
 - name: London
   slug: london
-  parent: Uk
+  parent: UK
 
 ---
 # Sites
