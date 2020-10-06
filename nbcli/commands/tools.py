@@ -15,6 +15,9 @@ class NbArgs():
     def __bool__(self):
         return bool(self.args) or bool(self.kwargs)
 
+    def __repr__(self):
+        return 'NbArgs(args={}, kwargs={})'.format(self.args, self.kwargs)
+
     def proc(self, *args):
 
         for arg in args:
@@ -41,7 +44,7 @@ class NbArgs():
                 for res in resol.split('~'):
                     nba = NbArgs(self._nb)
                     nba.proc(*args)
-                    nba.resolve(*res.split(':'))
+                    nba.resolve(*res.split(':'), kwargs=nba.kwargs)
                     al += list(nba.kwargs.items())
                 args = al
             for arg in args:
