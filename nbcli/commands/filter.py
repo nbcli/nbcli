@@ -1,5 +1,5 @@
 from pynetbox.core.response import Record
-from nbcli.commands.base import BaseSubCommand, ProcKWArgsAction
+from nbcli.commands.base import BaseSubCommand
 from nbcli.commands.tools import NbArgs
 from nbcli.core.utils import app_model_by_loc, is_list_of_records
 
@@ -10,14 +10,11 @@ class Filter():
                  netbox,
                  model,
                  args=list(),
-                 #kwargs=dict(),
                  get=False,
                  count=False,
                  delete=False,
-                 update=list(),
-                 update_kwargs=dict(),
-                 de=list(),
-                 de_kwargs=dict()):
+                 ud=list(),
+                 de=list()):
 
         self.model = app_model_by_loc(netbox, model)
 
@@ -27,12 +24,11 @@ class Filter():
             method = 'get'
         elif count:
             method = 'count'
-        elif args:# or kwargs:
+        elif args:
             method = 'filter'
 
         self.method = getattr(self.model, method)
 
-        #result = self.method(*args, **kwargs)
         nba = NbArgs(netbox)
         nba.proc(*args)
         result = self.method(*nba.args, **nba.kwargs)
@@ -43,10 +39,15 @@ class Filter():
         if is_list_of_records(result):
             if delete:
                 self.delete(result)
-            elif update_kwargs:
-                self.update(result, **update_kwargs)
+            elif ud:
+                ud_nba = NbArgs(netbox)
+                ud_nba.proc(*ud)
+                self.update(result, **ud_nba.kwargs)
             elif de:
-                self.detail(result, de[0], *de[1:], **de_kwargs)
+                detail = de.pop(0)
+                de_nba = NbArgs(netbox)
+                de_nba.proc(*de)
+                self.detail(result, detail, *de_nba.args, **de_nba.kwargs)
             else:
                 self.result = result
         else:
@@ -117,7 +118,6 @@ class FilterSubCommand(BaseSubCommand):
     
         self.parser.add_argument('args',
                             nargs='*',
-                            #action=ProcKWArgsAction,
                             help='Argumnet(s) to filter results.')
 
         self.parser.add_argument('-g', '--get',
@@ -135,41 +135,26 @@ class FilterSubCommand(BaseSubCommand):
                               action='store_true',
                               help='Delete Object(s) retrieved by get method')
     
-        obj_meth.add_argument('-u', '--update',
-                              metavar='UD-ARGS',
-                              nargs='+',
-                              action=ProcKWArgsAction,
+        obj_meth.add_argument('--ud', '--update',
+                              nargs='*',
                               help='Update object(s) with given kwargs')
     
         self.parser.add_argument('--de', '--detail-endpoint',
-                            metavar='DE-ARGS',
-                            nargs='+',
-                            action=ProcKWArgsAction,
+                            nargs='*',
                             help='List results from detail endpoint '+ \
                                  'With optional kwargs')
 
 
     def run(self):
     
-        if self.args.update is None:
-            self.args.update = list()
-            self.args.update_kwargs = dict()
-    
-        if self.args.de is None:
-            self.args.de = list()
-            self.args.de_kwargs = dict()
-
         nbfilter = Filter(self.netbox,
                           self.args.model,
-                          args=self.args.args,
-                          #kwargs=self.args.args_kwargs,
+                          args=self.args.args or [],
                           get=self.args.get,
                           count=self.args.count,
                           delete=self.args.delete,
-                          update=self.args.update,
-                          update_kwargs=self.args.update_kwargs,
-                          de=self.args.de,
-                          de_kwargs=self.args.de_kwargs)
+                          ud=self.args.ud or [],
+                          de=self.args.de or [])
 
         if nbfilter.result:
             self.nbprint(nbfilter.result, cols=self.args.cols)

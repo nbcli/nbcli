@@ -21,6 +21,10 @@ dcim.manufacturers:
 
 dcim.device_types:
   lookup: model
+  reply:
+    get:
+    - [device_type_id, id]
+    - [devicetype_id, id]
 
 dcim.console_port_templates:
 dcim.console_server_port_templates:
@@ -44,7 +48,11 @@ dcim.power_outlets:
 dcim.interfaces:
 dcim.front_ports:
 dcim.rear_ports:
+
 dcim.device_bays:
+  dcim.devices:
+    alias: installed_device
+
 dcim.inventory_items:
 dcim.console_connections:
 dcim.power_connections:

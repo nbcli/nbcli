@@ -45,7 +45,7 @@ class Upsert():
 
     def _add_parent_arg(self):
         if self.parent:
-            res = self.parent.res.get(self.res.model) or parent.res
+            res = self.parent.res.get(self.res.model) or self.parent.res
             self.args.apply_res([self.parent.obj], res)
 
 
@@ -64,13 +64,13 @@ class Upsert():
             if gp:
                 self._add_parent_arg()
 
-            nba, self.obj = self.args.resolve(alias, kws, res=self.res)
+            nba, self.obj = self.args.resolve(alias, kws, kwargs=self.args.kwargs, res=self.res)
             if self.obj:
                 assert len(self.obj) == 1
                 self.obj = self.obj[0]
                 self.args = NbArgs(self.netbox, action='patch')
                 if not gp:
-                    self._add_parent_args()
+                    self._add_parent_arg()
             else:
                 self.obj = None
                 self.args = NbArgs(self.netbox, action='post')

@@ -41,39 +41,6 @@ def get_view_parser():
     return view_parser
 
 
-def proc_kw_str(kw_dict, string):
-    """Depricated."""
-    kv = list()
-    if isinstance(string, str):
-        kv = string.split('=')
-    if len(kv) == 2:
-        key, value = kv[0], kv[1]
-    if (len(key) > 0) and (len(value) > 0):
-        if key in kw_dict:
-            if isinstance(kw_dict[key], list):
-                kw_dict[key].append(value)
-            else:
-                kw_dict[key] = [kw_dict[key], value]
-        else:
-            kw_dict[key] = value
-
-
-class ProcKWArgsAction(argparse.Action):
-    """Depricated."""
-
-    def __call__(self, parser, namespace, values, option_string):
-        """Depricated."""
-        setattr(namespace, self.dest, list())
-        kw_dest = self.dest + '_kwargs'
-        setattr(namespace, kw_dest, dict())
-        for i in values:
-            if i.find('=') > 0:
-                kwargs = getattr(namespace, kw_dest)
-                proc_kw_str(kwargs, i)
-            else:
-                getattr(namespace, self.dest).append(i)
-
-
 class BaseSubCommand():
     """Base sub-command to build commands from."""
 
