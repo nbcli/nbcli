@@ -1,57 +1,91 @@
 """Define Classes and Functions used throughout nbcli."""
 from collections import namedtuple
+from typing import NamedTuple
+from pkg_resources import resource_string
 import json
 import logging
 import os
+import yaml
 from pathlib import Path
+from inspect import getmembers, isclass, ismethod
+from textwrap import indent
+from pynetbox.core.endpoint import Endpoint
 from pynetbox.core.response import Record
-from pynetbox.core.endpoint import DetailEndpoint, RODetailEndpoint
-from pynetbox.models.dcim import Cables, Termination
 
 
-class  Reference():
+class NbNS:
+    """NameSpace object for nbcli."""
+    def __repr__(self):
+        """Print Info about Classes and methods in namespace."""
+        def pred(obj):
+            return isinstance(obj, NbNS) or ismethod(obj)
 
-    def __init__(self):
+        ml = getmembers(self, predicate=pred)
+        ht = list([self.__doc__ or ''])
+        for m in ml:
+            s = '{}.{}:\n{}'.format(type(self).__name__,
+                                      m[0],
+                                      indent(m[1].__doc__ or '', prefix='  '))
+            if not m[0].startswith('_'):
+                ht.append(indent(s, prefix='  '))
+        return '\n\n'.join(ht)
 
-        self.Ref = namedtuple('Ref', ['model',
-                                      'alias',
-                                      'answer',
-                                      'lookup',
-                                      'hook'])
 
-        ident = [('dcim.devices', {}),
-                 ('dcim.device_roles', {}),
-                 ('dcim.device_types', {'lookup_key': 'model'}),
-                 ('dcim.interfaces', {}),
-                 ('dcim.sites', {}),
-                 ('dcim.racks', {}),
-                 ('ipam.ip_addresses', {'alias': 'address',
-                                        'lookup': 'address',
-                                        'hook': 'address'}),
-                 ('tenancy.tenants', {})]
+class NbInfo(NbNS):
+    """Desplay information for nbcli."""
 
-        refs = list()
+    def __init__(self, netbox):
 
-        for entry in ident:
+        self._nb = netbox
+        self._models = {}
 
-            alias = entry[0].strip('s').split('.')[-1]
+    def loaded(self):
+        """List pre-loaded models"""
 
-            r = self.Ref(entry[0],
-                         entry[1].get('alias') or alias,
-                         entry[1].get('answer') or 'id',
-                         entry[1].get('lookup') or 'name',
-                         entry[1].get('hook') or '{}_id'.format(alias))
+        table = list()
+        table.append(['Variable', 'Model Name', 'Alias', 'View Name'])
 
-            refs.append(r)
+        for model in self._models.items():
+            var = model[0]
+            model_name = app_model_loc(model[1])
+            alias = '-'
+            res = self._nb.nbcli.rm.get(model_name)
+            if res:
+                alias = res.alias
+            view = view_name(model[1])
+            table.append([var, model_name, alias, view])
 
-        self.refs = tuple(refs)
+        print(rend_table(table))
 
-    def get(self, string):
 
-        for ref in self.refs:
-            if ref.alias == string:
-                return ref
-        return None
+def view_name(obj):
+    """Generate view name based on class, url, or endpoint url."""
+    assert isinstance(obj, (Record, Endpoint))
+
+    class_name = obj.__class__.__name__
+    model_loc = app_model_loc(obj)
+
+    if class_name not in ['Record', 'Endpoint']:
+        return model_loc.split('.')[0].title() + class_name + 'View'
+
+    return model_loc.title().replace('_', '').replace('.', '') + 'View'
+
+
+def rend_table(table):
+    """Convert 2D array into printable string."""
+    assert len(table) > 1
+    # get max width for each column
+    colw = list()
+    for col in range(len(table[0])):
+        colw.append(max([len(row[col]) for row in table]))
+
+    # build template based on max with for each column
+    template = ''
+    buff = 2
+    for w in colw:
+        template += '{:<' + str(w + buff) + 's}'
+
+    return '\n'.join([template.format(*row) for row in table])
 
 
 def get_nbcli_dir():
@@ -87,37 +121,9 @@ def auto_cast(string):
             return string
     return string
 
-class Trace(Record):
-    """Model to use as custom_return for trace DetailEndpoint."""
-
-    near_end = Termination
-    cable = Cables
-    far_end = Termination
-
-    def __init__(self, values, api, endpoint):
-
-        data = dict(near_end = values[0],
-                    cable = values[1],
-                    far_end = values[2])
-        
-        super().__init__(data, api, endpoint)
-
-    def __str__(self):
-
-        if self.cable:
-            return '{}[{}] < #{} > {}[{}]'.format(self.near_end.device.name,
-                                             self.near_end.name,
-                                             self.cable.id,
-                                             self.far_end.device.name,
-                                             self.far_end.name)
-        else:
-            return '{}[{}] <'.format(self.near_end.device.name,
-                                             self.near_end.name)
-
-
 def app_model_loc(obj):
     """Derive pynetbox App and Endpoint names from url/endpoint.url."""
-    assert isinstance(obj, Record)
+    assert isinstance(obj, (Record, Endpoint))
     if obj.url:
         url = obj.url
     else:
@@ -130,9 +136,9 @@ def app_model_by_loc(api, loc):
     """Return Endpoint defined by location"""
     assert isinstance(loc, str)
     loc = loc.lower().replace('-', '_')
-    ref = api.nbcli.ref.get(loc)
-    if ref:
-        loc = ref.model
+    res = api.nbcli.rm.get(loc)
+    if res:
+        loc = res.model
     app_ep = loc.split('.')
     assert len(app_ep) == 2
     app = getattr(api, app_ep[0])
@@ -142,30 +148,99 @@ def app_model_by_loc(api, loc):
 
 def is_list_of_records(result):
 
-    assert isinstance(result, list) and (len(result) > 0)
+    if isinstance(result, list) and (len(result) > 0):
 
-    # check all entries are an instance of Record
-    rc = [isinstance(e, Record) for e in result].count(True) == len(result)
+        # check all entries are an instance of Record
+        rc = [isinstance(e, Record) for e in result].count(True) == len(result)
 
-    # check all entries are the same type
-    tc = len(set(type(e) for e in result)) == 1
+        # check all entries are the same type
+        tc = len(set(type(e) for e in result)) == 1
 
-    return rc and tc
+        return rc and tc
 
-
-def add_detail_endpoint(model, name, RO=False, custom_return=None):
-
-    assert model in Record.__subclasses__(), 'model must b subclass of Record'
-
-    @property
-    def detail_ep(self):
-        return DetailEndpoint(self, name, custom_return=custom_return)
-
-    @property
-    def ro_detail_ep(self):
-        return RODetailEndpoint(self, name, custom_return=custom_return)
-
-    if RO:
-        setattr(model, name, ro_detail_ep)
     else:
-        setattr(model, name, detail_ep)
+        return False
+
+
+
+Resolve = namedtuple('Resolve', ['model', 'alias', 'lookup', 'reply'])
+Reply = namedtuple('Reply', ['get', 'post', 'patch'])
+
+
+class  ResMgr():
+    
+    def __init__(self, *args, **kwargs):
+
+        self._res = None
+        self._resl = []
+
+        if args:
+            self._res = Resolve(*args)
+
+        for key, value in kwargs.items():
+
+            value = value or {}
+
+            if isinstance(value, dict):
+                self._proc_res_data(key, value)
+            elif isinstance(value, list):
+                for data in value:
+                    self._proc_res_data(key, data)
+
+        self._resl = tuple(self._resl)
+
+    def _proc_res_data(self, key, data):
+
+            model = key
+            alias = data.pop('alias', model.strip('s').split('.')[-1])
+            lookup = data.pop('lookup', 'name')
+            reply = data.pop('reply', {})
+            if isinstance(reply, list):
+                reply = Reply(tuple([tuple(i) for i in reply]),
+                              tuple([tuple(i) for i in reply]),
+                              tuple([tuple(i) for i in reply]))
+            elif isinstance(reply, dict):
+                # tuple-fy
+                get = reply.pop('get', (('{}_id'.format(alias), 'id'),))
+                post = reply.pop('post', ((alias, 'id'),))
+                patch = reply.pop('patch', post)
+                reply = Reply(get, post, patch)
+
+            self._resl.append(ResMgr(model, alias, lookup, reply, **data))
+
+    def __repr__(self):
+
+        repstr = ''
+
+        if self._res:
+            return str(self._res)
+        else:
+            rl = list()
+            for res in self._resl:
+                if res._resl:
+                    rl.append('{}*'.format(res.model))
+                else:
+                    rl.append(res.model)
+            return '{}({})'.format('ResMgr', ', '.join(rl))
+
+    def __iter__(self):
+        return self._resl.__iter__()
+
+    def __getitem__(self, key):
+        return self._resl[key]
+
+    def __getattr__(self, key):
+
+        if (key in Resolve._fields) and self._res:
+            return getattr(self._res, key)
+
+        object.__getattribute__(self, key)
+
+    def get(self, string):
+
+        for res in self:
+            if res.alias == string:
+                return res
+            if res.model == string:
+                return res
+        return None

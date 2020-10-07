@@ -5,10 +5,15 @@ pynetbox:
 #  private_jey: null
 #  threading: false
 
-#requests:
+requests:
 #  verify: false
 
-#nbcli:
+nbcli:
+#  delimiters:
+#    eq: '='
+#    res: ':'
+#    cpres: '::'
+#    cpsep: '~'
 #  search_models:
 #    - circuits.providers
 #    - circuits.circuits
@@ -29,3 +34,5 @@ pynetbox:
 #    - tenancy.tenants
 #    - virtualization.clusters
 #    - virtualization.virtual_machines
+
+user:

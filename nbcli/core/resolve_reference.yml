@@ -1,0 +1,130 @@
+tenancy.tenant_groups:
+
+tenancy.tenants:
+
+
+dcim.regions:
+  dcim.regions:
+    alias: parent
+
+dcim.sites:
+
+dcim.rack_groups:
+
+dcim.rack_roles:
+
+dcim.racks:
+
+dcim.rack_reservations:
+
+dcim.manufacturers:
+
+dcim.device_types:
+  lookup: model
+  reply:
+    get:
+    - [device_type_id, id]
+    - [devicetype_id, id]
+
+dcim.console_port_templates:
+dcim.console_server_port_templates:
+dcim.power_port_templates:
+dcim.power_outlet_templates:
+dcim.interface_templates:
+dcim.front_port_templates:
+dcim.rear_port_templates:
+dcim.device_bay_templates:
+
+dcim.device_roles:
+
+dcim.platforms:
+
+dcim.devices:
+
+dcim.console_ports:
+dcim.console_server_ports:
+dcim.power_ports:
+dcim.power_outlets:
+dcim.interfaces:
+dcim.front_ports:
+dcim.rear_ports:
+
+dcim.device_bays:
+  dcim.devices:
+    alias: installed_device
+
+dcim.inventory_items:
+dcim.console_connections:
+dcim.power_connections:
+#dcim.interface_connections:
+
+dcim.cables:
+  lookup: id
+  dcim.interfaces:
+  - alias: interface_a
+    reply:
+      post:
+      - [termination_a_id, id]
+      - [termination_a_type, ~dcim.interface~]
+      get: null
+      patch: null
+  - alias: interface_b
+    reply:
+      post:
+      - [termination_b_id, id]
+      - [termination_b_type, ~dcim.interface~]
+      get: null
+      patch: null
+
+dcim.virtual_chassis:
+dcim.power_panels:
+dcim.power_feeds:
+#dcim.connected_device:
+
+
+ipam.vrfs:
+ipam.rirs:
+ipam.aggregates:
+ipam.roles:
+
+ipam.prefixes:
+  alias: prefix
+  lookup: prefix
+  reply:
+  - [prefix, prefix]
+
+ipam.ip_addresses:
+  alias: address
+  lookup: address
+  reply:
+  - [address, address]
+
+ipam.vlan_groups:
+ipam.vlans:
+ipam.services:
+
+virtualization.cluster_types:
+virtualization.cluster_groups:
+virtualization.clusters:
+virtualization.virtual_machines:
+virtualization.interfaces:
+  alias: virtual_interface
+
+circuits.providers:
+circuits.circuit_types:
+circuits.circuits:
+circuits.circuit_terminations:
+
+extras.graphs:
+extras.export_templates:
+extras.tags:
+extras.image_attachments:
+extras.config_contexts:
+extras.reports:
+extras.scripts:
+extras.object_changes:
+
+secrets.secret_roles:
+secrets.secrets:
+#secrets.get_session_key:
+#secrets.generate_rsa_key_pair:

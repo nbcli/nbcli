@@ -7,7 +7,7 @@ from pynetbox.core.response import Record
 from pynetbox.core.query import Request
 from nbcli.commands.base import BaseSubCommand
 from nbcli.core.utils import app_model_loc
-from nbcli.views.tools import nbprint, get_view_name
+from nbcli.views.tools import nbprint
 
 class Shell():
 
@@ -39,10 +39,11 @@ class Shell():
 
     def build_ns(self, skip_models=False):
 
-        self.ns = dict(Netbox=self.netbox)
-        if self.logger:
-            self.ns['nblogger'] = self.logger
-            self.banner += 'nblogger, '
+        self.ns = dict(Netbox=self.netbox,
+                       NbInfo=self.netbox.nbcli.NbInfo,
+                       nblogger=self.logger,
+                       nbprint=nbprint)
+        self.banner += 'nbprint(), NbInfo, nblogger'
 
         def load_models(item):
             app, url = item
@@ -73,36 +74,8 @@ class Shell():
 
             nbns = dict(self.ns)
 
-            def nbmodels(display='model'):
-                """List available pynetbox models"""
-                modeldict = dict()
-
-                for key, value in nbns.items():
-                    if isinstance(value, Endpoint):
-                        app = value.url.split('/')[-2].title()
-                        if app in modeldict.keys():
-                            modeldict[app].append((key, value))
-                        else:
-                            modeldict[app] = list()
-                            modeldict[app].append((key, value))
-
-                for app, modellist in sorted(modeldict.items()):
-                    print(app + ':')
-                    for model in sorted(modellist):
-                        if display == 'loc':
-                            obj = Record({}, model[1].api, model[1])
-                            print('  ' + app_model_loc(obj))
-                        elif display == 'view':
-                            obj = Record({}, model[1].api, model[1])
-                            print('  ' + get_view_name(obj))
-                        else:
-                            print('  ' + model[0])
-
-            self.ns['nbmodels'] = nbmodels
-            self.banner += 'nbmodels(), '
-
-        self.ns['nbprint'] = nbprint
-        self.banner += 'nbprint()'
+            models = {key:value for (key,value) in nbns.items() if isinstance(value, Endpoint)}
+            self.ns['NbInfo']._models = models
 
 
     def python(self):

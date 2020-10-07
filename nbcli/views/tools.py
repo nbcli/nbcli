@@ -3,7 +3,7 @@
 import json
 from collections import OrderedDict
 from pynetbox.core.response import Record
-from nbcli.core.utils import app_model_loc, is_list_of_records
+from nbcli.core.utils import app_model_loc, is_list_of_records, view_name, rend_table
 
 
 class BaseView():
@@ -75,7 +75,7 @@ class BaseView():
     def table_view(self):
         """Define headers and values for table view of object."""
         self.add_col('ID', self.get_attr('id'))
-        self.add_col(get_view_name(self.obj).replace('View', ''),
+        self.add_col(view_name(self.obj).replace('View', ''),
                      str(self.obj))
 
     def detail_view(self):
@@ -104,19 +104,6 @@ class BaseView():
     def __repr__(self):
         """Meaningful repr."""
         return 'View' + repr(list(self.items()))
-
-
-def get_view_name(obj):
-    """Generate view name based on class, url, or endpoint url."""
-    assert isinstance(obj, Record)
-
-    class_name = obj.__class__.__name__
-    model_loc = app_model_loc(obj)
-
-    if class_name != 'Record':
-        return model_loc.split('.')[0].title() + class_name + 'View'
-
-    return model_loc.title().replace('_', '').replace('.', '') + 'View'
 
 
 class Formatter():
@@ -175,23 +162,12 @@ class Formatter():
         if self.disable_header:
             display.pop(0)
 
-        # get max width for each column
-        colw = list()
-        for col in range(len(display[0])):
-            colw.append(max([len(row[col]) for row in display]))
-
-        # build template based on max with for each column
-        template = ''
-        buff = 2
-        for w in colw:
-            template += '{:<' + str(w + buff) + 's}'
-
-        self._string = '\n'.join([template.format(*row) for row in display])
+        self._string = rend_table(display)
 
     def _get_view(self):
 
         if not self.view_model:
-            self.view_model = get_view_name(self.result[0])
+            self.view_model = view_name(self.result[0])
 
         if isinstance(self.view_model, str):
 

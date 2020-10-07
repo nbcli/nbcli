@@ -1,0 +1,237 @@
+---
+# Manufacturers
+
+manufacturer:ACME:
+  slug: acme
+
+---
+# Device Types
+
+device_type:A-1U-S:
+  manufacturer: ACME
+  slug: a-1u-s
+  u_height: 1
+
+  power_port_template:PSU1:
+    type: iec-60320-c14
+  power_port_template:PSU2:
+    type: iec-60320-c14
+
+  interface_template:Mgmt:
+    type: 1000base-t
+    mgmt_only: true
+  interface_template:Eth1:
+    type: 10gbase-x-sfpp
+  interface_template:Eth2:
+    type: 10gbase-x-sfpp
+
+
+device_type:A-2U-C:
+  manufacturer: ACME
+  slug: a-2u-c
+  u_height: 2
+  subdevice_role: parent
+
+  power_port_template:PSU1:
+    type: iec-60320-c20
+  power_port_template:PSU2:
+    type: iec-60320-c20
+
+  device_bay_template:1:
+  device_bay_template:2:
+  device_bay_template:3:
+  device_bay_template:4:
+
+
+device_type:A-BL-S:
+  manufacturer: ACME
+  slug: a-bl-c
+  u_height: 0
+  subdevice_role: child
+
+  interface_template:Mgmt:
+    type: 1000base-t
+    mgmt_only: true
+  interface_template:Eth1:
+    type: 10gbase-x-sfpp
+  interface_template:Eth2:
+    type: 10gbase-x-sfpp
+
+---
+# Tenants
+
+tenant:ENCOM:
+  slug: encom
+
+---
+# Sites
+
+site:DC 1:
+  slug: dc-1
+  status: active
+
+---
+# Racks
+
+rack:1.1:
+  site: DC 1
+  tenant: ENCOM
+  type: 4-post-cabinet
+  width: 19
+  u_height: 42
+
+
+rack:1.2:
+  site: DC 1
+  tenant: ENCOM
+  type: 4-post-cabinet
+  width: 19
+  u_height: 42
+
+---
+# Device Roles
+
+device_role:PSU:
+  slug: psu
+  color: ff0000
+
+device_role:Switch:
+  slug: switch
+  color: 00ff00
+
+device_role:Patch Panel:
+  slug: patch-panel
+  color: 0000ff
+
+device_role:Chassis:
+  slug: chassis
+  color: ffff00
+
+device_role:Server:
+  slug: server
+  color: ff00ff
+
+---
+# Devices
+
+device:web-proxy-1:
+  device_role: Server
+  device_type: A-1U-S
+  serial: 000001
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.1'
+  position: 1
+  face: front
+
+
+device:web-1:
+  device_role: Server
+  device_type: A-1U-S
+  serial: 000002
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.1'
+  position: 2
+  face: front
+
+
+device:web-2:
+  device_role: Server
+  device_type: A-1U-S
+  serial: 000003
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.1'
+  position: 3
+  face: front
+
+
+device:web-3:
+  device_role: Server
+  device_type: A-1U-S
+  serial: 000004
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.1'
+  position: 4
+  face: front
+
+
+device:db-1:
+  device_role: Server
+  device_type: A-1U-S
+  serial: 000005
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.1'
+  position: 5
+  face: front
+
+
+device:db-2:
+  device_role: Server
+  device_type: A-1U-S
+  serial: 000006
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.1'
+  position: 6
+  face: front
+
+
+device:compute-1:
+  device_role: Server
+  device_type: A-BL-S
+  serial: 000008
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.2'
+
+
+device:compute-2:
+  device_role: Server
+  device_type: A-BL-S
+  serial: 000009
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.2'
+
+
+device:compute-3:
+  device_role: Server
+  device_type: A-BL-S
+  serial: 000010
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.2'
+
+
+device:compute-4:
+  device_role: Server
+  device_type: A-BL-S
+  serial: 000011
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.2'
+
+
+device:chassis-1:
+  device_role: Chassis
+  device_type: A-2U-C
+  serial: 000007
+  tenant: ENCOM
+  site: DC 1
+  rack: '1.2'
+  position: 1
+  face: front
+
+  device_bay:1:
+    installed_device: compute-1
+  device_bay:2:
+    installed_device: compute-2
+  device_bay:3:
+    installed_device: compute-3
+  device_bay:4:
+    installed_device: compute-4
+

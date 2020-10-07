@@ -6,10 +6,10 @@ import requests
 import urllib3
 import yaml
 from nbcli import logger
-from nbcli.core.utils import Reference, auto_cast, get_nbcli_dir
+from nbcli.core.utils import NbNS, NbInfo, ResMgr, auto_cast, get_nbcli_dir
 
-class Config():
-    """Namespace to hold config options that will be passed to pynetbox."""
+class Config(NbNS):
+    """nbcli config Namespace."""
 
     def __init__(self, init=False):
         """Create Config object.
@@ -73,17 +73,14 @@ class Config():
         conffile = self.user_files.user_config
         try:
             user_config = yaml.safe_load(open(str(conffile)))
-            #user_config = dict()
-            #with open(str(conffile), 'r') as fh:
-            #    exec(fh.read(), dict(), user_config)
         except Exception as e:
             logger.critical('Error loading user_config!')
             logger.critical("Run: 'nbcli init' to create a user_config file")
             raise e
 
         for key, value in user_config.items():
-            if isinstance(value, dict):
-                setattr(self, key, value)
+            if isinstance(value, (dict, type(None))):
+                setattr(self, key, value or {})
 
             # get envars
             prefix = 'NBCLI_{}_'.format(key.upper())
@@ -100,6 +97,7 @@ class Config():
 def get_session(init=False):
 
     conf = Config(init=init)
+    delattr(conf, 'user_files')
 
     if init:
         return
@@ -122,10 +120,14 @@ def get_session(init=False):
     if nb.http_session.verify is False:
         urllib3.disable_warnings()
 
-    nb.nbcli = type('nbcli', (), {})()
-    nb.nbcli.ref = Reference()
-    nb.nbcli.logger = logger
+    nb.nbcli = type('nbcli', (NbNS,), dict(__doc__='Main nbcli NameSpace.'))()
 
-    nb.nbcli_conf = conf
+    resstr = resource_string('nbcli.core', 'resolve_reference.yml').decode()
+    resdict = yaml.safe_load(resstr)
+    nb.nbcli.rm = ResMgr(**resdict)
+
+    nb.nbcli.logger = logger
+    nb.nbcli.conf = conf
+    nb.nbcli.NbInfo = NbInfo(nb)
 
     return nb

@@ -1,18 +1,23 @@
+"""Sub Command to set up bare nbcli user directory."""
+
+
 import logging
 from nbcli.commands.base import BaseSubCommand
 from nbcli.core.config import get_session
+
 
 class InitSubCommand(BaseSubCommand):
     """Initialize nbcli.
 
     Default confg directory location $HOME/.nbcli
-    After running edit $HOME/.nbcli/user_config.yml with your credentials."""
+    After running edit $HOME/.nbcli/user_config.yml with your credentials.
+    """
 
     name = 'init'
     parser_kwargs = dict(help='Initialize nbcli.')
 
     def _pre_run_(self, args):
-        
+        """Override BaseSubCommand _pre_run_ method for init special case."""
         self.args = args
         self.logger = logging.getLogger('nbcli.'+self.name)
         self._set_log_level_()
@@ -27,5 +32,4 @@ class InitSubCommand(BaseSubCommand):
         - Initialize nbcli
           $ nbcli init
         """
-
         self.netbox = get_session(init=True)

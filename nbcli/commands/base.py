@@ -1,4 +1,8 @@
+"""Base sub-command and tools for commands."""
+
+
 import argparse
+from argparse import RawTextHelpFormatter
 import functools
 import logging
 import sys
@@ -9,23 +13,23 @@ from nbcli.views.tools import nbprint
 
 
 def get_common_parser():
-
+    """Create parser for handling verbose options."""
     common_parser = argparse.ArgumentParser(add_help=False)
     common_parser.add_argument('-v', '--verbose',
-                        	   action='count',
-                        	   help='Show more logging messages')
+                               action='count',
+                               help='Show more logging messages')
     common_parser.add_argument('-q', '--quiet',
-                        	   action='count',
-                       		   help='Show fewer logging messages')
+                               action='count',
+                               help='Show fewer logging messages')
     return common_parser
 
 
 def get_view_parser():
-
+    """Create parser for handling view options."""
     view_parser = argparse.ArgumentParser(add_help=False)
     view_parser.add_argument('--view', type=str, help='Output view.',
-                               choices=['table', 'detail', 'json'],
-                               default='table')
+                             choices=['table', 'detail', 'json'],
+                             default='table')
     view_parser.add_argument('--view-model',
                              type=str,
                              help='View model to use')
@@ -37,35 +41,16 @@ def get_view_parser():
     return view_parser
 
 
-class ProcKWArgsAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string):
-        setattr(namespace, self.dest, list())
-        kw_dest = self.dest + '_kwargs'
-        setattr(namespace, kw_dest, dict())
-        for i in values:
-            if i.find('=') > 0:
-                kwargs = getattr(namespace, kw_dest)
-                key = i.split('=')[0]
-                value = i.split('=')[1]
-                if key in kwargs:
-                    if isinstance(kwargs[key], list):
-                        kwargs[key].append(value)
-                    else:
-                        kwargs[key] = [kwargs[key], value]
-                else:
-                    kwargs[key] = value
-            else:
-                getattr(namespace, self.dest).append(i)
-
-
 class BaseSubCommand():
+    """Base sub-command to build commands from."""
 
     name = 'base'
     parser_kwargs = dict(help='')
     view_options = False
+    default_loglevel = logging.WARNING
 
     def __init__(self, subparser):
-
+        """Add sub-command parser to subparser object."""
         if 'parents' in self.parser_kwargs.keys():
             assert isinstance(self.parser_kwargs['parents'], list)
             self.parser_kwargs['parents'].append(get_common_parser())
@@ -78,7 +63,7 @@ class BaseSubCommand():
         self.name = self.name.lower()
 
         if 'formatter_class' not in self.parser_kwargs.keys():
-            self.parser_kwargs['formatter_class'] = argparse.RawTextHelpFormatter
+            self.parser_kwargs['formatter_class'] = RawTextHelpFormatter
 
         if 'description' not in self.parser_kwargs.keys():
             self.parser_kwargs['description'] = dedent(getdoc(self))
@@ -91,7 +76,7 @@ class BaseSubCommand():
             if self.__module__.split('.')[0] == 'user_commands':
                 self.name = 'user_{}'.format(self.name)
             else:
-                prfix = self.__module__.split('.')[0].replace('nbcli_', '')
+                prefix = self.__module__.split('.')[0].replace('nbcli_', '')
                 self.name = '{}_{}'.format(prefix, self.name)
 
         self.parser = subparser.add_parser(self.name, **self.parser_kwargs)
@@ -99,18 +84,19 @@ class BaseSubCommand():
         self.setup()
 
     def _pre_run_(self, args):
-        
+
         self.args = args
         self.logger = logging.getLogger('nbcli.'+self.name)
         self._set_log_level_()
         try:
             self.netbox = get_session()
             if self.view_options:
-                self.nbprint = functools.partial(nbprint,
-                                                 view=self.args.view,
-                                                 view_model=self.args.view_model,
-                                                 cols=self.args.cols,
-                                                 disable_header=self.args.nh)
+                nbopts = dict(view=self.args.view,
+                              view_model=self.args.view_model,
+                              cols=self.args.cols,
+                              disable_header=self.args.nh)
+
+                self.nbprint = functools.partial(nbprint, **nbopts)
             self.logger.debug(args)
 
             self.run()
@@ -124,21 +110,24 @@ class BaseSubCommand():
 
     def _set_log_level_(self):
         """Set the loglevel based on the arguments passed."""
+        level = self.default_loglevel
+
         if self.args.quiet:
-            if self.args.quiet == 1:
-                self.logger.parent.setLevel(logging.ERROR)
-            elif self.args.quiet == 2:
-                self.logger.parent.setLevel(logging.CRITICAL)
-            elif self.args.quiet > 2:
-                self.logger.parent.setLevel(100)
+            level = level + (10 * self.args.quiet)
+            if level > 100:
+                level = 100
+
         if self.args.verbose:
-            if self.args.verbose == 1:
-                self.logger.parent.setLevel(logging.INFO)
-            elif self.args.verbose > 1:
-                self.logger.parent.setLevel(logging.DEBUG)
+            level = level - (10 * self.args.verbose)
+            if level < 1:
+                level = 1
+
+        self.logger.parent.setLevel(level)
 
     def setup(self):
+        """Define additional parser options for sub command."""
         pass
 
     def run(self):
+        """Execute subcommand."""
         pass

@@ -1,7 +1,6 @@
 """Main nbcli app."""
 
 from argparse import ArgumentParser, RawTextHelpFormatter
-from pydoc import getdoc
 import sys
 from textwrap import dedent
 from nbcli import logger

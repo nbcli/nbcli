@@ -1,0 +1,28 @@
+---
+# Regions
+
+region:USA:
+  description: Parent region for USA reagions
+
+region:New York:
+  description: NE States
+
+---
+# Sites
+
+site:NY DC-1:
+  facility: Manhattan
+  asn: 11111
+
+---
+# Manufacturers
+
+manufacturer:Dell:
+  description: Dell devices
+
+---
+# Device Types
+
+device_type:R640:
+  u_height: 2
+
