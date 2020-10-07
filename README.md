@@ -37,16 +37,15 @@ requests:
 
 ## Core Commands
 
-- [init](docs/init.rst)
-- [search](docs/nbsearch.rst)
-- [show](docs/show.rst)
-- [pynb](docs/pynb.rst)
-- [shell](docs/shell.rst)
+- [init](docs/commands/init.rst)
+- [search](docs/commands/nbsearch.rst)
+- [filter](docs/commands/filter.rst)
+- [shell](docs/commands/shell.rst)
 
 ## Extend and Customize
 
-- [Views](docs/views.rst)
-- [Commands](docs/commands.rst)
+- [Views](docs/extend/views.rst)
+- [Commands](docs/extend/commands.rst)
 
 ## Testing
 
