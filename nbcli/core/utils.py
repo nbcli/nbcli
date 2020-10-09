@@ -13,51 +13,6 @@ from pynetbox.core.endpoint import Endpoint
 from pynetbox.core.response import Record
 
 
-class NbNS:
-    """NameSpace object for nbcli."""
-    def __repr__(self):
-        """Print Info about Classes and methods in namespace."""
-        def pred(obj):
-            return isinstance(obj, NbNS) or ismethod(obj)
-
-        ml = getmembers(self, predicate=pred)
-        ht = list([self.__doc__ or ''])
-        for m in ml:
-            s = '{}.{}:\n{}'.format(type(self).__name__,
-                                      m[0],
-                                      indent(m[1].__doc__ or '', prefix='  '))
-            if not m[0].startswith('_'):
-                ht.append(indent(s, prefix='  '))
-        return '\n\n'.join(ht)
-
-
-class NbInfo(NbNS):
-    """Desplay information for nbcli."""
-
-    def __init__(self, netbox):
-
-        self._nb = netbox
-        self._models = {}
-
-    def loaded(self):
-        """List pre-loaded models"""
-
-        table = list()
-        table.append(['Variable', 'Model Name', 'Alias', 'View Name'])
-
-        for model in self._models.items():
-            var = model[0]
-            model_name = app_model_loc(model[1])
-            alias = '-'
-            res = self._nb.nbcli.rm.get(model_name)
-            if res:
-                alias = res.alias
-            view = view_name(model[1])
-            table.append([var, model_name, alias, view])
-
-        print(rend_table(table))
-
-
 def view_name(obj):
     """Generate view name based on class, url, or endpoint url."""
     assert isinstance(obj, (Record, Endpoint))

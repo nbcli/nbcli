@@ -77,6 +77,7 @@ dcim.cables:
       patch: null
 
 dcim.virtual_chassis:
+  alias: virtual_chassis
 dcim.power_panels:
 dcim.power_feeds:
 #dcim.connected_device:
