@@ -244,3 +244,25 @@ class  ResMgr():
             if res.model == string:
                 return res
         return None
+
+
+def getter(obj, string):
+    assert isinstance(string, str)
+    def getitem(o, k):
+        try:
+            try:
+                return o[str(k)]
+            except:
+                return o[int(k)]
+        except:
+            return None
+    for attr in string.split('.'):
+        keys = attr.split(':')[1:]
+        attr = attr.split(':')[0]
+        try:
+            obj = getattr(obj, attr)
+            for key in keys:
+                obj = getitem(obj, key)
+        except:
+            return None
+    return obj

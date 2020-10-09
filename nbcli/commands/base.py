@@ -101,10 +101,19 @@ class BaseSubCommand():
 
             self.run()
         except Exception as e:
+            from traceback import print_tb
             self.logger.critical('%s: %s', type(e).__name__, str(e))
 
-            if 0 < self.logger.parent.level <= 10:
-                raise e
+            if self.logger.parent.level <= 10:
+                print_tb(e.__traceback__)
+            if self.logger.parent.level == 1:
+                try:
+                    from ipdb import post_mortem
+                except:
+                    from pdb import post_mortem
+                print("\n*** Entering debuger! " + \
+                      "(type '?' for help, or 'q' to quit) ***\n")
+                post_mortem()
 
             sys.exit(1)
 
