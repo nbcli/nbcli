@@ -1,10 +1,9 @@
 """Sub Command to set up bare nbcli user directory."""
 
-import yaml
-from pprint import pprint
 from nbcli.commands.base import BaseSubCommand
 from nbcli.core.utils import app_model_by_loc, rend_table
 from nbcli.views.tools import view_name
+
 
 class ModelsSubCommand(BaseSubCommand):
     """View Information on nbcli Models."""
@@ -12,9 +11,8 @@ class ModelsSubCommand(BaseSubCommand):
     name = 'models'
     parser_kwargs = dict(help='Display information on Supported Models.')
 
-
     def setup(self):
-
+        """Additional arguments for model command."""
         self.parser.add_argument('model',
                                  nargs='?',
                                  help='Display detailed info on given model.')
@@ -30,9 +28,6 @@ class ModelsSubCommand(BaseSubCommand):
         - Show information of device model
           $ nbcli models device
         """
-
-        modlist = list()
-
         if not self.args.model:
 
             header = ['Model', 'Lookup', 'Endpoint']
@@ -61,4 +56,4 @@ class ModelsSubCommand(BaseSubCommand):
 
             else:
                 self.logger.warning("Unsupported model: '%s'",
-                                self.args.model)
+                                    self.args.model)
