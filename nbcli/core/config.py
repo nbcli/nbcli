@@ -1,12 +1,14 @@
+"""Objects related to loading nbcli configuration."""
+
 import os
 from pkg_resources import resource_string
-import sys
 import pynetbox
 import requests
 import urllib3
 import yaml
 from nbcli import logger
 from nbcli.core.utils import ResMgr, auto_cast, get_nbcli_dir
+
 
 class Config():
     """nbcli config Namespace."""
@@ -17,7 +19,6 @@ class Config():
         Args:
             init (bool): Seting True will create a new configuration file.
         """
-
         uf = type('tree', (), {})()
 
         uf.dir = get_nbcli_dir()
@@ -34,16 +35,14 @@ class Config():
 
         self._load()
 
-
     def _init(self):
         """Create a new empty config file."""
-
         # Create user directory tree
         dirlist = [self.user_files.dir, self.user_files.extdir]
         for udir in dirlist:
             if udir.exists() and not udir.is_dir():
                 logger.critical('%s exists, but is not a directory',
-                                     str(udir.absolute()))
+                                str(udir.absolute()))
                 raise FileExistsError(str(udir.absolute()))
             else:
                 udir.mkdir(exist_ok=True)
@@ -66,10 +65,8 @@ class Config():
         print("Edit pynetbox 'url' and 'token' entries in user_config.yml:")
         print('\t{}'.format(str(self.user_files.user_config.absolute())))
 
-
     def _load(self):
         """Set attributes from configfile or os environment variables."""
-
         conffile = self.user_files.user_config
         try:
             user_config = yaml.safe_load(open(str(conffile)))
@@ -95,7 +92,7 @@ class Config():
 
 
 def get_session(init=False):
-
+    """Create and return pynetbox api object."""
     conf = Config(init=init)
     delattr(conf, 'user_files')
 

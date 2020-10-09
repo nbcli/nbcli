@@ -1,3 +1,5 @@
+"""Define function for loading user extensions and plugins."""
+
 import importlib
 import pkgutil
 import sys
@@ -6,7 +8,7 @@ from nbcli.core.utils import get_nbcli_dir
 
 
 def load_extensions():
-
+    """Load user extensions and plugins."""
     sys.path.append(str(get_nbcli_dir().joinpath('user_extensions')))
 
     extensions = list()
