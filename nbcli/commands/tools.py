@@ -86,7 +86,7 @@ class NbArgs():
         for arg in nba.args:
             nba.update(res.lookup, arg)
 
-        result = ep.filter(**nba.kwargs)
+        result = ep.filter(**nba.kwargs, brief=1)
 
         self.apply_res(result, res)
 
