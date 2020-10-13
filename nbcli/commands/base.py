@@ -116,6 +116,9 @@ class BaseSubCommand():
                 post_mortem()
 
             sys.exit(1)
+        except KeyboardInterrupt:
+            self.logger.warning('Interrupted by user.')
+            sys.exit(0)
 
     def _set_log_level_(self):
         """Set the loglevel based on the arguments passed."""
