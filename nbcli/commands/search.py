@@ -37,31 +37,31 @@ class SearchSubCommand(BaseSubCommand):
           $ nbcli search server1
 
         - Search the dcim.interfaces model for 'eth 1':
-          $ nbcli search dcim.interfaces 'eth 1'
+          $ nbcli search interface 'eth 1'
         """
         if hasattr(self.netbox.nbcli.conf, 'nbcli') and \
                 ('search_models' in self.netbox.nbcli.conf.nbcli.keys()):
             self.search_models = self.netbox.nbcli.conf.nbcli['search_models']
         else:
-            self.search_models = ['circuits.providers',
-                                  'circuits.circuits',
-                                  'dcim.sites',
-                                  'dcim.racks',
-                                  'dcim.rack_groups',
-                                  'dcim.device_types',
-                                  'dcim.devices',
-                                  'dcim.virtual_chassis',
-                                  'dcim.cables',
-                                  'dcim.power_feeds',
-                                  'ipam.vrfs',
-                                  'ipam.aggregates',
-                                  'ipam.prefixes',
-                                  'ipam.ip_addresses',
-                                  'ipam.vlans',
-                                  'secrets.secrets',
-                                  'tenancy.tenants',
-                                  'virtualization.clusters',
-                                  'virtualization.virtual_machines']
+            self.search_models = ['provider',
+                                  'circuit',
+                                  'site',
+                                  'rack',
+                                  'rack_group',
+                                  'device_type',
+                                  'device',
+                                  'virtual_chassis',
+                                  'cable',
+                                  'power_feed',
+                                  'vrf',
+                                  'aggregate',
+                                  'prefix',
+                                  'address',
+                                  'vlan',
+                                  'secret',
+                                  'tenant',
+                                  'cluster',
+                                  'virtual_machine']
 
         def search(ep):
             req = Request(filters=dict(q=self.args.searchterm),
@@ -95,11 +95,11 @@ class SearchSubCommand(BaseSubCommand):
             full_count = model.count(self.args.searchterm)
             if len(result) > 0:
                 result_count += 1
-                print('{}\n{}'.format(app_model, '=' * len(app_model)))
+                print('{}\n{}'.format(app_model.title(), '=' * len(app_model)))
                 self.nbprint(result)
                 if len(result) < full_count:
                     print('*** See all {} results: '.format(full_count) +
-                          "'$ nbcli pynb {} filter {}' ***".
+                          "'$ nbcli filter {} {}' ***".
                           format(app_model, self.args.searchterm))
                 print('')
         if result_count == 0:

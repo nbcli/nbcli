@@ -1,4 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor
 import pkgutil
 import sys
 import pynetbox
@@ -6,7 +5,7 @@ from pynetbox.core.endpoint import Endpoint
 from pynetbox.core.response import Record
 from pynetbox.core.query import Request
 from nbcli.commands.base import BaseSubCommand
-from nbcli.core.utils import app_model_loc
+from nbcli.core.utils import app_model_loc, app_model_by_loc
 from nbcli.views.tools import nbprint
 
 class Shell():
@@ -16,7 +15,6 @@ class Shell():
                  script=None,
                  cmd=None,
                  interact=False,
-                 skip_models=False,
                  logger=None):
 
         if pkgutil.find_loader('IPython') is None:
@@ -34,48 +32,19 @@ class Shell():
                                        self.netbox.version,
                                        pynetbox.__version__)
         self.banner += '\nAdditional utilities available:\n\t'
-        self.build_ns(skip_models=skip_models) 
+        self.build_ns() 
 
 
-    def build_ns(self, skip_models=False):
+    def build_ns(self):
 
         self.ns = dict(Netbox=self.netbox,
-                       NbInfo=self.netbox.nbcli.NbInfo,
                        nblogger=self.logger,
                        nbprint=nbprint)
-        self.banner += 'nbprint(), NbInfo, nblogger'
+        self.banner += 'nbprint(), nblogger'
 
-        def load_models(item):
-            app, url = item
-            appobj = getattr(self.netbox, app)
-            models = Request(url, self.netbox.http_session).get()
-            for model in models.keys():
-                if model[0] != '_':
-                    modelname = model.title().replace('-', '')
-                    modelobj = getattr(appobj, model.replace('-', '_'))
-                    if app == 'virtualization' and model == "interfaces":
-                        modelname = 'VirtualInterfaces'
-                    self.ns[modelname] = modelobj
-
-        if not skip_models:
-            apps = Request(self.netbox.base_url, self.netbox.http_session).get()
-
-            # for now only get apps pynetbox supports
-            for app in list(apps.keys()):
-                if not hasattr(self.netbox, app):
-                    del apps[app]
-
-            if self.netbox.threading:
-                with ThreadPoolExecutor() as executor:
-                    executor.map(load_models, apps.items())
-            else:
-                for item in apps.items():
-                    load_models(item)
-
-            nbns = dict(self.ns)
-
-            models = {key:value for (key,value) in nbns.items() if isinstance(value, Endpoint)}
-            self.ns['NbInfo']._models = models
+        for res in self.netbox.nbcli.rm:
+            name = res.alias.title().replace('_', '')
+            self.ns[name] = app_model_by_loc(self.netbox, res.model)
 
 
     def python(self):
@@ -141,9 +110,6 @@ class ShellSubCommand(BaseSubCommand):
         self.parser.add_argument('-s', '--interactive-shell', choices=['python', 'ipython'],
                       default='ipython',
                       help='Specifies interactive shell to use')
-        self.parser.add_argument('--skip',
-                                 action='store_true',
-                                 help='Skip loading models.')
 
     def run(self):
         """Run Shell enviornment.
@@ -157,6 +123,5 @@ class ShellSubCommand(BaseSubCommand):
                       script=self.args.script,
                       cmd=self.args.c,
                       interact=self.args.i,
-                      skip_models=self.args.skip,
                       logger=self.logger)
         shell.run()

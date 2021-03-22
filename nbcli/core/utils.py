@@ -1,61 +1,92 @@
 """Define Classes and Functions used throughout nbcli."""
+
 from collections import namedtuple
-from typing import NamedTuple
-from pkg_resources import resource_string
 import json
 import logging
 import os
-import yaml
 from pathlib import Path
-from inspect import getmembers, isclass, ismethod
-from textwrap import indent
 from pynetbox.core.endpoint import Endpoint
 from pynetbox.core.response import Record
 
 
-class NbNS:
-    """NameSpace object for nbcli."""
+Resolve = namedtuple('Resolve', ['model', 'alias', 'lookup', 'reply'])
+Reply = namedtuple('Reply', ['get', 'post', 'patch'])
+
+
+class ResMgr():
+    """Store and retrieve Resolve objects."""
+
+    def __init__(self, *args, **kwargs):
+        """Populate ResMgr with Resolve objects based on args/kwargs."""
+        self._res = None
+        self._resl = []
+
+        if args:
+            self._res = Resolve(*args)
+
+        for key, value in kwargs.items():
+
+            value = value or {}
+
+            if isinstance(value, dict):
+                self._proc_res_data(key, value)
+            elif isinstance(value, list):
+                for data in value:
+                    self._proc_res_data(key, data)
+
+        self._resl = tuple(self._resl)
+
+    def _proc_res_data(self, key, data):
+
+        model = key
+        alias = data.pop('alias', model.strip('s').split('.')[-1])
+        lookup = data.pop('lookup', 'name')
+        reply = data.pop('reply', {})
+        if isinstance(reply, list):
+            reply = Reply(tuple([tuple(i) for i in reply]),
+                          tuple([tuple(i) for i in reply]),
+                          tuple([tuple(i) for i in reply]))
+        elif isinstance(reply, dict):
+            # tuple-fy
+            get = reply.pop('get', (('{}_id'.format(alias), 'id'),))
+            post = reply.pop('post', ((alias, 'id'),))
+            patch = reply.pop('patch', post)
+            reply = Reply(get, post, patch)
+
+        self._resl.append(ResMgr(model, alias, lookup, reply, **data))
+
     def __repr__(self):
-        """Print Info about Classes and methods in namespace."""
-        def pred(obj):
-            return isinstance(obj, NbNS) or ismethod(obj)
+        """."""
+        if self._res:
+            return str(self._res)
+        else:
+            rl = list()
+            for res in self._resl:
+                if res._resl:
+                    rl.append('{}*'.format(res.model))
+                else:
+                    rl.append(res.model)
+            return '{}({})'.format('ResMgr', ', '.join(rl))
 
-        ml = getmembers(self, predicate=pred)
-        ht = list([self.__doc__ or ''])
-        for m in ml:
-            s = '{}.{}:\n{}'.format(type(self).__name__,
-                                      m[0],
-                                      indent(m[1].__doc__ or '', prefix='  '))
-            if not m[0].startswith('_'):
-                ht.append(indent(s, prefix='  '))
-        return '\n\n'.join(ht)
+    def __iter__(self):
+        """Iterate through list of child REsolve objects."""
+        return self._resl.__iter__()
 
+    def __getattr__(self, key):
+        """Return attribute of Resolve object if defined."""
+        if (key in Resolve._fields) and self._res:
+            return getattr(self._res, key)
 
-class NbInfo(NbNS):
-    """Desplay information for nbcli."""
+        object.__getattribute__(self, key)
 
-    def __init__(self, netbox):
-
-        self._nb = netbox
-        self._models = {}
-
-    def loaded(self):
-        """List pre-loaded models"""
-
-        table = list()
-        table.append(['Variable', 'Model Name', 'Alias', 'View Name'])
-
-        for model in self._models.items():
-            var = model[0]
-            model_name = app_model_loc(model[1])
-            alias = '-'
-            res = self._nb.nbcli.rm.get(model_name)
-            if res:
-                alias = res.alias
-            view = view_name(model[1])
-            table.append([var, model_name, alias, view])
-
-        print(rend_table(table))
+    def get(self, string):
+        """Return Resolve object if alias or model matches string."""
+        for res in self:
+            if res.alias == string:
+                return res
+            if res.model == string:
+                return res
+        return None
 
 
 def view_name(obj):
@@ -89,13 +120,13 @@ def rend_table(table):
 
 
 def get_nbcli_dir():
-
+    """Return path of nbcli directory."""
     default = Path.home().joinpath('.nbcli')
     return Path(os.environ.get('NBCLI_DIR', str(default)))
 
 
 def get_nbcli_logger():
-
+    """Return logger object and set level if defined by env var."""
     logging.basicConfig(format="[%(levelname)s](%(name)s): %(message)s")
     logger = logging.getLogger('nbcli')
     env_level = os.environ.get('NBCLI_LOGLEVEL', 'WARNING').upper()
@@ -106,7 +137,7 @@ def get_nbcli_logger():
 
 
 def auto_cast(string):
-    """Convert True, False, and None strings to their type"""
+    """Convert True, False, and None strings to their type."""
     assert isinstance(string, str)
     if string.lower() == 'none':
         return None
@@ -117,9 +148,10 @@ def auto_cast(string):
     if ('{' in string) or ('[' in string):
         try:
             return json.loads(string)
-        except:
+        except Exception:
             return string
     return string
+
 
 def app_model_loc(obj):
     """Derive pynetbox App and Endpoint names from url/endpoint.url."""
@@ -133,7 +165,7 @@ def app_model_loc(obj):
 
 
 def app_model_by_loc(api, loc):
-    """Return Endpoint defined by location"""
+    """Return Endpoint defined by location."""
     assert isinstance(loc, str)
     loc = loc.lower().replace('-', '_')
     res = api.nbcli.rm.get(loc)
@@ -147,7 +179,7 @@ def app_model_by_loc(api, loc):
 
 
 def is_list_of_records(result):
-
+    """Determine if list only contains pynetbox Records of the same type."""
     if isinstance(result, list) and (len(result) > 0):
 
         # check all entries are an instance of Record
@@ -162,85 +194,26 @@ def is_list_of_records(result):
         return False
 
 
+def getter(obj, string):
+    """Get attribute or item from object defined by string."""
+    assert isinstance(string, str)
+    def getitem(o, k):
 
-Resolve = namedtuple('Resolve', ['model', 'alias', 'lookup', 'reply'])
-Reply = namedtuple('Reply', ['get', 'post', 'patch'])
+        try:
+            try:
+                return o[str(k)]
+            except Exception:
+                return o[int(k)]
+        except Exception:
+            return None
 
-
-class  ResMgr():
-    
-    def __init__(self, *args, **kwargs):
-
-        self._res = None
-        self._resl = []
-
-        if args:
-            self._res = Resolve(*args)
-
-        for key, value in kwargs.items():
-
-            value = value or {}
-
-            if isinstance(value, dict):
-                self._proc_res_data(key, value)
-            elif isinstance(value, list):
-                for data in value:
-                    self._proc_res_data(key, data)
-
-        self._resl = tuple(self._resl)
-
-    def _proc_res_data(self, key, data):
-
-            model = key
-            alias = data.pop('alias', model.strip('s').split('.')[-1])
-            lookup = data.pop('lookup', 'name')
-            reply = data.pop('reply', {})
-            if isinstance(reply, list):
-                reply = Reply(tuple([tuple(i) for i in reply]),
-                              tuple([tuple(i) for i in reply]),
-                              tuple([tuple(i) for i in reply]))
-            elif isinstance(reply, dict):
-                # tuple-fy
-                get = reply.pop('get', (('{}_id'.format(alias), 'id'),))
-                post = reply.pop('post', ((alias, 'id'),))
-                patch = reply.pop('patch', post)
-                reply = Reply(get, post, patch)
-
-            self._resl.append(ResMgr(model, alias, lookup, reply, **data))
-
-    def __repr__(self):
-
-        repstr = ''
-
-        if self._res:
-            return str(self._res)
-        else:
-            rl = list()
-            for res in self._resl:
-                if res._resl:
-                    rl.append('{}*'.format(res.model))
-                else:
-                    rl.append(res.model)
-            return '{}({})'.format('ResMgr', ', '.join(rl))
-
-    def __iter__(self):
-        return self._resl.__iter__()
-
-    def __getitem__(self, key):
-        return self._resl[key]
-
-    def __getattr__(self, key):
-
-        if (key in Resolve._fields) and self._res:
-            return getattr(self._res, key)
-
-        object.__getattribute__(self, key)
-
-    def get(self, string):
-
-        for res in self:
-            if res.alias == string:
-                return res
-            if res.model == string:
-                return res
-        return None
+    for attr in string.split('.'):
+        keys = attr.split(':')[1:]
+        attr = attr.split(':')[0]
+        try:
+            obj = getattr(obj, attr)
+            for key in keys:
+                obj = getitem(obj, key)
+        except Exception:
+            return None
+    return obj
