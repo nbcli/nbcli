@@ -36,6 +36,9 @@ dcim.rear_port_templates:
 dcim.device_bay_templates:
 
 dcim.device_roles:
+  reply:
+    get:
+    - [role_id, id]
 
 dcim.platforms:
 

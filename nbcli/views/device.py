@@ -4,7 +4,6 @@ class DcimDevicesView(BaseView):
 
     def table_view(self):
 
-        self.add_col('ID', self.get_attr('id'))
         self.add_col('Name', self.get_attr('name'))
         self.add_col('Status', self.get_attr('status'))
         self.add_col('Tenant', self.get_attr('tenant'))

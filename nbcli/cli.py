@@ -32,7 +32,7 @@ class CLI():
                                                 metavar='<command>')
 
         for command in BaseSubCommand.__subclasses__():
-            logger.debug('Loading %s', command.__class__.__name__)
+            logger.debug('Loading %s', command.__module__)
             command(subparsers)
 
     def run(self, argv):

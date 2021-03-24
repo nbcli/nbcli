@@ -4,7 +4,6 @@ class IpamIpAddressesView(BaseView):
 
     def table_view(self):
 
-        self.add_col('ID', self.get_attr('id'))
         self.add_col('IP Address', self.get_attr('address'))
         self.add_col('Vrf', self.get_attr('vrf'))
         self.add_col('Status', self.get_attr('status'))

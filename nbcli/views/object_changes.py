@@ -4,7 +4,6 @@ class ExtrasObjectChangesView(BaseView):
 
     def table_view(self):
 
-        self.add_col('ID', self.get_attr('id'))
         self.add_col('Time', self.get_attr('time').split('.')[0].replace('T', ' '))
         self.add_col('User', self.get_attr('user.username'))
         self.add_col('Action', self.get_attr('action'))
