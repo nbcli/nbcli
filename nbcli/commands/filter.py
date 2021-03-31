@@ -10,7 +10,6 @@ class Filter():
                  netbox,
                  model,
                  args=list(),
-                 get=False,
                  count=False,
                  delete=False,
                  ud=list(),
@@ -20,9 +19,7 @@ class Filter():
 
         method = 'all'
 
-        if get:
-            method = 'get'
-        elif count:
+        if count:
             method = 'count'
         elif args:
             method = 'filter'
@@ -40,9 +37,9 @@ class Filter():
             if delete:
                 self.delete(result)
             elif ud:
-                ud_nba = NbArgs(netbox)
+                ud_nba = NbArgs(netbox, action='patch')
                 ud_nba.proc(*ud)
-                self.update(result, **ud_nba.kwargs)
+                self.update(result, ud_nba)
             elif de:
                 detail = de.pop(0)
                 de_nba = NbArgs(netbox)
@@ -69,32 +66,30 @@ class Filter():
                     dellist.append('{} Deleted!'.format(objrep))
                 else:
                     dellist.append('Error deleting {}'.format(objrep))
-            result = '\n'.join(dellist)
+            self.result = '\n'.join(dellist)
         else:
             self.result = 'Aborting!'
 
-    def update(self, result, **kwargs):
+    def update(self, result, nba):
         assert is_list_of_records(result)
         anslist = list()
         for obj in result:
             anslist.append('{} ({})'.format(str(obj), str(obj.id)))
         ans = input('Update {} with {}?\n* {}\n(yes) to update: '. \
                     format(obj.__class__.__name__,
-                           str(kwargs),
+                           str(nba.kwargs),
                            '\n* '.join(anslist)))
         if ans.lower() == 'yes':
             udlist = list()
             for obj in result:
                 objrep = '{} ({})'.format(str(obj), str(obj.id))
-                if obj.update(kwargs):
+                if obj.update(nba.kwargs):
                     udlist.append('{} Updated!'.format(objrep))
                 else:
                     udlist.append('Error updating {}'.format(objrep))
-            result = '\n'.join(udlist)
+            self.result = '\n'.join(udlist)
         else:
             self.result = 'Aborting!'
-
-        self.result = obj.update(kwargs)
 
     def detail(self, result, detail, *args, **kwargs):
         assert is_list_of_records(result)
@@ -120,11 +115,6 @@ class FilterSubCommand(BaseSubCommand):
                             nargs='*',
                             help='Argumnet(s) to filter results.')
 
-        self.parser.add_argument('-g', '--get',
-                                 action='store_true',
-                                 help='Get single result. '+ \
-                                      'Raise error if more are returned')
-    
         obj_meth = self.parser.add_mutually_exclusive_group()
     
         obj_meth.add_argument('-c', '--count',
@@ -150,7 +140,6 @@ class FilterSubCommand(BaseSubCommand):
         nbfilter = Filter(self.netbox,
                           self.args.model,
                           args=self.args.args or [],
-                          get=self.args.get,
                           count=self.args.count,
                           delete=self.args.delete,
                           ud=self.args.ud or [],
