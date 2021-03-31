@@ -42,7 +42,7 @@ class NbArgs():
             for resol in reversed(string.split('::')):
                 al = list()
                 for res in resol.split('~'):
-                    nba = NbArgs(self._nb)
+                    nba = NbArgs(self._nb, action=self.action)
                     nba.proc(*args)
                     nba.resolve(*res.split(':'), kwargs=nba.kwargs)
                     al += list(nba.kwargs.items())
