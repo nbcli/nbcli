@@ -10,7 +10,6 @@ class Filter():
                  netbox,
                  model,
                  args=list(),
-                 get=False,
                  count=False,
                  delete=False,
                  ud=list(),
@@ -20,9 +19,7 @@ class Filter():
 
         method = 'all'
 
-        if get:
-            method = 'get'
-        elif count:
+        if count:
             method = 'count'
         elif args:
             method = 'filter'
@@ -118,11 +115,6 @@ class FilterSubCommand(BaseSubCommand):
                             nargs='*',
                             help='Argumnet(s) to filter results.')
 
-        self.parser.add_argument('-g', '--get',
-                                 action='store_true',
-                                 help='Get single result. '+ \
-                                      'Raise error if more are returned')
-    
         obj_meth = self.parser.add_mutually_exclusive_group()
     
         obj_meth.add_argument('-c', '--count',
@@ -148,7 +140,6 @@ class FilterSubCommand(BaseSubCommand):
         nbfilter = Filter(self.netbox,
                           self.args.model,
                           args=self.args.args or [],
-                          get=self.args.get,
                           count=self.args.count,
                           delete=self.args.delete,
                           ud=self.args.ud or [],
