@@ -23,3 +23,4 @@ class DcimRUsView(BaseView):
         self.add_col('Device', self.get_attr('device'))
         self.add_col('Role', self.get_attr('device.device_role'))
         self.add_col('Type', self.get_attr('device.device_type'))
+        self.add_col('Serial', self.get_attr('device.serial'))
