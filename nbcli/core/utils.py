@@ -104,7 +104,6 @@ def view_name(obj):
 
 def rend_table(table):
     """Convert 2D array into printable string."""
-    assert len(table) > 1
     # get max width for each column
     colw = list()
     for col in range(len(table[0])):
