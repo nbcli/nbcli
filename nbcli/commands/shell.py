@@ -31,7 +31,9 @@ class Shell():
         self.banner += versions.format(*sys.version_info[:3],
                                        self.netbox.version,
                                        pynetbox.__version__)
+        self.banner += '\nRoot pynetbox API object: Netbox'
         self.banner += '\nAdditional utilities available:\n\t'
+        self.banner += 'lsmodels(), nbprint(), nblogger'
         self.build_ns() 
 
 
@@ -40,11 +42,19 @@ class Shell():
         self.ns = dict(Netbox=self.netbox,
                        nblogger=self.logger,
                        nbprint=nbprint)
-        self.banner += 'nbprint(), nblogger'
 
         for res in self.netbox.nbcli.rm:
             name = res.alias.title().replace('_', '')
             self.ns[name] = app_model_by_loc(self.netbox, res.model)
+
+
+        def lsmodels():
+
+            for k, v in self.ns.items():
+                if isinstance(v, Endpoint):
+                    print(k)
+
+        self.ns['lsmodels'] = lsmodels
 
 
     def python(self):
