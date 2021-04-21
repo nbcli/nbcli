@@ -26,6 +26,7 @@ theme:
   features:
     - navigation.tracking
     - navigation.tabs
+  custom_dir: 'overrides/'
 
 markdown_extensions:
   - admonition

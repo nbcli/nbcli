@@ -1,31 +1,14 @@
+---
+template: home.html
+title: "nbcli: NetBox Command-Line Client"
+---
+
 # nbcli: NetBox Command-Line Client
 
 Extensible command-line interface for [Netbox](https://netbox.readthedocs.io/en/stable/>)
 using the [pynetbox](https://pynetbox.readthedocs.io/en/latest/) module. 
 
 !!! warning "nbcli is still in development. Syntax of commands are subject to change."
-
-```
-usage: nbcli [-h] <command> ...
-
-Extensible CLI for Netbox
-
-optional arguments:
-  -h, --help  show this help message and exit
-
-Commands:
-  <command>
-    init      Initialize nbcli.
-    search    Search Netbox Objects
-    filter    Filter NetBox objects.
-    create    Create/Update objects with YAML file.
-    shell     Launch interactive shell
-
-General Options:
-  -h, --help           show this help message and exit
-  -v, --verbose        Show more logging messages
-  -q, --quiet          Show fewer logging messages
-```
 
 ## Notable Features
 
