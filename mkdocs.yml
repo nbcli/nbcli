@@ -1,0 +1,33 @@
+site_name: nbcli
+site_author: Eric Geldmacher
+
+repo_name: ericgeldmacher/nbcli
+repo_url: https://github.com/ericgeldmacher/nbcli
+edit_uri: ""
+
+nav:
+  - Home: index.md
+  - Commands:
+    - init: commands/init.md
+    - search: commands/nbsearch.md
+    - filter: commands/filter.md
+    - create: commands/create.md
+    - shell: commands/shell.md
+  - Extend:
+    - Views: extend/views.md
+    - Command: extend/commands.md
+  - Utilities: nbprint.md
+  - Testing: test-env.md
+
+theme:
+  name: material
+  logo: images/nbcli.svg
+  favicon: images/nbcli.svg
+  features:
+    - navigation.tracking
+    - navigation.tabs
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
