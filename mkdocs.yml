@@ -24,8 +24,10 @@ theme:
   logo: images/nbcli.svg
   favicon: images/nbcli.svg
   features:
+    - navigation.instant
     - navigation.tracking
     - navigation.tabs
+    - navigation.top
     - search.suggest
   custom_dir: 'overrides/'
 
