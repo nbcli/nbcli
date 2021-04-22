@@ -1,0 +1,29 @@
+name: build-docs
+on:
+  push:
+    branches:
+      - develop
+      - release
+  release:
+    types: [created]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install dependencies and set git user
+        run: |
+          pip3 install mkdocs-material mike
+          git config user.name $(git log -1 --pretty=format:'%an')
+          git config user.email $(git log -1 --pretty=format:'%ae')
+      - name: Build dev docs
+        if: contains(github.ref, 'develop')
+        run: mike deploy -pf dev
+      - name: Build latest release docs
+        if: ${{ startsWith(github.ref, 'refs/tags/v') || contains(github.ref, 'release') }}
+        run: |
+          RELEASE_VERSION=$(git describe --tag | cut -f1 -d"-")
+          mike deploy --pfu $RELEASE_VERSION latest

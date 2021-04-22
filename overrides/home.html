@@ -1,0 +1,47 @@
+{% extends "main.html" %}
+{% block site_nav %}{% endblock %}
+{% block content %}
+
+  <style>
+    .overview {
+      margin: 0 16px;
+      display: flex;
+      flex-flow: row wrap-reverse;
+      justify-content: space-between;
+    }
+
+    .demo {
+      width: 760px;
+    }
+
+    .content {
+      max-width: 380px;
+    }
+  </style>
+
+  <section class="container">
+    <div class="md-grid md-typeset">
+      <div class="overview">
+
+        <div class="content">
+          {{ page.content }}
+          <a
+            href="{{ page.next_page.url | url }}"
+            title="{{ page.next_page.title | e }}"
+            class="md-button md-button--primary"
+          >
+            Quick start
+          </a>
+        </div>
+
+        <div class="demo">
+          <script id="asciicast-348204" src="https://asciinema.org/a/348204.js"
+            async data-autoplay="true" data-loop="true"
+            data-cols="100" data-rows="30"></script>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
