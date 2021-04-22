@@ -1,32 +1,27 @@
-===========
-nbcli shell
-===========
+# nbcli shell
 
-.. contents::
-    :local:
+```
+nbcli shell -h
+usage: nbcli shell [-h] [-v] [-q] [-i] [-s {python,ipython}] [--skip] [script]
 
-::
+Launch Interactive Shell with pynetbox objects preloaded.
 
-    nbcli shell -h
-    usage: nbcli shell [-h] [-v] [-q] [-i] [-s {python,ipython}] [--skip] [script]
+positional arguments:
+  script                Script to run
 
-    Launch Interactive Shell with pynetbox objects preloaded.
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         Show more logging messages
+  -q, --quiet           Show fewer logging messages
+  -c cmd                Program passed in as string
+  -i                    inspect interactively after running script
+  -s {python,ipython}, --interactive-shell {python,ipython}
+                        Specifies interactive shell to use
+  --skip                Skip loading models.
 
-    positional arguments:
-      script                Script to run
+Run Shell enviornment.
 
-    optional arguments:
-      -h, --help            show this help message and exit
-      -v, --verbose         Show more logging messages
-      -q, --quiet           Show fewer logging messages
-      -c cmd                Program passed in as string
-      -i                    inspect interactively after running script
-      -s {python,ipython}, --interactive-shell {python,ipython}
-                            Specifies interactive shell to use
-      --skip                Skip loading models.
-
-    Run Shell enviornment.
-
-    Example usage:
-    $ nbcli shell -i myscript.py
-    $ nbcli shell -s python
+Example usage:
+$ nbcli shell -i myscript.py
+$ nbcli shell -s python
+```

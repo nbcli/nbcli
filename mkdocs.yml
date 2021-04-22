@@ -9,7 +9,7 @@ nav:
   - Home: index.md
   - Commands:
     - init: commands/init.md
-    - search: commands/nbsearch.md
+    - search: commands/search.md
     - filter: commands/filter.md
     - create: commands/create.md
     - shell: commands/shell.md
@@ -29,6 +29,7 @@ theme:
     - navigation.tabs
     - navigation.top
     - search.suggest
+    - toc.integrate
   custom_dir: 'overrides/'
 
 extra:
