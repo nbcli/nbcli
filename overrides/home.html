@@ -3,52 +3,41 @@
   {{ super() }}
 
   <style>
-
-    /* Application header should be static for the landing page */
-    .md-header {
-      position: initial;
+    .overview {
+      margin: 0 16px;
+      display: flex;
+      flex-flow: row wrap-reverse;
+      justify-content: space-between;
     }
 
-    /* Remove spacing, as we cannot hide it completely */
-    .md-main__inner {
-      margin: 0;
+    .demo {
+      width: 760px;
     }
 
-    /* Hide main content for now */
+    .content {
+      max-width: 380px;
+    }
+
     .md-content {
       display: none;
     }
 
-    /* Hide table of contents */
-    @media screen and (min-width: 60em) {
-      .md-sidebar--secondary {
-        display: none;
-      }
+    .md-sidebar {
+      display: none;
     }
 
-    /* Hide navigation */
-    @media screen and (min-width: 76.25em) {
-      .md-sidebar--primary {
-        display: none;
-      }
+    .md-nav {
+      display: none;
     }
+
   </style>
 
-  <!-- Hero for landing page -->
-  <section class="mdx-container">
+  <section class="container">
     <div class="md-grid md-typeset">
-      <div class="mdx-hero">
+      <div class="overview">
 
-        <!-- Hero image -->
-        <div class="mdx-hero__image">
-          <script id="asciicast-348204" src="https://asciinema.org/a/348204.js"
-            async data-autoplay="true" data-loop="true" data-rows="30"></script>
-        </div>
-
-        <!-- Hero content -->
-        <div class="mdx-hero__content">
+        <div class="content">
           {{ page.content }}
-          <p>{{ config.site_description }}. Set up in 5 minutes.</p>
           <a
             href="{{ page.next_page.url | url }}"
             title="{{ page.next_page.title | e }}"
@@ -57,10 +46,17 @@
             Quick start
           </a>
         </div>
+
+        <div class="demo">
+          <script id="asciicast-348204" src="https://asciinema.org/a/348204.js"
+            async data-autoplay="true" data-loop="true"
+            data-cols="100" data-rows="30"></script>
+        </div>
+
       </div>
     </div>
   </section>
 
 {% endblock %}
 {% block content %}{% endblock %}
-{% block footer %}{% endblock %}
+{% block footer %}{{ super() }}{% endblock %}

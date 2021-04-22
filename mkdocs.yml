@@ -1,4 +1,4 @@
-site_name: nbcli
+site_name: "nbcli: NetBox Command-Line Client"
 site_author: Eric Geldmacher
 
 repo_name: ericgeldmacher/nbcli
@@ -26,7 +26,11 @@ theme:
   features:
     - navigation.tracking
     - navigation.tabs
+    - search.suggest
   custom_dir: 'overrides/'
+
+plugins:
+  - search
 
 markdown_extensions:
   - admonition
