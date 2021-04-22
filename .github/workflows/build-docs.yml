@@ -26,4 +26,4 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/v') || contains(github.ref, 'release') }}
         run: |
           RELEASE_VERSION=$(git describe --tag | cut -f1 -d"-")
-          mike deploy --pfu $RELEASE_VERSION latest
+          mike deploy -pfu $RELEASE_VERSION latest
