@@ -29,6 +29,10 @@ theme:
     - search.suggest
   custom_dir: 'overrides/'
 
+extra:
+  version:
+    provider: mike
+
 plugins:
   - search
 

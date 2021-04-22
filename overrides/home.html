@@ -1,6 +1,6 @@
 {% extends "main.html" %}
-{% block tabs %}
-  {{ super() }}
+{% block site_nav %}{% endblock %}
+{% block content %}
 
   <style>
     .overview {
@@ -17,19 +17,6 @@
     .content {
       max-width: 380px;
     }
-
-    .md-content {
-      display: none;
-    }
-
-    .md-sidebar {
-      display: none;
-    }
-
-    .md-nav {
-      display: none;
-    }
-
   </style>
 
   <section class="container">
@@ -58,5 +45,3 @@
   </section>
 
 {% endblock %}
-{% block content %}{% endblock %}
-{% block footer %}{{ super() }}{% endblock %}
