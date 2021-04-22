@@ -8,7 +8,7 @@ using the [pynetbox](https://pynetbox.readthedocs.io/en/latest/) module.
 
 ## Notable Features
 
-- [Search](commands/nbsearch) Netbox instance
+- [Search](commands/search) Netbox instance
 
 - [Filter](commands/filter) Netbox objects
 
