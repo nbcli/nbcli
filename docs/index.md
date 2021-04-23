@@ -3,7 +3,7 @@ template: home.html
 title: "nbcli: NetBox Command-Line Client"
 ---
 
-Extensible command-line interface for [Netbox](https://netbox.readthedocs.io/en/stable/>)
+Extensible command-line interface for [Netbox](https://netbox.readthedocs.io/en/stable/)
 using the [pynetbox](https://pynetbox.readthedocs.io/en/latest/) module. 
 
 ## Notable Features

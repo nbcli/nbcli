@@ -7,6 +7,7 @@ edit_uri: ""
 
 nav:
   - Home: index.md
+  - Get Started: quick-start.md
   - Commands:
     - init: commands/init.md
     - search: commands/search.md
@@ -16,7 +17,10 @@ nav:
   - Extend:
     - Views: extend/views.md
     - Command: extend/commands.md
-  - Utilities: nbprint.md
+  - Reference:
+    - Environment Variables: reference/envars.md
+    - Create Examples: reference/create-examples.md
+    - nbprint(): reference/nbprint.md
   - Testing: test-env.md
 
 theme:

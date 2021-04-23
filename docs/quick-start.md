@@ -1,20 +1,11 @@
-# nbcli: NetBox Command-line Client
-
-Extensible command-line interface for [Netbox](https://netbox.readthedocs.io/en/stable/) 
-using the [pynetbox](https://pynetbox.readthedocs.io/en/latest/) module. 
-
-***nbcli is still in development!*** 
-***Syntax of commands are subject to change!***
-
-<script id="asciicast-348204" src="https://asciinema.org/a/348204.js"
-    async data-autoplay="true" data-loop="true" data-rows="30"></script>
-
-## Quickstart
-
-The full nbcli documentation can be found [here](https://ericgeldmacher.github.io/nbcli/).
+## Install
 
 ```
 $ pip install nbcli
+```
+## Configure
+
+```
 $ nbcli init
 Edit pynetbox 'url' and 'token' entries in user_config.yml:
         ~/.nbcli/user_config.yml
@@ -35,7 +26,7 @@ requests:
   verify: false
 ```
 
-Run a search of Netbox objects and show a table view of results.
+## Search
 
 ```
 $ nbcli search server
@@ -48,3 +39,11 @@ ID  Name      Status  Tenant  Site    Rack     Role    Type   IP Address
 3   server03  Active  -       SING 1  rack-03  server  Other  -
 
 ```
+
+## Filter
+
+
+## Create
+
+
+## Shell
