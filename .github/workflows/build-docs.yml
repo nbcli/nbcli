@@ -21,9 +21,7 @@ jobs:
           git config user.email $(git log -1 --pretty=format:'%ae')
       - name: Build dev docs
         if: contains(github.ref, 'develop')
-        run: mike deploy -pf dev
+        run: mike deploy -p dev
       - name: Build latest release docs
-        if: ${{ startsWith(github.ref, 'refs/tags/v') || contains(github.ref, 'release') }}
-        run: |
-          RELEASE_VERSION=$(git describe --tag | cut -f1 -d"-")
-          mike deploy -pfu $RELEASE_VERSION latest
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: mike deploy -pu ${GITHUB_REF#refs/tags/} latest
