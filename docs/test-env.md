@@ -80,7 +80,7 @@ $ python3 wait_for_service.py
 
 Bring down test Netbox service and deactivate virtual environment.
 
-    ```
-    $ docker-compose down -v
-    $ deactivate
-    ```
+```
+$ docker-compose down -v
+$ deactivate
+```
