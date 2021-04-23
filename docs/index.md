@@ -16,6 +16,6 @@ using the [pynetbox](https://pynetbox.readthedocs.io/en/latest/) module.
 
 - [Shell](commands/shell) with preloaded pynetbox endpoints
 
-- Customizable table/detail views
+- Custom [Views](extend/views)
 
-- Extensible by adding custom commands
+- Custom [Commands](extend/commands)
