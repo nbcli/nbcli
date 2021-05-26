@@ -11,8 +11,8 @@ from nbcli.views.tools import nbprint
 class SearchSubCommand(BaseSubCommand):
     """Search Netbox objects with the given searchterm.
 
-    The List of search models can be modified in:
-    $HOME/$CONF_DIR/config.py
+    The List of search objects can be modified in:
+    $CONF_DIR/user_config.yml
     """
 
     name = 'search'
@@ -20,10 +20,10 @@ class SearchSubCommand(BaseSubCommand):
 
     def setup(self):
         """Add parser arguments to search sub command."""
-        self.parser.add_argument('app_model',
+        self.parser.add_argument('obj_type',
                                  type=str,
                                  nargs='?',
-                                 help='Model location to search (app.model)')
+                                 help='Object type to search')
 
         self.parser.add_argument('searchterm',
                                  help='Search term')
@@ -33,17 +33,17 @@ class SearchSubCommand(BaseSubCommand):
 
         Usage Examples:
 
-        - Search all search modelss for 'server1':
+        - Search all object types for 'server1':
           $ nbcli search server1
 
-        - Search the dcim.interfaces model for 'eth 1':
+        - Search the interface object type for 'eth 1':
           $ nbcli search interface 'eth 1'
         """
         if hasattr(self.netbox.nbcli.conf, 'nbcli') and \
-                ('search_models' in self.netbox.nbcli.conf.nbcli.keys()):
-            self.search_models = self.netbox.nbcli.conf.nbcli['search_models']
+                ('search_objects' in self.netbox.nbcli.conf.nbcli.keys()):
+            self.search_objects = self.netbox.nbcli.conf.nbcli['search_objects']
         else:
-            self.search_models = ['provider',
+            self.search_objects = ['provider',
                                   'circuit',
                                   'site',
                                   'rack',
@@ -81,26 +81,26 @@ class SearchSubCommand(BaseSubCommand):
 
         self.nbprint = nbprint
 
-        if self.args.app_model:
-            modellist = [self.args.app_model]
+        if self.args.obj_type:
+            modellist = [self.args.obj_type]
         else:
-            modellist = self.search_models
+            modellist = self.search_objects
 
         result_count = 0
 
         print('')
-        for app_model in modellist:
-            model = app_model_by_loc(self.netbox, app_model)
+        for obj_type in modellist:
+            model = app_model_by_loc(self.netbox, obj_type)
             result = search(model)
             full_count = model.count(self.args.searchterm)
             if len(result) > 0:
                 result_count += 1
-                print('{}\n{}'.format(app_model.title(), '=' * len(app_model)))
+                print('{}\n{}'.format(obj_type.title(), '=' * len(obj_type)))
                 self.nbprint(result)
                 if len(result) < full_count:
                     print('*** See all {} results: '.format(full_count) +
                           "'$ nbcli filter {} {}' ***".
-                          format(app_model, self.args.searchterm))
+                          format(obj_type, self.args.searchterm))
                 print('')
         if result_count == 0:
             self.logger.warning('No results found')
