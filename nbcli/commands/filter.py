@@ -100,6 +100,11 @@ class Filter():
 
 
 class FilterSubCommand(BaseSubCommand):
+    """Filter Netbox objects by searchterm and object properties.
+    
+    Optionally update and delete objects returned by the filter.
+    Control output view and listed columns.
+    """
 
     name = 'filter'
     parser_kwargs = dict(help='Filter NetBox objects.')
@@ -123,19 +128,39 @@ class FilterSubCommand(BaseSubCommand):
 
         obj_meth.add_argument('-D', '--delete',
                               action='store_true',
-                              help='Delete Object(s) retrieved by get method')
+                              help='Delete Object(s) returned by filter [WIP]')
     
         obj_meth.add_argument('--ud', '--update',
                               nargs='*',
-                              help='Update object(s) with given kwargs')
+                              help='Update object(s) returned by filter '+ \
+                                   'with given kwargs [WIP]')
     
         self.parser.add_argument('--de', '--detail-endpoint',
                             nargs='*',
                             help='List results from detail endpoint '+ \
-                                 'With optional kwargs')
+                                 'With optional kwargs [WIP]')
 
 
     def run(self):
+        """Filter Netbox objects by a searchterm and object properties.
+
+        Usage Examples:
+
+        - Filter IP Addresses with searchterm '192.168.1.1':
+          $ nbcli filter address 192.168.1.1
+
+        - Filter devices by serial number using keyword arguments:
+          $ nbcli filter device serial=123456
+
+        - Filter devices types by manufacturer using auto-resolve arguments: 
+          $ nbcli filter device_type manufacturer:ACME
+
+        - Update tenant on devices returned by filter:
+          $ nbcli filter device name=server1 -ud tenant:tenant2
+
+        - Delete IP addresses returned by filter:
+          $ nbcli filter address 192.168.1.1 -D
+        """
     
         nbfilter = Filter(self.netbox,
                           self.args.model,

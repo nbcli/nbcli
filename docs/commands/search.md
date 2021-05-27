@@ -29,12 +29,18 @@ Usage Examples:
   $ nbcli search interface 'eth 1'
 ```
 
-The search command is designed to emulate the main search bar that can be found
+The `search` command is designed to emulate the main search bar that can be found
 at the top of the home page of the Netbox web interface.
 
 By default it will search through a predefined list of object types and return
 up to 15 results for each object type. If more then 15 results are found, it
 will display the filter command to show all the results.
+
+If your search term needs to contain a space, make sure to wrap it in quotes.
+
+```
+nbcli search 'web server'
+```
 
 If you only want to search one object type you can specify if before the search
 term. `nbcli search [obj_type] searchterm`.
