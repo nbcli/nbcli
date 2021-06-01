@@ -10,6 +10,7 @@ nav:
   - Get Started: quick-start.md
   - Commands:
     - init: commands/init.md
+    - models: commands/models.md
     - search: commands/search.md
     - filter: commands/filter.md
     - create: commands/create.md

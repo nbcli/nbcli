@@ -151,7 +151,7 @@ nbcli filter device rack:1.1:1.2
     ```
     nbcli filter device rack_id=1
     ```
-    For most object types value after the `:`, is applyed to the key `name`.  
+    For most object types, the  value after the `:`, is applyed to the key `name`.  
     You can override this behavior by inserting a keyword argument after the `:`  
     The following command should return all devices in racks with the status `reserved`:
     ```
@@ -160,9 +160,36 @@ nbcli filter device rack:1.1:1.2
 
 ## Compound-resolve arguments [WIP]
 
+Any argument containing a `::` will be considered a compound-resolve argument
+in the form of `object::object:name`.
 
-## Updating and Deleting [WIP]
+Compound-resolve arguments take the concept of auto-resolve further, by allowing
+you to apply an auto-resolve to an auto-resolve. This allows you to put more
+precise constraints on your auto-resolve arguments.
 
+For instance you can list interfaces matching the search term 'eth' only on
+devices in rack 1.1.
+
+```
+nbcli filter interface eth device::rack:1.1
+```
+
+
+## Modifying results
+
+### Updating
+
+### Deleting
+
+
+## Detail Endpoint
+
+pynetbox [DetailEndpoint](https://pynetbox.readthedocs.io/en/latest/endpoint.html#pynetbox.core.endpoint.DetailEndpoint)
+objects can be access with the `--de` flag.
+
+```
+nbcli filter prefix 192.168.1.0/24 --de available_ips
+```
 
 ## Controlling output
 
@@ -181,11 +208,37 @@ command are displayed.
 
 ### --view
 
+* table  
+
+    Displays results in a tabular format. (default)
+
+* detail  
+
+    Display more detailed info for results.
+    (Poorly implemented, will likely be removed.)
+
+* json  
+
+    Display results as json string. Output should be similar (but may not be
+    exactly the same) as the contents from the `results` field when accessing the
+    Netbox API directly.
+
 
 ### ---view-model
+
+Override the default view model for the given object types with one defined by
+a [User Custom View](../extend/views.md) or extention, by specifying it's Class
+name.
+
+```
+nbcli filter device rack:1.1 --view-model MyDevicesView
+```
 
 
 ### --cols
 
 
 ### --nh, --no-header
+
+Allows you to remove the header row in the table view.
+(Useful for when piping to another shell command.)
