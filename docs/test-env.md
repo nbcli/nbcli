@@ -69,6 +69,7 @@ and wait for service to be ready
 
 ```
 $ cd netbox-docker
+$ python3 create_initializers.py
 $ docker-compose pull
 $ docker-compose up -d
 $ python3 wait_for_service.py
