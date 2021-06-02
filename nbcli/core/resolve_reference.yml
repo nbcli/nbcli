@@ -9,7 +9,7 @@ dcim.regions:
 
 dcim.sites:
 
-dcim.rack_groups:
+dcim.locations:
 
 dcim.rack_roles:
 
