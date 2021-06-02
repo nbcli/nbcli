@@ -1,6 +1,6 @@
 from nbcli.views.tools import BaseView
 
-class DcimRackGroupsView(BaseView):
+class DcimLocationsView(BaseView):
 
     def table_view(self):
 
