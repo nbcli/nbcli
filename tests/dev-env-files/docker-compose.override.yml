@@ -3,6 +3,5 @@ services:
   netbox:
     volumes:
     - ./nbcli_initializers:/opt/netbox/initializers:z,ro
-  nginx:
     ports:
     - 8080:8080
