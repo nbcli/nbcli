@@ -9,7 +9,7 @@ requests:
 #  verify: false
 
 nbcli:
-#  search_models:
+#  search_objects:
 #    - provider
 #    - circuit
 #    - site

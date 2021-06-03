@@ -6,8 +6,7 @@ using the [pynetbox](https://pynetbox.readthedocs.io/en/latest/) module.
 ***nbcli is still in development!*** 
 ***Syntax of commands are subject to change!***
 
-<script id="asciicast-348204" src="https://asciinema.org/a/348204.js"
-    async data-autoplay="true" data-loop="true" data-rows="30"></script>
+[![asciicast](https://asciinema.org/a/348204.svg)](https://asciinema.org/a/348204)
 
 ## Quickstart
 
