@@ -67,7 +67,7 @@ nbcli:
 #    - circuit
 #    - site
 #    - rack
-#    - rack_group
+#    - location
 #    - device_type
 #    - device
 #    - virtual_chassis
