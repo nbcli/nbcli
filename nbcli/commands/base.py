@@ -34,7 +34,7 @@ def get_view_parser():
                              type=str,
                              help='View model to use')
     view_parser.add_argument('--cols', nargs='*',
-                             help="Custome columns for table output.")
+                             help="Custom columns for table output.")
     view_parser.add_argument('--nh', '--no-header',
                              action='store_true',
                              help='Disable header row in results')

@@ -25,7 +25,7 @@ optional arguments:
   --view-model VIEW_MODEL
                         View model to use
   --cols [COLS [COLS ...]]
-                        Custome columns for table output.
+                        Custom columns for table output.
   --nh, --no-header     Disable header row in results
   -c, --count           Return the count of objects in filter.
   -D, --delete          Delete Object(s) returned by filter [WIP]
@@ -177,10 +177,37 @@ nbcli filter interface eth device::rack:1.1
 
 ## Modifying results
 
+Results from the filter can be updated or deleted. You will always be prompted
+to confirm when updating or deleting.
+
 ### Updating
+
+Update objects returned by filter.
+Values can be updated with keyword arguments and/or auto-resolve arguments.
+
+```
+$ nbcli filter rack tenant:ENCOM --ud status=reserved 'site:NY DC-1'
+Update Racks with {'status': 'reserved', 'site': 2}?
+* 1.1 (1)
+* 1.2 (2)
+(yes) to update: yes
+1.1 (1) Updated!
+1.2 (2) Updated!
+```
 
 ### Deleting
 
+Delete objects returned by filter.
+
+```
+$ nbcli filter device db -D
+Delete Devices?
+* db-1 (5)
+* db-2 (6)
+(yes) to delete: yes
+db-1 (5) Deleted!
+db-2 (6) Deleted!
+```
 
 ## Detail Endpoint
 
@@ -202,7 +229,7 @@ command are displayed.
   --view-model VIEW_MODEL
                         View model to use
   --cols [COLS [COLS ...]]
-                        Custome columns for table output.
+                        Custom columns for table output.
   --nh, --no-header     Disable header row in results
 ```
 
@@ -234,9 +261,68 @@ name.
 nbcli filter device rack:1.1 --view-model MyDevicesView
 ```
 
-
 ### --cols
 
+Specify object attributes to display in table view.
+
+```
+$ nbcli filter device tenant:ENCOM --cols name rack position device_type
+name         rack  position  device_type
+chassis-1    1.2   1         A-2U-C
+compute-1    1.2   -         A-BL-S
+compute-2    1.2   -         A-BL-S
+compute-3    1.2   -         A-BL-S
+compute-4    1.2   -         A-BL-S
+web-1        1.1   2         A-1U-S
+web-2        1.1   3         A-1U-S
+web-3        1.1   4         A-1U-S
+web-proxy-1  1.1   1         A-1U-S
+```
+
+!!! tip
+    Looking at the json view will give you some insite on what attribues are
+    available for a given object type.
+    ```
+    $ nbcli filter device compute-1 --view json | jq
+    ```
+    or
+    ```
+    $ nbcli filter device compute-1 --view json | python3 -m json.tool
+    ```
+
+If the attribute is an instance of another object type, you can `drill into`
+that object to grab it's attributes
+
+```
+$ nbcli filter device tenant:ENCOM --cols name rack position parent_device parent_device.position parent_device.device_bay
+name         rack  position  parent_device  parent_device.position  parent_device.device_bay
+chassis-1    1.2   1         -              -                       -
+compute-1    1.2   -         chassis-1      1                       1
+compute-2    1.2   -         chassis-1      1                       2
+compute-3    1.2   -         chassis-1      1                       3
+compute-4    1.2   -         chassis-1      1                       4
+web-1        1.1   2         -              -                       -
+web-2        1.1   3         -              -                       -
+web-3        1.1   4         -              -                       -
+web-proxy-1  1.1   1         -              -                       -
+```
+
+`--cols` should fail gracefully, so if the attribute does not exist, or is
+null, or and empty string the value will be displayed as an `-`
+
+```
+$ nbcli filter device tenant:ENCOM --cols name bad_attr bad_attr.child_attr
+name         bad_attr  bad_attr.child_attr
+chassis-1    -         -
+compute-1    -         -
+compute-2    -         -
+compute-3    -         -
+compute-4    -         -
+web-1        -         -
+web-2        -         -
+web-3        -         -
+web-proxy-1  -         -
+```
 
 ### --nh, --no-header
 
