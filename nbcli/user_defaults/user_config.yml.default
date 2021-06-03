@@ -9,12 +9,12 @@ requests:
 #  verify: false
 
 nbcli:
-#  search_models:
+#  search_objects:
 #    - provider
 #    - circuit
 #    - site
 #    - rack
-#    - rack_group
+#    - location
 #    - device_type
 #    - device
 #    - virtual_chassis

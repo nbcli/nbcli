@@ -1,5 +1,4 @@
 {% extends "main.html" %}
-{% block site_nav %}{% endblock %}
 {% block content %}
 
   <style>
@@ -17,6 +16,19 @@
     .content {
       max-width: 380px;
     }
+
+    @media screen and (min-width: 60em) {
+      .md-sidebar--secondary {
+        display: none;
+      }
+    }
+
+    @media screen and (min-width: 76.25em) {
+      .md-sidebar--primary {
+        display: none;
+      }
+    }
+
   </style>
 
   <section class="container">
@@ -30,7 +42,7 @@
             title="{{ page.next_page.title | e }}"
             class="md-button md-button--primary"
           >
-            Quick start
+            Get Started
           </a>
         </div>
 

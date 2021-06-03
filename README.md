@@ -1,11 +1,10 @@
-# nbcli NetBox Command-line Client
+# nbcli: NetBox Command-line Client
 
 Extensible command-line interface for [Netbox](https://netbox.readthedocs.io/en/stable/) 
 using the [pynetbox](https://pynetbox.readthedocs.io/en/latest/) module. 
 
 ***nbcli is still in development!*** 
 ***Syntax of commands are subject to change!***
-
 
 [![asciicast](https://asciinema.org/a/348204.svg)](https://asciinema.org/a/348204)
 
