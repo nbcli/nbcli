@@ -8,23 +8,26 @@ class Upsert():
 
     def __init__(self, netbox, logger, model, data,
                  res=None,
-                 dr=False,      # dry run
-                 ud=False,      # update only
+                 #dr=False,      # dry run
+                 #ud=False,      # update only
                  parent=None):
 
         assert (parent == None) or isinstance(parent, Upsert)
 
         if isinstance(data, list):
             for d in data:
-                Upsert(netbox, logger, model, d, dr=dr, ud=ud, parent=parent)
+                Upsert(netbox, logger, model, d,
+                       #dr=dr,
+                       #ud=ud,
+                       parent=parent)
             return
 
         self.netbox = netbox
         self.logger = logger
         self.model = model
         self.data = data
-        self.dr = dr
-        self.ud = ud
+        #self.dr = dr
+        #self.ud = ud
         self.parent = parent
 
         self.res = res or netbox.nbcli.rm.get(self.model.split(':')[0])
@@ -117,8 +120,8 @@ class Upsert():
 
             Upsert(self.netbox, self.logger, model, data,
                    res=res,
-                   dr=self.dr,
-                   ud=self.ud,
+                   #dr=self.dr,
+                   #ud=self.ud,
                    parent=self)
 
 
@@ -134,19 +137,20 @@ class CreateSubCommand(BaseSubCommand):
         self.parser.add_argument('file',
                                  type=str,
                                  help='YAML file.')
-        self.parser.add_argument('--dr', '--dry-run',
-                                 action='store_true',
-                                 help='Dry run.')
-        self.parser.add_argument('-u', '--update-only',
-                                 action='store_true',
-                                 help='Do not create object not found '+ \
-                                      'with the lookup key schema.')
+        #self.parser.add_argument('--dr', '--dry-run',
+        #                         action='store_true',
+        #                         help='Dry run.')
+        #self.parser.add_argument('-u', '--update-only',
+        #                         action='store_true',
+        #                         help='Do not create object not found '+ \
+        #                              'with the lookup key schema.')
 
     def run(self):
         """Run command.
 
-        See documentation for YAML file reference and examples.
-        https://nbcli.readthedocs.io/en/release/create.html
+        See documentation and reference examples.
+        https://ericgeldmacher.github.io/nbcli/latest/commands/create/
+        https://ericgeldmacher.github.io/nbcli/latest/reference/create-examples/
 
         Usage Examples:
 
@@ -161,6 +165,6 @@ class CreateSubCommand(BaseSubCommand):
             for key, value in data.items():
                 assert self.netbox.nbcli.rm.get(key.split(':')[0])
                 Upsert(self.netbox, self.logger, key, value,
-                       dr=self.args.dr,
-                       ud=self.args.update_only,
+                       #dr=self.args.dr,
+                       #ud=self.args.update_only,
                        parent=None)
