@@ -2,4 +2,5 @@ __pycache__
 venv
 *egg-info
 netbox-docker
-/docs/_build/
+.nbcli_testing/
+site/

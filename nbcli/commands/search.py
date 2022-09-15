@@ -2,7 +2,7 @@
 
 
 from pynetbox.core.query import Request
-from pynetbox.core.endpoint import response_loader
+from pynetbox.core.response import Record
 from nbcli.commands.base import BaseSubCommand
 from nbcli.core.utils import app_model_by_loc
 from nbcli.views.tools import nbprint
@@ -63,19 +63,16 @@ class SearchSubCommand(BaseSubCommand):
                                   'cluster',
                                   'virtual_machine']
 
-        def search(ep):
-            req = Request(filters=dict(q=self.args.searchterm),
-                          base=ep.url,
-                          token=ep.token,
-                          session_key=ep.session_key,
-                          http_session=ep.api.http_session)
 
-            rep = req._make_call(add_params=dict(limit=15))
+        def search(ep):
+            record_set = ep.filter(self.args.searchterm)
+
+            rep = record_set.request._make_call(add_params=dict(limit=15))
 
             result = list()
 
             if rep.get('results'):
-                result = response_loader(rep['results'], ep.return_obj, ep)
+                result = [Record(r, ep.api, ep) for r in rep['results']]
 
             return result
 

@@ -1,4 +1,4 @@
-from pynetbox.core.response import Record
+from pynetbox.core.response import RecordSet
 from nbcli.commands.base import BaseSubCommand
 from nbcli.commands.tools import NbArgs
 from nbcli.core.utils import app_model_by_loc, is_list_of_records
@@ -30,8 +30,8 @@ class Filter():
         nba.proc(*args)
         result = self.method(*nba.args, **nba.kwargs)
 
-        if isinstance(result, Record):
-            result = [result]
+        if isinstance(result, RecordSet):
+            result = list(result)
 
         if is_list_of_records(result):
             if delete:

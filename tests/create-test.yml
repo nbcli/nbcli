@@ -46,18 +46,20 @@ site:
 
 manufacturer:
 
-- name: Cisco
-  slug: cisco
+- name: ACME
+  slug: acme
 
-- name: Dell
-  slug: dell
+- name: BnL
+  slug: bnl
 
-- name: Hitachi
-  slug: hitachi
+- name: Stark
+  slug: stark
 
-- name: IBM
-  slug: ibm
+- name: Cyberdyne
+  slug: cyberdyne
 
+- name: InGen
+  slug: ingen
 ---
 # Device Types
 
