@@ -10,6 +10,7 @@ class Filter():
     def __init__(self,
                  netbox,
                  model,
+                 logger,
                  args=list(),
                  count=False,
                  delete=False,
@@ -29,6 +30,7 @@ class Filter():
 
         nba = NbArgs(netbox)
         nba.proc(*args)
+        logger.debug(str(nba))
         result = self.method(*nba.args, **nba.kwargs)
 
         if isinstance(result, RecordSet):
@@ -115,7 +117,7 @@ class FilterSubCommand(BaseSubCommand):
     def setup(self):
     
         self.parser.add_argument('model',
-                            help="NetBox model")
+                            help="NetBox model.")
     
         self.parser.add_argument('args',
                             nargs='*',
@@ -129,17 +131,20 @@ class FilterSubCommand(BaseSubCommand):
 
         obj_meth.add_argument('-D', '--delete',
                               action='store_true',
-                              help='Delete Object(s) returned by filter [WIP]')
+                              help='Delete Object(s) returned by filter. [WIP]')
     
         obj_meth.add_argument('--ud', '--update',
                               nargs='*',
                               help='Update object(s) returned by filter '+ \
-                                   'with given kwargs [WIP]')
+                                   'with given kwargs. [WIP]')
     
         self.parser.add_argument('--de', '--detail-endpoint',
                             nargs='*',
                             help='List results from detail endpoint '+ \
-                                 'With optional kwargs [WIP]')
+                                 'With optional kwargs. [WIP]')
+
+        self.parser.add_argument('--pre', '--stdin-prefix',
+                            help='Prefix to add to stdin args.')
 
 
     def run(self):
@@ -164,10 +169,14 @@ class FilterSubCommand(BaseSubCommand):
         """
 
         if not stdin.isatty():
-            self.args.args = stdin.read().split() + self.args.args
+            stdin_args = stdin.read().split()
+            if self.args.pre:
+                stdin_args = ['{}{}'.format(self.args.pre, i) for i in stdin_args]
+            self.args.args = stdin_args + self.args.args
     
         nbfilter = Filter(self.netbox,
                           self.args.model,
+                          self.logger,
                           args=self.args.args or [],
                           count=self.args.count,
                           delete=self.args.delete,
