@@ -1,3 +1,4 @@
+from sys import stdin
 from pynetbox.core.response import RecordSet
 from nbcli.commands.base import BaseSubCommand
 from nbcli.commands.tools import NbArgs
@@ -161,6 +162,9 @@ class FilterSubCommand(BaseSubCommand):
         - Delete IP addresses returned by filter:
           $ nbcli filter address 192.168.1.1 -D
         """
+
+        if not stdin.isatty():
+            self.args.args = stdin.read().split() + self.args.args
     
         nbfilter = Filter(self.netbox,
                           self.args.model,
