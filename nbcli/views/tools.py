@@ -2,7 +2,7 @@
 
 import json
 from collections import OrderedDict
-from pynetbox.core.response import Record
+from pynetbox.core.response import Record, RecordSet
 from nbcli.core.utils import app_model_loc, is_list_of_records, view_name, rend_table
 
 
@@ -116,6 +116,8 @@ class Formatter():
                  cols=list(),
                  disable_header=False):
         """Initialize Display instance."""
+        if isinstance(result, RecordSet):
+            result = list(result)
         self.result = result
         self.view = view
         self.view_model = view_model
