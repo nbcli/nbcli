@@ -9,6 +9,7 @@ requests:
 #  verify: false
 
 nbcli:
+  filter_limit: 50
 #  search_objects:
 #    - provider
 #    - circuit

@@ -1,8 +1,8 @@
 from sys import stdin
-from pynetbox.core.response import RecordSet
+from pynetbox.core.response import Record, RecordSet
 from nbcli.commands.base import BaseSubCommand
 from nbcli.commands.tools import NbArgs
-from nbcli.core.utils import app_model_by_loc, is_list_of_records
+from nbcli.core.utils import app_model_by_loc, is_list_of_records, rs_limit
 
 
 class Filter():
@@ -13,28 +13,33 @@ class Filter():
                  logger,
                  args=list(),
                  count=False,
+                 list_all=False,
                  delete=False,
                  ud=list(),
                  de=list()):
 
         self.model = app_model_by_loc(netbox, model)
 
-        method = 'all'
-
-        if count:
-            method = 'count'
-        elif args:
-            method = 'filter'
-
-        self.method = getattr(self.model, method)
-
+ 
         nba = NbArgs(netbox)
         nba.proc(*args)
         logger.debug(str(nba))
-        result = self.method(*nba.args, **nba.kwargs)
+
+        full_count = self.model.count(*nba.args, **nba.kwargs)
+        filter_limit = netbox.nbcli.conf.nbcli.get('filter_limit', 50)
+
+        if count:
+            result = full_count
+        else:
+            result = self.model.filter(*nba.args, **nba.kwargs)
 
         if isinstance(result, RecordSet):
-            result = list(result)
+            if not list_all and (full_count > filter_limit):
+                result = rs_limit(result,  filter_limit)
+                logger.warning(f'Returning {filter_limit} of {full_count} results.')
+                logger.warning(f'use "--all" to return all {full_count} results.')
+            else:
+                result = list(result)
 
         if is_list_of_records(result):
             if delete:
@@ -129,6 +134,10 @@ class FilterSubCommand(BaseSubCommand):
                               action='store_true',
                               help='Return the count of objects in filter.')
 
+        obj_meth.add_argument('--all',
+                              action='store_true',
+                              help='List all results.')
+
         obj_meth.add_argument('-D', '--delete',
                               action='store_true',
                               help='Delete Object(s) returned by filter. [WIP]')
@@ -179,6 +188,7 @@ class FilterSubCommand(BaseSubCommand):
                           self.logger,
                           args=self.args.args or [],
                           count=self.args.count,
+                          list_all=self.args.all,
                           delete=self.args.delete,
                           ud=self.args.ud or [],
                           de=self.args.de or [])

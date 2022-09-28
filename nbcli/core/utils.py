@@ -6,7 +6,7 @@ import logging
 import os
 from pathlib import Path
 from pynetbox.core.endpoint import Endpoint
-from pynetbox.core.response import Record
+from pynetbox.core.response import Record, RecordSet
 
 
 Resolve = namedtuple('Resolve', ['model', 'alias', 'lookup', 'reply'])
@@ -191,6 +191,21 @@ def is_list_of_records(result):
 
     else:
         return False
+
+def rs_limit(record_set, result_limit):
+    """Limit the number of results in a RecordSet."""
+    assert(isinstance(record_set, RecordSet))
+
+    ep = record_set.endpoint
+
+    rep = record_set.request._make_call(add_params=dict(limit=result_limit))
+
+    result = list()
+
+    if rep.get('results'):
+        result = [Record(r, ep.api, ep) for r in rep['results']]
+
+    return result
 
 
 def getter(obj, string):

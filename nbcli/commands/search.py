@@ -4,7 +4,7 @@
 from pynetbox.core.query import Request
 from pynetbox.core.response import Record
 from nbcli.commands.base import BaseSubCommand
-from nbcli.core.utils import app_model_by_loc
+from nbcli.core.utils import app_model_by_loc, rs_limit
 from nbcli.views.tools import nbprint
 
 
@@ -63,19 +63,6 @@ class SearchSubCommand(BaseSubCommand):
                                   'cluster',
                                   'virtual_machine']
 
-
-        def search(ep):
-            record_set = ep.filter(self.args.searchterm)
-
-            rep = record_set.request._make_call(add_params=dict(limit=15))
-
-            result = list()
-
-            if rep.get('results'):
-                result = [Record(r, ep.api, ep) for r in rep['results']]
-
-            return result
-
         self.nbprint = nbprint
 
         if self.args.obj_type:
@@ -88,7 +75,7 @@ class SearchSubCommand(BaseSubCommand):
         print('')
         for obj_type in modellist:
             model = app_model_by_loc(self.netbox, obj_type)
-            result = search(model)
+            result = rs_limit(model.filter(self.args.searchterm), 15)
             full_count = model.count(self.args.searchterm)
             if len(result) > 0:
                 result_count += 1
@@ -96,7 +83,7 @@ class SearchSubCommand(BaseSubCommand):
                 self.nbprint(result)
                 if len(result) < full_count:
                     print('*** See all {} results: '.format(full_count) +
-                          "'$ nbcli filter {} {}' ***".
+                          "'$ nbcli filter {} {} --all' ***".
                           format(obj_type, self.args.searchterm))
                 print('')
         if result_count == 0:
