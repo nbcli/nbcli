@@ -28,6 +28,10 @@ class Filter():
         full_count = self.model.count(*nba.args, **nba.kwargs)
         filter_limit = netbox.nbcli.conf.nbcli.get('filter_limit', 50)
 
+        if filter_limit <= 0:
+            filter_limit = 0
+            list_all = True
+
         if count:
             result = full_count
         else:

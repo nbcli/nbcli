@@ -9,7 +9,10 @@ requests:
 #  verify: false
 
 nbcli:
+
+  # Limit results returned from filter command. Set to 0 to disable.
   filter_limit: 50
+
 #  search_objects:
 #    - provider
 #    - circuit
