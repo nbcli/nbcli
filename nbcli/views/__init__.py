@@ -8,4 +8,5 @@ from nbcli.views.locations import DcimLocationsView             # noqa: F401
 from nbcli.views.sites import DcimSitesView                     # noqa: F401
 from nbcli.views.aggregates import IpamAggregatesView           # noqa: F401
 from nbcli.views.ip_addresses import IpamIpAddressesView        # noqa: F401
+from nbcli.views.ip_prefixes import IpamPrefixesView            # noqa: F401
 from nbcli.views.object_changes import ExtrasObjectChangesView  # noqa: F401
