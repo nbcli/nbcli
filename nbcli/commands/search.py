@@ -74,18 +74,21 @@ class SearchSubCommand(BaseSubCommand):
 
         print('')
         for obj_type in modellist:
-            model = app_model_by_loc(self.netbox, obj_type)
-            result = rs_limit(model.filter(self.args.searchterm), 15)
-            full_count = model.count(self.args.searchterm)
-            if len(result) > 0:
-                result_count += 1
-                print('{}\n{}'.format(obj_type.title(), '=' * len(obj_type)))
-                self.nbprint(result)
-                if len(result) < full_count:
-                    print('*** See all {} results: '.format(full_count) +
-                          "'$ nbcli filter {} {} --all' ***".
-                          format(obj_type, self.args.searchterm))
-                print('')
+            try:
+                model = app_model_by_loc(self.netbox, obj_type)
+                result = rs_limit(model.filter(self.args.searchterm), 15)
+                full_count = model.count(self.args.searchterm)
+                if len(result) > 0:
+                    result_count += 1
+                    print('{}\n{}'.format(obj_type.title(), '=' * len(obj_type)))
+                    self.nbprint(result)
+                    if len(result) < full_count:
+                        print('*** See all {} results: '.format(full_count) +
+                              "'$ nbcli filter {} {} --all' ***".
+                              format(obj_type, self.args.searchterm))
+                    print('')
+            except:
+                self.logger.warning('No API endpoint found for "%s".\n', obj_type)
         if result_count == 0:
             self.logger.warning('No results found')
             print('')
