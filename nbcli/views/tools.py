@@ -111,7 +111,8 @@ class Formatter():
 
     def __init__(self,
                  result,
-                 view='table',
+                 json_view=False,
+                 detail_view=False,
                  view_model=None,
                  cols=list(),
                  disable_header=False):
@@ -119,7 +120,8 @@ class Formatter():
         if isinstance(result, RecordSet):
             result = list(result)
         self.result = result
-        self.view = view
+        self.json_view = json_view
+        self.detail_view = detail_view
         self.view_model = view_model
         self.cols = cols
         self.disable_header = disable_header
@@ -196,7 +198,7 @@ class Formatter():
     @property
     def string(self):
         """Generate string based on peramiters passed to Display."""
-        if self.view == 'json':
+        if self.json_view:
             self._get_json()
             return self._string
 
@@ -205,7 +207,7 @@ class Formatter():
 
         if isinstance(self.result, list) and is_list_of_records(self.result):
             self._get_view()
-            if self.view == 'detail':
+            if self.detail_view:
                 self._get_detail()
             else:
                 self._get_table()
@@ -216,14 +218,16 @@ class Formatter():
 
 
 def nbprint(result,
-            view='table',
+            json_view=False,
+            detail_view=False,
             view_model=None,
             cols=list(),
             disable_header=False,
             string=False):
     """Print result from pynetbox."""
     formatted_result = Formatter(result,
-                                 view=view,
+                                 json_view=json_view,
+                                 detail_view=detail_view,
                                  view_model=view_model,
                                  cols=cols,
                                  disable_header=disable_header)

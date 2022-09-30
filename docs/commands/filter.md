@@ -2,8 +2,10 @@
 
 ```
 $ nbcli filter -h
-usage: nbcli filter [-h] [-v] [-q] [--view {table,detail,json}] [--view-model VIEW_MODEL] [--cols [COLS [COLS ...]]] [--nh]
-                    [-c | --all | -D | --ud [UD [UD ...]]] [--de [DE [DE ...]]] [--pre PRE]
+usage: nbcli filter [-h] [-v] [-q] [--json | --detail] [--view VIEW]
+                    [--cols [COLS [COLS ...]]] [--nh] [--all]
+                    [-c | -D | --ud [UD [UD ...]]] [--de [DE [DE ...]]]
+                    [--pre PRE]
                     model [args [args ...]]
 
 Filter Netbox objects by searchterm and object properties.
@@ -19,15 +21,14 @@ optional arguments:
   -h, --help            show this help message and exit
   -v, --verbose         Show more logging messages
   -q, --quiet           Show fewer logging messages
-  --view {table,detail,json}
-                        Output view.
-  --view-model VIEW_MODEL
-                        View model to use
+  --json                Display results as json string.
+  --detail              Display more detailed info for results.
+  --view VIEW           View model to use
   --cols [COLS [COLS ...]]
                         Custom columns for table output.
   --nh, --no-header     Disable header row in results
-  -c, --count           Return the count of objects in filter.
   --all                 List all results.
+  -c, --count           Return the count of objects in filter.
   -D, --delete          Delete Object(s) returned by filter. [WIP]
   --ud [UD [UD ...]], --update [UD [UD ...]]
                         Update object(s) returned by filter with given kwargs. [WIP]
@@ -238,41 +239,33 @@ The following optional arguments can change how the results of the filter
 command are displayed.
 
 ```
-  --view {table,detail,json}
-                        Output view.
-  --view-model VIEW_MODEL
-                        View model to use
+  --json                Display results as json string.
+  --detail              Display more detailed info for results.
+  --view VIEW           View model to use
   --cols [COLS [COLS ...]]
                         Custom columns for table output.
   --nh, --no-header     Disable header row in results
 ```
 
-### --view
+### --json
 
-* table  
+Display results as json string. Output should be similar (but may not be
+exactly the same) as the contents from the `results` field when accessing the
+Netbox API directly.
 
-    Displays results in a tabular format. (default)
+### --detail  
 
-* detail  
-
-    Display more detailed info for results.
-    (Poorly implemented, will likely be removed.)
-
-* json  
-
-    Display results as json string. Output should be similar (but may not be
-    exactly the same) as the contents from the `results` field when accessing the
-    Netbox API directly.
+Display more detailed info for results.
 
 
-### ---view-model
+### ---view
 
 Override the default view model for the given object types with one defined by
 a [User Custom View](../extend/views.md) or extention, by specifying it's Class
 name.
 
 ```
-nbcli filter device rack:1.1 --view-model MyDevicesView
+nbcli filter device rack:1.1 --view MyDevicesView
 ```
 
 ### --cols
@@ -297,11 +290,11 @@ web-proxy-1  1.1   1         A-1U-S
     Looking at the json view will give you some insite on what attribues are
     available for a given object type.
     ```
-    $ nbcli filter device compute-1 --view json | jq
+    $ nbcli filter device compute-1 --json | jq
     ```
     or
     ```
-    $ nbcli filter device compute-1 --view json | python3 -m json.tool
+    $ nbcli filter device compute-1 --json | python3 -m json.tool
     ```
 
 If the attribute is an instance of another object type, you can `drill into`

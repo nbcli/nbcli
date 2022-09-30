@@ -132,15 +132,15 @@ class FilterSubCommand(BaseSubCommand):
                             nargs='*',
                             help='Argumnet(s) to filter results.')
 
+        self.parser.add_argument('--all',
+                            action='store_true',
+                            help='List all results.')
+
         obj_meth = self.parser.add_mutually_exclusive_group()
     
         obj_meth.add_argument('-c', '--count',
                               action='store_true',
                               help='Return the count of objects in filter.')
-
-        obj_meth.add_argument('--all',
-                              action='store_true',
-                              help='List all results.')
 
         obj_meth.add_argument('-D', '--delete',
                               action='store_true',
