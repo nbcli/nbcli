@@ -130,7 +130,7 @@ class FilterSubCommand(BaseSubCommand):
     
         self.parser.add_argument('args',
                             nargs='*',
-                            help='Argumnet(s) to filter results.')
+                            help='Argument(s) to filter results.')
 
         self.parser.add_argument('--all',
                             action='store_true',

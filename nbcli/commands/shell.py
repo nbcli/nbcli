@@ -124,9 +124,13 @@ class ShellSubCommand(BaseSubCommand):
     def run(self):
         """Run Shell enviornment.
 
-        Example usage:
-        $ nbcli shell -i myscript.py
-        $ nbcli shell -s python"""
+        Usage Example:
+
+        - Execute script in the nbcli shell environment.
+          $ nbcli shell -i myscript.py
+
+        - Force nbcli shell to use the python shell when IPython is installed.
+          $ nbcli shell -s python"""
  
         shell = Shell(self.netbox,
                       interactive_shell=self.args.interactive_shell,
