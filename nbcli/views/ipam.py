@@ -1,5 +1,26 @@
 from nbcli.views.tools import BaseView
 
+
+class IpamAggregatesView(BaseView):
+
+    def table_view(self):
+
+        self.add_col('Aggregate', self.get_attr('display'))
+        self.add_col('RIR', self.get_attr('rir'))
+        self.add_col('Added', self.get_attr('date_added'))
+        self.add_col('Description', self.get_attr('description'))
+
+
+class IpamPrefixesView(BaseView):
+
+    def table_view(self):
+
+        self.add_col('Prefix', self.get_attr('prefix'))
+        self.add_col('VLAN', self.get_attr('vlan'))
+        self.add_col('VLAN ID', self.get_attr('vlan.vid'))
+        self.add_col('Description', self.get_attr('description'))
+
+
 class IpamIpAddressesView(BaseView):
 
     def table_view(self):
@@ -13,3 +34,4 @@ class IpamIpAddressesView(BaseView):
         self.add_col('Interface', self.get_attr('interface'))
         self.add_col('DNS Name', self.get_attr('dns_name'))
         self.add_col('Description', self.get_attr('description'))
+

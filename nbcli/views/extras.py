@@ -1,5 +1,15 @@
 from nbcli.views.tools import BaseView
 
+class ExtrasConfigContextsView(BaseView):
+
+	def table_view(self):
+
+		self.add_col('Name', self.get_attr('name'))
+		self.add_col('Weight', self.get_attr('weight'))
+		self.add_col('Active', self.get_attr('is_active'))
+		self.add_col('Description', self.get_attr('description'))
+
+
 class ExtrasObjectChangesView(BaseView):
 
     def table_view(self):
