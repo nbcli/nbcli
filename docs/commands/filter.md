@@ -3,8 +3,8 @@
 ```
 $ nbcli filter -h
 usage: nbcli filter [-h] [-v] [-q] [--json | --detail] [--view VIEW]
-                    [--cols [COLS [COLS ...]]] [--nh] [--all]
-                    [-c | -D | --ud [UD [UD ...]]] [--de [DE [DE ...]]]
+                    [--cols [COLS [COLS ...]]] [--nh] [--dl]
+                    [-a | -c | -D | --ud [UD [UD ...]]] [--de [DE [DE ...]]]
                     [--pre PRE]
                     model [args [args ...]]
 
@@ -15,7 +15,7 @@ Control output view and listed columns.
 
 positional arguments:
   model                 NetBox model.
-  args                  Argumnet(s) to filter results.
+  args                  Argument(s) to filter results.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -27,7 +27,9 @@ optional arguments:
   --cols [COLS [COLS ...]]
                         Custom columns for table output.
   --nh, --no-header     Disable header row in results
-  --all                 List all results.
+  --dl, --disable-limit
+                        Disable limiting number of results returned.
+  -a, --all             List all object from endpoint.
   -c, --count           Return the count of objects in filter.
   -D, --delete          Delete Object(s) returned by filter. [WIP]
   --ud [UD [UD ...]], --update [UD [UD ...]]
@@ -47,7 +49,7 @@ Usage Examples:
 - Filter devices by serial number using keyword arguments:
   $ nbcli filter device serial=123456
 
-- Filter devices types by manufacturer using auto-resolve arguments:
+- Filter devices types by manufacturer using auto-resolve arguments: 
   $ nbcli filter device_type manufacturer:ACME
 
 - Update tenant on devices returned by filter:
@@ -86,7 +88,7 @@ auto-resolve, and compound-resolve arguments to refine your filter.
 
 !!! note
     The `filter` command will limit the number of returned results to 50 by default.
-    Adding the `--all` argument will return all results.
+    Adding the `--dl` argument will return all results.
 
     The default can be changed in the `user_config.yml` file by editing the value for `filter_limit`.
     ```

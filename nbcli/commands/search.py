@@ -84,7 +84,7 @@ class SearchSubCommand(BaseSubCommand):
                     self.nbprint(result)
                     if len(result) < full_count:
                         print('*** See all {} results: '.format(full_count) +
-                              "'$ nbcli filter {} {} --all' ***".
+                              "'$ nbcli filter {} {} --dl' ***".
                               format(obj_type, self.args.searchterm))
                     print('')
             except:

@@ -12,36 +12,42 @@ class Filter():
                  model,
                  logger,
                  args=list(),
-                 count=False,
+                 dl=False,
                  list_all=False,
+                 count=False,
                  delete=False,
                  ud=list(),
                  de=list()):
 
         self.model = app_model_by_loc(netbox, model)
 
- 
         nba = NbArgs(netbox)
-        nba.proc(*args)
-        logger.debug(str(nba))
+ 
+        if list_all:
+            full_count = self.model.count()
+        else:
+            nba.proc(*args)
+            logger.debug(str(nba))
+            full_count = self.model.count(*nba.args, **nba.kwargs)
 
-        full_count = self.model.count(*nba.args, **nba.kwargs)
         filter_limit = netbox.nbcli.conf.nbcli.get('filter_limit', 50)
 
         if filter_limit <= 0:
             filter_limit = 0
             list_all = True
 
-        if count:
+        if list_all:
+            result = self.model.all()
+        elif count:
             result = full_count
         else:
             result = self.model.filter(*nba.args, **nba.kwargs)
 
         if isinstance(result, RecordSet):
-            if not list_all and (full_count > filter_limit):
+            if not dl and (full_count > filter_limit):
                 result = rs_limit(result,  filter_limit)
                 logger.warning(f'Returning {filter_limit} of {full_count} results.')
-                logger.warning(f'use "--all" to return all {full_count} results.')
+                logger.warning(f'use "--dl" to return all {full_count} results.')
             else:
                 result = list(result)
 
@@ -132,12 +138,16 @@ class FilterSubCommand(BaseSubCommand):
                             nargs='*',
                             help='Argument(s) to filter results.')
 
-        self.parser.add_argument('--all',
+        self.parser.add_argument('--dl', '--disable-limit',
                             action='store_true',
-                            help='List all results.')
+                            help='Disable limiting number of results returned.')
 
         obj_meth = self.parser.add_mutually_exclusive_group()
     
+        obj_meth.add_argument('-a', '--all',
+                            action='store_true',
+                            help='List all object from endpoint.')
+
         obj_meth.add_argument('-c', '--count',
                               action='store_true',
                               help='Return the count of objects in filter.')
@@ -191,8 +201,9 @@ class FilterSubCommand(BaseSubCommand):
                           self.args.model,
                           self.logger,
                           args=self.args.args or [],
-                          count=self.args.count,
+                          dl=self.args.dl,
                           list_all=self.args.all,
+                          count=self.args.count,
                           delete=self.args.delete,
                           ud=self.args.ud or [],
                           de=self.args.de or [])
