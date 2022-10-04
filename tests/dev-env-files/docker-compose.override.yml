@@ -1,7 +1,0 @@
-version: '3.4'
-services:
-  netbox:
-    volumes:
-    - ./nbcli_initializers:/opt/netbox/initializers:z,ro
-    ports:
-    - 8080:8080
