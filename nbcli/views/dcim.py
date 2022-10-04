@@ -10,8 +10,19 @@ from nbcli.views.tools import BaseView
 #class DcimDeviceBayTemplatesView(BaseView):
 #class DcimDeviceBaysView(BaseView):
 #class DcimDeviceRolesView(BaseView):
-#class DcimDeviceTypesView(BaseView):
 
+
+class DcimDeviceTypesView(BaseView):
+
+    def table_view(self):
+
+        self.add_col('Device Type', self.get_attr('model'))
+        self.add_col('Manufacturer', self.get_attr('manufacturer'))
+        self.add_col('Part Number', self.get_attr('part_number'))
+        self.add_col('Height (U)', self.get_attr('u_height'))
+        self.add_col('Full Depth', self.get_attr('is_full_depth'))
+        self.add_col('Parent/child status', self.get_attr('subdevice_role'))
+        self.add_col('Instances', self.get_attr('device_count'))
 
 class DcimDevicesView(BaseView):
 
