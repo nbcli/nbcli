@@ -67,8 +67,7 @@ git clone https://github.com/netbox-community/netbox-docker.git && \
 
 ```bash
 docker-compose pull && \
-    docker-compose up -d && \
-    nbcli info --status 180
+    docker-compose up -d
 ```
 
 !!! done "The test Netbox instance should now be ready for testing!"
