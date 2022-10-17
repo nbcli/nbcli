@@ -44,6 +44,16 @@ class Filter():
             result = self.model.filter(*nba.args, **nba.kwargs)
 
         if isinstance(result, RecordSet):
+
+            api_url = result.request.url + '?'
+            for k, v in result.request.filters.items():
+                if isinstance(v, list):
+                    api_url += '&'.join(str(k) + '=' + str(i) for i in v)
+                else:
+                    api_url += str(k) + '=' + str(v)
+                api_url += '&'
+            logger.info(api_url)
+
             if not dl and (full_count > filter_limit):
                 result = rs_limit(result,  filter_limit)
                 logger.warning(f'Returning {filter_limit} of {full_count} results.')
