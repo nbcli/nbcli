@@ -19,6 +19,7 @@ from nbcli.views.extras import ExtrasObjectChangesView  		# noqa: F401
 from nbcli.views.ipam import IpamAggregatesView           		# noqa: F401
 from nbcli.views.ipam import IpamIpAddressesView        		# noqa: F401
 from nbcli.views.ipam import IpamPrefixesView            		# noqa: F401
+from nbcli.views.ipam import IpamVlanssView            		    # noqa: F401
 
 from nbcli.views.tenancy import TenancyTenantGroupsView         # noqa: F401
 from nbcli.views.tenancy import TenancyTenantsView              # noqa: F401
