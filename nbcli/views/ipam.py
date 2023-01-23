@@ -35,3 +35,13 @@ class IpamIpAddressesView(BaseView):
         self.add_col('DNS Name', self.get_attr('dns_name'))
         self.add_col('Description', self.get_attr('description'))
 
+class IpamVlansView(BaseView):
+
+    def table_view(self):
+        self.add_col('VID', self.get_attr('vid'))
+        self.add_col('Name', self.get_attr('name'))
+        self.add_col('Group', self.get_attr('group'))
+        self.add_col('Tenant', self.get_attr('tenant'))
+        self.add_col('Status', self.get_attr('status'))
+        self.add_col('Role', self.get_attr('role'))
+        self.add_col('Description', self.get_attr('description'))
