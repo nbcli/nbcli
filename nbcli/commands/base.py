@@ -14,30 +14,44 @@ from nbcli.views.tools import nbprint
 
 def get_common_parser():
     """Create parser for handling verbose options."""
+
     common_parser = argparse.ArgumentParser(add_help=False)
+
     common_parser.add_argument('-v', '--verbose',
                                action='count',
                                help='Show more logging messages')
+
     common_parser.add_argument('-q', '--quiet',
                                action='count',
                                help='Show fewer logging messages')
+
     return common_parser
 
 
 def get_view_parser():
     """Create parser for handling view options."""
+
     view_parser = argparse.ArgumentParser(add_help=False)
-    view_parser.add_argument('--view', type=str, help='Output view.',
-                             choices=['table', 'detail', 'json'],
-                             default='table')
-    view_parser.add_argument('--view-model',
+
+    view_type = view_parser.add_mutually_exclusive_group()
+
+    view_type.add_argument('--json', action='store_true',
+                           help='Display results as json string.')
+
+    view_type.add_argument('--detail', action='store_true',
+                           help='Display more detailed info for results.')
+
+    view_parser.add_argument('--view',
                              type=str,
                              help='View model to use')
+
     view_parser.add_argument('--cols', nargs='*',
                              help="Custom columns for table output.")
+
     view_parser.add_argument('--nh', '--no-header',
                              action='store_true',
                              help='Disable header row in results')
+
     return view_parser
 
 
@@ -91,8 +105,9 @@ class BaseSubCommand():
         try:
             self.netbox = get_session()
             if self.view_options:
-                nbopts = dict(view=self.args.view,
-                              view_model=self.args.view_model,
+                nbopts = dict(json_view=self.args.json,
+                              detail_view=self.args.detail,
+                              view_model=self.args.view,
                               cols=self.args.cols,
                               disable_header=self.args.nh)
 

@@ -57,29 +57,17 @@ and copy needed files into netbox-docker directory
 
 ```bash
 git clone https://github.com/netbox-community/netbox-docker.git && \
-    cp -r tests/dev-env-files/* netbox-docker/ && \
+    cp -r tests/docker-compose.override.yml netbox-docker/ && \
     cd netbox-docker
-```
-
-### Create sample objects for netbox-docker
-
-!!! info "Optional"
-
-```bash
-python3 create_initializers.py
 ```
 
 ### Start test Netbox service
 
-and wait for service to be ready
-
 !!! info "service usually take ~1 min to come up"
-    `wait_for_service.py` will time out after 5 min
 
 ```bash
 docker-compose pull && \
-    docker-compose up -d && \
-    python3 wait_for_service.py
+    docker-compose up -d
 ```
 
 !!! done "The test Netbox instance should now be ready for testing!"

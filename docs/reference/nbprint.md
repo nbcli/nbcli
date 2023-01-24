@@ -1,15 +1,11 @@
 # nbprint()
 
 ```python
->>> from nbcli.views.tools import nbprint
-```
-
-```python
 >>> devlist = Devices.filter('server')
 >>> nbprint(devlist)
 >>> nbprint(devlist, disable_header=True)
->>> nbprint(devlist, view='detail')
->>> nbprint(devlist, view='json')
+>>> nbprint(devlist, json_view=True)
+>>> nbprint(devlist, detail_view=True)
 >>> nbprint(devlist, cols=['name',
 ...                        'device_type.manufacturer',
 ...                        'device_type.model'])

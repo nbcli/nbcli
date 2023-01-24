@@ -24,7 +24,7 @@ jobs:
         if: contains(github.ref, 'develop')
         run: mike deploy -p  dev
       - name: Build latest release docs
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: contains(github.ref, 'release')
         run: |
-          mike deploy -pu ${GITHUB_REF#refs/tags/} latest
+          mike deploy -p latest
           mike set-default -p latest

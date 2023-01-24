@@ -26,12 +26,22 @@ requests:
   verify: false
 ```
 
-## Models
+## Info
+
+List version info
+
+```
+$ nbcli info
+
+nbcli version: 0.8.0.dev1
+NetBox version: 2.11
+pynetbox version: 6.6.2
+```
 
 List information on supported Netbox object types
 
 ```
-$ nbcli models
+$ nbcli info --models
 Model                         Lookup   Endpoint
 tenant_group                  name     tenancy/tenant-groups
 tenant                        name     tenancy/tenants
@@ -40,25 +50,11 @@ site                          name     dcim/sites
 location                      name     dcim/locations
 rack_role                     name     dcim/rack-roles
 rack                          name     dcim/racks
-rack_reservation              name     dcim/rack-reservations
-manufacturer                  name     dcim/manufacturers
-device_type                   model    dcim/device-types
-console_port_template         name     dcim/console-port-templates
-console_server_port_template  name     dcim/console-server-port-templates
-power_port_template           name     dcim/power-port-templates
-power_outlet_template         name     dcim/power-outlet-templates
-interface_template            name     dcim/interface-templates
-front_port_template           name     dcim/front-port-templates
-rear_port_template            name     dcim/rear-port-templates
-device_bay_template           name     dcim/device-bay-templates
-device_role                   name     dcim/device-roles
-platform                      name     dcim/platforms
-device                        name     dcim/devices
 ...
 ```
 
 ```
-$ nbcli models device
+$ nbcli info --models device
 
 Model: device
 Lookup: name

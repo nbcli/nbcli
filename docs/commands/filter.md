@@ -2,9 +2,10 @@
 
 ```
 $ nbcli filter -h
-usage: nbcli filter [-h] [-v] [-q] [--view {table,detail,json}]
-                    [--view-model VIEW_MODEL] [--cols [COLS [COLS ...]]] [--nh]
-                    [-c | -D | --ud [UD [UD ...]]] [--de [DE [DE ...]]]
+usage: nbcli filter [-h] [-v] [-q] [--json | --detail] [--view VIEW]
+                    [--cols [COLS [COLS ...]]] [--nh] [--dl]
+                    [-a | -c | -D | --ud [UD [UD ...]]] [--de [DE [DE ...]]]
+                    [--pre PRE]
                     model [args [args ...]]
 
 Filter Netbox objects by searchterm and object properties.
@@ -13,26 +14,30 @@ Optionally update and delete objects returned by the filter.
 Control output view and listed columns.
 
 positional arguments:
-  model                 NetBox model
-  args                  Argumnet(s) to filter results.
+  model                 NetBox model.
+  args                  Argument(s) to filter results.
 
 optional arguments:
   -h, --help            show this help message and exit
   -v, --verbose         Show more logging messages
   -q, --quiet           Show fewer logging messages
-  --view {table,detail,json}
-                        Output view.
-  --view-model VIEW_MODEL
-                        View model to use
+  --json                Display results as json string.
+  --detail              Display more detailed info for results.
+  --view VIEW           View model to use
   --cols [COLS [COLS ...]]
                         Custom columns for table output.
   --nh, --no-header     Disable header row in results
+  --dl, --disable-limit
+                        Disable limiting number of results returned.
+  -a, --all             List all object from endpoint.
   -c, --count           Return the count of objects in filter.
-  -D, --delete          Delete Object(s) returned by filter [WIP]
+  -D, --delete          Delete Object(s) returned by filter. [WIP]
   --ud [UD [UD ...]], --update [UD [UD ...]]
-                        Update object(s) returned by filter with given kwargs [WIP]
+                        Update object(s) returned by filter with given kwargs. [WIP]
   --de [DE [DE ...]], --detail-endpoint [DE [DE ...]]
-                        List results from detail endpoint With optional kwargs [WIP]
+                        List results from detail endpoint With optional kwargs. [WIP]
+  --pre PRE, --stdin-prefix PRE
+                        Prefix to add to stdin args.
 
 Filter Netbox objects by a searchterm and object properties.
 
@@ -44,7 +49,7 @@ Usage Examples:
 - Filter devices by serial number using keyword arguments:
   $ nbcli filter device serial=123456
 
-- Filter devices types by manufacturer using auto-resolve arguments:
+- Filter devices types by manufacturer using auto-resolve arguments: 
   $ nbcli filter device_type manufacturer:ACME
 
 - Update tenant on devices returned by filter:
@@ -80,6 +85,18 @@ nbcli filter device 'web server'
 
 Search term arguments can be mixed and matched with any combination of keyword,
 auto-resolve, and compound-resolve arguments to refine your filter.
+
+!!! note
+    The `filter` command will limit the number of returned results to 50 by default.
+    Adding the `--dl` argument will return all results.
+
+    The default can be changed in the `user_config.yml` file by editing the value for `filter_limit`.
+    ```
+        nbcli:
+          filter_limit: 50
+    ```
+
+    This feature can be overridden completely by setting `filter_limit` to `0`
 
 ## Keyword arguments
 
@@ -224,41 +241,33 @@ The following optional arguments can change how the results of the filter
 command are displayed.
 
 ```
-  --view {table,detail,json}
-                        Output view.
-  --view-model VIEW_MODEL
-                        View model to use
+  --json                Display results as json string.
+  --detail              Display more detailed info for results.
+  --view VIEW           View model to use
   --cols [COLS [COLS ...]]
                         Custom columns for table output.
   --nh, --no-header     Disable header row in results
 ```
 
-### --view
+### --json
 
-* table  
+Display results as json string. Output should be similar (but may not be
+exactly the same) as the contents from the `results` field when accessing the
+Netbox API directly.
 
-    Displays results in a tabular format. (default)
+### --detail  
 
-* detail  
-
-    Display more detailed info for results.
-    (Poorly implemented, will likely be removed.)
-
-* json  
-
-    Display results as json string. Output should be similar (but may not be
-    exactly the same) as the contents from the `results` field when accessing the
-    Netbox API directly.
+Display more detailed info for results.
 
 
-### ---view-model
+### ---view
 
 Override the default view model for the given object types with one defined by
 a [User Custom View](../extend/views.md) or extention, by specifying it's Class
 name.
 
 ```
-nbcli filter device rack:1.1 --view-model MyDevicesView
+nbcli filter device rack:1.1 --view MyDevicesView
 ```
 
 ### --cols
@@ -283,11 +292,11 @@ web-proxy-1  1.1   1         A-1U-S
     Looking at the json view will give you some insite on what attribues are
     available for a given object type.
     ```
-    $ nbcli filter device compute-1 --view json | jq
+    $ nbcli filter device compute-1 --json | jq
     ```
     or
     ```
-    $ nbcli filter device compute-1 --view json | python3 -m json.tool
+    $ nbcli filter device compute-1 --json | python3 -m json.tool
     ```
 
 If the attribute is an instance of another object type, you can `drill into`

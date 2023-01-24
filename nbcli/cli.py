@@ -15,7 +15,7 @@ class CLI():
         """Set up argument parser and load sub-commands."""
         epilog = '''
                General Options:
-                 -h, --help           show this help message and exit
+                 -h, --help           Show this help message and exit
                  -v, --verbose        Show more logging messages
                  -q, --quiet          Show fewer logging messages'''
 

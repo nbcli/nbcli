@@ -1,7 +1,8 @@
-from pynetbox.core.response import Record
+from sys import stdin
+from pynetbox.core.response import Record, RecordSet
 from nbcli.commands.base import BaseSubCommand
 from nbcli.commands.tools import NbArgs
-from nbcli.core.utils import app_model_by_loc, is_list_of_records
+from nbcli.core.utils import app_model_by_loc, is_list_of_records, rs_limit
 
 
 class Filter():
@@ -9,7 +10,10 @@ class Filter():
     def __init__(self,
                  netbox,
                  model,
+                 logger,
                  args=list(),
+                 dl=False,
+                 list_all=False,
                  count=False,
                  delete=False,
                  ud=list(),
@@ -17,21 +21,45 @@ class Filter():
 
         self.model = app_model_by_loc(netbox, model)
 
-        method = 'all'
-
-        if count:
-            method = 'count'
-        elif args:
-            method = 'filter'
-
-        self.method = getattr(self.model, method)
-
         nba = NbArgs(netbox)
-        nba.proc(*args)
-        result = self.method(*nba.args, **nba.kwargs)
+ 
+        if list_all:
+            full_count = self.model.count()
+        else:
+            nba.proc(*args)
+            logger.debug(str(nba))
+            full_count = self.model.count(*nba.args, **nba.kwargs)
 
-        if isinstance(result, Record):
-            result = [result]
+        filter_limit = netbox.nbcli.conf.nbcli.get('filter_limit', 50)
+
+        if filter_limit <= 0:
+            filter_limit = 0
+            list_all = True
+
+        if list_all:
+            result = self.model.all()
+        elif count:
+            result = full_count
+        else:
+            result = self.model.filter(*nba.args, **nba.kwargs)
+
+        if isinstance(result, RecordSet):
+
+            api_url = result.request.url + '?'
+            for k, v in result.request.filters.items():
+                if isinstance(v, list):
+                    api_url += '&'.join(str(k) + '=' + str(i) for i in v)
+                else:
+                    api_url += str(k) + '=' + str(v)
+                api_url += '&'
+            logger.info(api_url)
+
+            if not dl and (full_count > filter_limit):
+                result = rs_limit(result,  filter_limit)
+                logger.warning(f'Returning {filter_limit} of {full_count} results.')
+                logger.warning(f'use "--dl" to return all {full_count} results.')
+            else:
+                result = list(result)
 
         if is_list_of_records(result):
             if delete:
@@ -114,31 +142,42 @@ class FilterSubCommand(BaseSubCommand):
     def setup(self):
     
         self.parser.add_argument('model',
-                            help="NetBox model")
+                            help="NetBox model.")
     
         self.parser.add_argument('args',
                             nargs='*',
-                            help='Argumnet(s) to filter results.')
+                            help='Argument(s) to filter results.')
+
+        self.parser.add_argument('--dl', '--disable-limit',
+                            action='store_true',
+                            help='Disable limiting number of results returned.')
 
         obj_meth = self.parser.add_mutually_exclusive_group()
     
+        obj_meth.add_argument('-a', '--all',
+                            action='store_true',
+                            help='List all object from endpoint.')
+
         obj_meth.add_argument('-c', '--count',
                               action='store_true',
                               help='Return the count of objects in filter.')
 
         obj_meth.add_argument('-D', '--delete',
                               action='store_true',
-                              help='Delete Object(s) returned by filter [WIP]')
+                              help='Delete Object(s) returned by filter. [WIP]')
     
         obj_meth.add_argument('--ud', '--update',
                               nargs='*',
                               help='Update object(s) returned by filter '+ \
-                                   'with given kwargs [WIP]')
+                                   'with given kwargs. [WIP]')
     
         self.parser.add_argument('--de', '--detail-endpoint',
                             nargs='*',
                             help='List results from detail endpoint '+ \
-                                 'With optional kwargs [WIP]')
+                                 'With optional kwargs. [WIP]')
+
+        self.parser.add_argument('--pre', '--stdin-prefix',
+                            help='Prefix to add to stdin args.')
 
 
     def run(self):
@@ -161,10 +200,19 @@ class FilterSubCommand(BaseSubCommand):
         - Delete IP addresses returned by filter:
           $ nbcli filter address 192.168.1.1 -D
         """
+
+        if not stdin.isatty():
+            stdin_args = stdin.read().split()
+            if self.args.pre:
+                stdin_args = ['{}{}'.format(self.args.pre, i) for i in stdin_args]
+            self.args.args = stdin_args + self.args.args
     
         nbfilter = Filter(self.netbox,
                           self.args.model,
+                          self.logger,
                           args=self.args.args or [],
+                          dl=self.args.dl,
+                          list_all=self.args.all,
                           count=self.args.count,
                           delete=self.args.delete,
                           ud=self.args.ud or [],

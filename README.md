@@ -6,7 +6,7 @@ using the [pynetbox](https://pynetbox.readthedocs.io/en/latest/) module.
 ***nbcli is still in development!*** 
 ***Syntax of commands are subject to change!***
 
-[![asciicast](https://asciinema.org/a/348204.svg)](https://asciinema.org/a/348204)
+[![asciicast](https://asciinema.org/a/525610.svg)](https://asciinema.org/a/525610)
 
 ## Quickstart
 
@@ -37,13 +37,25 @@ requests:
 Run a search of Netbox objects and show a table view of results.
 
 ```
-$ nbcli search server
+$ nbcli search dmi01
 
-dcim.devices
-============
-ID  Name      Status  Tenant  Site    Rack     Role    Type   IP Address
-1   server01  Active  -       AMS 1   rack-01  server  Other  -
-2   server02  Active  -       AMS 2   rack-02  server  Other  -
-3   server03  Active  -       SING 1  rack-03  server  Other  -
-
+Device
+======
+Name                    Status  Tenant                Site           Rack          Role           Type         IP Address
+dmi01-akron-pdu01       Active  Dunder-Mifflin, Inc.  DM-Akron       Comms closet  PDU            AP7901       -
+dmi01-akron-rtr01       Active  Dunder-Mifflin, Inc.  DM-Akron       Comms closet  Router         ISR 1111-8P  -
+dmi01-akron-sw01        Active  Dunder-Mifflin, Inc.  DM-Akron       Comms closet  Access Switch  C9200-48P    -
+dmi01-albany-pdu01      Active  Dunder-Mifflin, Inc.  DM-Albany      Comms closet  PDU            AP7901       -
+dmi01-albany-rtr01      Active  Dunder-Mifflin, Inc.  DM-Albany      Comms closet  Router         ISR 1111-8P  -
+dmi01-albany-sw01       Active  Dunder-Mifflin, Inc.  DM-Albany      Comms closet  Access Switch  C9200-48P    -
+dmi01-binghamton-pdu01  Active  Dunder-Mifflin, Inc.  DM-Binghamton  Comms closet  PDU            AP7901       -
+dmi01-binghamton-rtr01  Active  Dunder-Mifflin, Inc.  DM-Binghamton  Comms closet  Router         ISR 1111-8P  -
+dmi01-binghamton-sw01   Active  Dunder-Mifflin, Inc.  DM-Binghamton  Comms closet  Access Switch  C9200-48P    -
+dmi01-buffalo-pdu01     Active  Dunder-Mifflin, Inc.  DM-Buffalo     Comms closet  PDU            AP7901       -
+dmi01-buffalo-rtr01     Active  Dunder-Mifflin, Inc.  DM-Buffalo     Comms closet  Router         ISR 1111-8P  -
+dmi01-buffalo-sw01      Active  Dunder-Mifflin, Inc.  DM-Buffalo     Comms closet  Access Switch  C9200-48P    -
+dmi01-camden-pdu01      Active  Dunder-Mifflin, Inc.  DM-Camden      Comms closet  PDU            AP7901       -
+dmi01-camden-rtr01      Active  Dunder-Mifflin, Inc.  DM-Camden      Comms closet  Router         ISR 1111-8P  -
+dmi01-camden-sw01       Active  Dunder-Mifflin, Inc.  DM-Camden      Comms closet  Access Switch  C9200-48P    -
+*** See all 39 results: '$ nbcli filter device dmi01 --dl' ***
 ```

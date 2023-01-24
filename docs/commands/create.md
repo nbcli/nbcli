@@ -2,24 +2,23 @@
 
 ```
 $ nbcli create -h
-usage: nbcli create [-h] [-v] [-q] [--dr] [-u] file
+usage: nbcli create [-h] [-v] [-q] file
 
 Create and/or Update objects defined in YAML file.
 
 positional arguments:
-  file               YAML file.
+  file           YAML file.
 
 optional arguments:
-  -h, --help         show this help message and exit
-  -v, --verbose      Show more logging messages
-  -q, --quiet        Show fewer logging messages
-  --dr, --dry-run    Dry run.
-  -u, --update-only  Do not create object not found with the lookup key schema.
+  -h, --help     show this help message and exit
+  -v, --verbose  Show more logging messages
+  -q, --quiet    Show fewer logging messages
 
 Run command.
 
-See documentation for YAML file reference and examples.
-https://nbcli.readthedocs.io/en/release/create.html
+See documentation and reference examples.
+https://ericgeldmacher.github.io/nbcli/latest/commands/create/
+https://ericgeldmacher.github.io/nbcli/latest/reference/create-examples/
 
 Usage Examples:
 
