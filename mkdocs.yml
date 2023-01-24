@@ -29,6 +29,7 @@ theme:
   logo: images/nbcli.svg
   favicon: images/nbcli.svg
   features:
+    - announce.dismiss
     - navigation.instant
     - navigation.tracking
     - navigation.tabs
