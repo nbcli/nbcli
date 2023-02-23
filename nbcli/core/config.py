@@ -6,7 +6,7 @@ import pynetbox
 import requests
 import urllib3
 import yaml
-from nbcli import logger
+from nbcli import logger, __version__
 from nbcli.core.utils import ResMgr, auto_cast, get_nbcli_dir
 
 
@@ -116,6 +116,8 @@ def get_session(init=False):
 
     if nb.http_session.verify is False:
         urllib3.disable_warnings()
+
+    nb.http_session.headers['User-Agent'] = f'nbcli/{__version__}'
 
     nb.nbcli = type('nbcli', (), {})()
 
