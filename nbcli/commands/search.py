@@ -58,7 +58,6 @@ class SearchSubCommand(BaseSubCommand):
                                   'prefix',
                                   'address',
                                   'vlan',
-                                  'secret',
                                   'tenant',
                                   'cluster',
                                   'virtual_machine']

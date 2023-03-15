@@ -127,8 +127,3 @@ extras.config_contexts:
 extras.reports:
 extras.scripts:
 extras.object_changes:
-
-secrets.secret_roles:
-secrets.secrets:
-#secrets.get_session_key:
-#secrets.generate_rsa_key_pair:
