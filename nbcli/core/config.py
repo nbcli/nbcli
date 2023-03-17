@@ -70,7 +70,7 @@ class Config:
         print("\t{}".format(str(self.user_files.user_config.absolute())))
 
     def _load(self):
-        """Set attributes from configfile or os environment variables."""
+        """Set attributes from config file or os environment variables."""
         conffile = self.user_files.user_config
         try:
             user_config = yaml.safe_load(open(str(conffile)))
