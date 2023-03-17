@@ -192,9 +192,10 @@ def is_list_of_records(result):
     else:
         return False
 
+
 def rs_limit(record_set, result_limit):
     """Limit the number of results in a RecordSet."""
-    assert(isinstance(record_set, RecordSet))
+    assert isinstance(record_set, RecordSet)
 
     ep = record_set.endpoint
 
@@ -211,6 +212,7 @@ def rs_limit(record_set, result_limit):
 def getter(obj, string):
     """Get attribute or item from object defined by string."""
     assert isinstance(string, str)
+
     def getitem(o, k):
 
         try:
