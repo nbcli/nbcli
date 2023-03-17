@@ -55,8 +55,12 @@ class Filter:
 
             if not dl and (full_count > filter_limit):
                 result = rs_limit(result, filter_limit)
-                logger.warning(f"Returning {filter_limit} of {full_count} results.")
-                logger.warning(f'use "--dl" to return all {full_count} results.')
+                logger.warning(
+                    f"Returning {filter_limit} of {full_count} results."
+                )
+                logger.warning(
+                    f'use "--dl" to return all {full_count} results.'
+                )
             else:
                 result = list(result)
 
@@ -157,7 +161,9 @@ class FilterSubCommand(BaseSubCommand):
         obj_meth = self.parser.add_mutually_exclusive_group()
 
         obj_meth.add_argument(
-            "-a", "--all", action="store_true", help="List all object from endpoint."
+            "-a", "--all",
+            action="store_true",
+            help="List all object from endpoint."
         )
 
         obj_meth.add_argument(
@@ -178,14 +184,16 @@ class FilterSubCommand(BaseSubCommand):
             "--ud",
             "--update",
             nargs="*",
-            help="Update object(s) returned by filter " + "with given kwargs. [WIP]",
+            help="Update object(s) returned by filter "
+                 + "with given kwargs. [WIP]",
         )
 
         self.parser.add_argument(
             "--de",
             "--detail-endpoint",
             nargs="*",
-            help="List results from detail endpoint " + "With optional kwargs. [WIP]",
+            help="List results from detail endpoint "
+            + "With optional kwargs. [WIP]",
         )
 
         self.parser.add_argument(
@@ -216,7 +224,9 @@ class FilterSubCommand(BaseSubCommand):
         if not stdin.isatty():
             stdin_args = stdin.read().split()
             if self.args.pre:
-                stdin_args = ["{}{}".format(self.args.pre, i) for i in stdin_args]
+                stdin_args = [
+                    "{}{}".format(self.args.pre, i) for i in stdin_args
+                ]
             self.args.args = stdin_args + self.args.args
 
         nbfilter = Filter(

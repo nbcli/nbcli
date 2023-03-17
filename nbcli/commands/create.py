@@ -98,12 +98,16 @@ class Upsert:
 
         if self.obj:
             self.logger.info(
-                "Updating %s with data: %s", str(self.obj), str(self.args.kwargs)
+                "Updating %s with data: %s",
+                str(self.obj),
+                str(self.args.kwargs)
             )
             self.obj.update(self.args.kwargs)
         else:
             self.logger.info(
-                "Creating %s with data: %s", self.res.alias, str(self.args.kwargs)
+                "Creating %s with data: %s",
+                self.res.alias,
+                str(self.args.kwargs)
             )
             self.obj = self.ep.create(**self.args.kwargs)
 

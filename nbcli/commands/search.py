@@ -40,7 +40,9 @@ class SearchSubCommand(BaseSubCommand):
         if hasattr(self.netbox.nbcli.conf, "nbcli") and (
             "search_objects" in self.netbox.nbcli.conf.nbcli.keys()
         ):
-            self.search_objects = self.netbox.nbcli.conf.nbcli["search_objects"]
+            self.search_objects = self.netbox.nbcli.conf.nbcli[
+                "search_objects"
+            ]
         else:
             self.search_objects = [
                 "provider",
@@ -81,7 +83,9 @@ class SearchSubCommand(BaseSubCommand):
                 full_count = model.count(self.args.searchterm)
                 if len(result) > 0:
                     result_count += 1
-                    print("{}\n{}".format(obj_type.title(), "=" * len(obj_type)))
+                    print("{}\n{}".format(
+                        obj_type.title(), "=" * len(obj_type)
+                    ))
                     self.nbprint(result)
                     if len(result) < full_count:
                         print(
@@ -94,7 +98,9 @@ class SearchSubCommand(BaseSubCommand):
             # TODO: This bare except can probably be removed once this issue
             # is resolved: https://github.com/ericgeldmacher/nbcli/issues/41
             except:  # noqa: E722
-                self.logger.warning('No API endpoint found for "%s".\n', obj_type)
+                self.logger.warning(
+                    'No API endpoint found for "%s".\n', obj_type
+                )
         if result_count == 0:
             self.logger.warning("No results found")
             print("")

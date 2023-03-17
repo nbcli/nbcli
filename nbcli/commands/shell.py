@@ -39,7 +39,9 @@ class Shell:
         self.build_ns()
 
     def build_ns(self):
-        self.ns = dict(Netbox=self.netbox, nblogger=self.logger, nbprint=nbprint)
+        self.ns = dict(
+            Netbox=self.netbox, nblogger=self.logger, nbprint=nbprint
+            )
 
         for res in self.netbox.nbcli.rm:
             name = res.alias.title().replace("_", "")
@@ -109,12 +111,16 @@ class ShellSubCommand(BaseSubCommand):
     parser_kwargs = dict(help="Launch interactive shell")
 
     def setup(self):
-        self.parser.add_argument("script", nargs="?", type=str, help="Script to run")
+        self.parser.add_argument(
+            "script", nargs="?", type=str, help="Script to run"
+        )
         self.parser.add_argument(
             "-c", metavar="cmd", type=str, help="Program passed in as string"
         )
         self.parser.add_argument(
-            "-i", action="store_true", help="inspect interactively after running script"
+            "-i",
+            action="store_true",
+            help="inspect interactively after running script"
         )
         self.parser.add_argument(
             "-s",

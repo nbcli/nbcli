@@ -30,7 +30,9 @@ class CLI:
         if "init" not in sys.argv:
             load_extensions()
 
-        subparsers = self.parser.add_subparsers(title="Commands", metavar="<command>")
+        subparsers = self.parser.add_subparsers(
+            title="Commands", metavar="<command>"
+        )
 
         for command in BaseSubCommand.__subclasses__():
             logger.debug("Loading %s", command.__module__)

@@ -32,7 +32,9 @@ class DcimDevicesView(BaseView):
         self.add_col("Rack", self.get_attr("rack"))
         self.add_col("Role", self.get_attr("device_role"))
         self.add_col("Type", self.get_attr("device_type"))
-        self.add_col("IP Address", str(self.get_attr("primary_ip")).split("/")[0])
+        self.add_col(
+            "IP Address", str(self.get_attr("primary_ip")).split("/")[0]
+            )
 
 
 # class DcimFrontPortTemplatesView(BaseView):

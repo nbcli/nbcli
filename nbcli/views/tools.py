@@ -55,7 +55,9 @@ class BaseView:
         def get_val(obj, key):
             if isinstance(obj, dict) and (key in obj):
                 return obj[key]
-            elif isinstance(obj, list) and key.isdigit() and (len(obj) > int(key)):
+            elif (isinstance(obj, list)
+                  and key.isdigit()
+                  and (len(obj) > int(key))):
                 return obj[int(key)]
             else:
                 return None

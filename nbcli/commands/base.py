@@ -40,7 +40,8 @@ def get_view_parser():
     )
 
     view_type.add_argument(
-        "--detail", action="store_true", help="Display more detailed info for results."
+        "--detail", action="store_true",
+        help="Display more detailed info for results."
     )
 
     view_parser.add_argument("--view", type=str, help="View model to use")
@@ -50,7 +51,10 @@ def get_view_parser():
     )
 
     view_parser.add_argument(
-        "--nh", "--no-header", action="store_true", help="Disable header row in results"
+        "--nh",
+        "--no-header",
+        action="store_true",
+        help="Disable header row in results"
     )
 
     return view_parser
