@@ -91,8 +91,8 @@ class SearchSubCommand(BaseSubCommand):
                             )
                         )
                     print("")
-            # This bare except can probably be removed once this issue is
-            # resolved: https://github.com/ericgeldmacher/nbcli/issues/41
+            # TODO: This bare except can probably be removed once this issue
+            # is resolved: https://github.com/ericgeldmacher/nbcli/issues/41
             except:  # noqa: E722
                 self.logger.warning('No API endpoint found for "%s".\n', obj_type)
         if result_count == 0:
