@@ -1,11 +1,9 @@
 from nbcli.core.utils import app_model_by_loc
 
 
-class NbArgs():
-
-    def __init__(self, netbox, kwargs=None, action='get'):
-
-        assert action in ['get', 'post', 'patch']
+class NbArgs:
+    def __init__(self, netbox, kwargs=None, action="get"):
+        assert action in ["get", "post", "patch"]
         self._nb = netbox
         self._logger = self._nb.nbcli.logger
         self.args = list()
@@ -16,10 +14,9 @@ class NbArgs():
         return bool(self.args) or bool(self.kwargs)
 
     def __repr__(self):
-        return 'NbArgs(args={}, kwargs={})'.format(self.args, self.kwargs)
+        return "NbArgs(args={}, kwargs={})".format(self.args, self.kwargs)
 
     def proc(self, *args):
-
         for arg in args:
             if isinstance(arg, tuple) and (len(arg) == 2):
                 self.update(*arg)
@@ -36,30 +33,28 @@ class NbArgs():
             self.kwargs[key] = value
 
     def string(self, string):
-
-        if ':' in string:
+        if ":" in string:
             args = list()
-            for resol in reversed(string.split('::')):
+            for resol in reversed(string.split("::")):
                 al = list()
-                for res in resol.split('~'):
+                for res in resol.split("~"):
                     nba = NbArgs(self._nb, action=self.action)
                     nba.proc(*args)
-                    nba.resolve(*res.split(':'), kwargs=nba.kwargs)
+                    nba.resolve(*res.split(":"), kwargs=nba.kwargs)
                     al += list(nba.kwargs.items())
                 args = al
             for arg in args:
                 self.update(*arg)
-        elif '=' in string:
-            kv = string.split('=')
+        elif "=" in string:
+            kv = string.split("=")
             if (len(kv) == 2) and (len(kv[0]) > 0) and (len(kv[1]) > 0):
-                self.update(kv[0], kv[1]) 
+                self.update(kv[0], kv[1])
             else:
                 self._logger.warning("Could not process '%s'", string)
         else:
             self.args.append(string)
 
     def apply_res(self, result, res):
-
         rep_items = getattr(res.reply, self.action)
 
         replyl = list()
@@ -73,7 +68,6 @@ class NbArgs():
         self.proc(*tuple(replyl))
 
     def resolve(self, resstr, *args, kwargs=None, res=None):
-
         res = res or self._nb.nbcli.rm.get(resstr)
         if not res:
             self._logger.warning("Could not resolve '%s'", resstr)
