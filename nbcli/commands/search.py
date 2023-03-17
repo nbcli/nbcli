@@ -1,8 +1,8 @@
 """Search sub command to emulate Netbox main search bar."""
 
 
-from pynetbox.core.query import Request
-from pynetbox.core.response import Record
+from pynetbox.core.query import Request  # noqa: F401
+from pynetbox.core.response import Record  # noqa: F401
 from nbcli.commands.base import BaseSubCommand
 from nbcli.core.utils import app_model_by_loc, rs_limit
 from nbcli.views.tools import nbprint
@@ -91,7 +91,9 @@ class SearchSubCommand(BaseSubCommand):
                             )
                         )
                     print("")
-            except:
+            # This bare except can probably be removed once this issue is
+            # resolved: https://github.com/ericgeldmacher/nbcli/issues/41
+            except:  # noqa: E722
                 self.logger.warning('No API endpoint found for "%s".\n', obj_type)
         if result_count == 0:
             self.logger.warning("No results found")
