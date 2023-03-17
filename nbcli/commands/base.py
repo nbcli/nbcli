@@ -121,7 +121,7 @@ class BaseSubCommand():
             if self.logger.parent.level == 1:
                 try:
                     from ipdb import post_mortem
-                except:
+                except ModuleNotFoundError:
                     from pdb import post_mortem
                 print("\n*** Entering debuger! (type '?' for help, or 'q' to quit) ***\n")
                 post_mortem()
