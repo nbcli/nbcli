@@ -16,7 +16,7 @@ class Upsert:
         # ud=False,      # update only
         parent=None,
     ):
-        assert (parent == None) or isinstance(parent, Upsert)
+        assert parent is None or isinstance(parent, Upsert)
 
         if isinstance(data, list):
             for d in data:
