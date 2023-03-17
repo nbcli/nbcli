@@ -3,7 +3,7 @@
 import json
 from collections import OrderedDict
 from pynetbox.core.response import Record, RecordSet
-from nbcli.core.utils import app_model_loc, is_list_of_records, view_name, rend_table
+from nbcli.core.utils import is_list_of_records, view_name, rend_table
 
 
 class BaseView():
