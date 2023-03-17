@@ -118,7 +118,7 @@ class BaseSubCommand:
                     from ipdb import post_mortem
                 except ModuleNotFoundError:
                     from pdb import post_mortem
-                print("\n*** Entering debuger! (type '?' for help, or 'q' to quit) ***\n")
+                print("\n*** Entering debugger! (type '?' for help, or 'q' to quit) ***\n")
                 post_mortem()
 
             sys.exit(1)
