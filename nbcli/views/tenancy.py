@@ -8,9 +8,9 @@ class TenancyTenantGroupsView(BaseView):
 
     def table_view(self):
         """Define columns for Tenant Groups."""
-        self.add_col('Name', self.get_attr('name'))
-        self.add_col('Tenants', self.get_attr('tenant_count'))
-        self.add_col('Slug', self.get_attr('slug'))
+        self.add_col("Name", self.get_attr("name"))
+        self.add_col("Tenants", self.get_attr("tenant_count"))
+        self.add_col("Slug", self.get_attr("slug"))
 
 
 class TenancyTenantsView(BaseView):
@@ -18,6 +18,6 @@ class TenancyTenantsView(BaseView):
 
     def table_view(self):
         """Define columns for Tenants."""
-        self.add_col('Name', self.get_attr('name'))
-        self.add_col('Group', self.get_attr('group'))
-        self.add_col('Description', self.get_attr('description'))
+        self.add_col("Name", self.get_attr("name"))
+        self.add_col("Group", self.get_attr("group"))
+        self.add_col("Description", self.get_attr("description"))
