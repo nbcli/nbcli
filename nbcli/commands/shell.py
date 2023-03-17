@@ -61,7 +61,8 @@ class Shell:
 
             readline.set_completer(rlcompleter.Completer(self.ns).complete)
             readline.parse_and_bind("tab:complete")
-        except:
+        except ImportError:
+            self.logger.debug("readline not available for import.")
             pass
 
         console = InteractiveConsole(locals=self.ns)
