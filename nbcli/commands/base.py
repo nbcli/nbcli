@@ -130,7 +130,7 @@ class BaseSubCommand:
                 except:
                     from pdb import post_mortem
                 print(
-                    "\n*** Entering debuger! "
+                    "\n*** Entering debugger! "
                     + "(type '?' for help, or 'q' to quit) ***\n"
                 )
                 post_mortem()
