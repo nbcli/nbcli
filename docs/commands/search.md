@@ -85,9 +85,9 @@ nbcli:
 ```
 
 !!! info
-    `nbcli search` relies on the `q` perameter being available for the GET
+    `nbcli search` relies on the `q` parameter being available for the GET
     method on the REST API endpoint. Make sure any object added to the
-    `search_objects` list has the `q` perameter available for the GET method.
+    `search_objects` list has the `q` parameter available for the GET method.
 
     Your Netbox instance API docs should be available at 
     https://your.netbox.url/api/docs
