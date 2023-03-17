@@ -1,5 +1,5 @@
 from sys import stdin
-from pynetbox.core.response import Record, RecordSet
+from pynetbox.core.response import Record, RecordSet  # noqa: F401
 from nbcli.commands.base import BaseSubCommand
 from nbcli.commands.tools import NbArgs
 from nbcli.core.utils import app_model_by_loc, is_list_of_records, rs_limit

@@ -1,11 +1,11 @@
 import pkgutil
 import sys
 import pynetbox
-from pynetbox.core.endpoint import Endpoint
-from pynetbox.core.response import Record
-from pynetbox.core.query import Request
+from pynetbox.core.endpoint import Endpoint  # noqa: F401
+from pynetbox.core.response import Record  # noqa: F401
+from pynetbox.core.query import Request  # noqa: F401
 from nbcli.commands.base import BaseSubCommand
-from nbcli.core.utils import app_model_loc, app_model_by_loc
+from nbcli.core.utils import app_model_loc, app_model_by_loc  # noqa: F401
 from nbcli.views.tools import nbprint
 
 
@@ -53,7 +53,7 @@ class Shell:
         self.ns["lsmodels"] = lsmodels
 
     def python(self):
-        from code import interact, InteractiveConsole
+        from code import interact, InteractiveConsole  # noqa: F401
 
         try:
             import readline
