@@ -1,6 +1,5 @@
 """Base sub-command and tools for commands."""
 
-
 import argparse
 from argparse import RawTextHelpFormatter
 import functools
@@ -14,7 +13,6 @@ from nbcli.views.tools import nbprint
 
 def get_common_parser():
     """Create parser for handling verbose options."""
-
     common_parser = argparse.ArgumentParser(add_help=False)
 
     common_parser.add_argument('-v', '--verbose',
@@ -30,7 +28,6 @@ def get_common_parser():
 
 def get_view_parser():
     """Create parser for handling view options."""
-
     view_parser = argparse.ArgumentParser(add_help=False)
 
     view_type = view_parser.add_mutually_exclusive_group()
@@ -126,8 +123,7 @@ class BaseSubCommand():
                     from ipdb import post_mortem
                 except:
                     from pdb import post_mortem
-                print("\n*** Entering debuger! " + \
-                      "(type '?' for help, or 'q' to quit) ***\n")
+                print("\n*** Entering debuger! (type '?' for help, or 'q' to quit) ***\n")
                 post_mortem()
 
             sys.exit(1)
