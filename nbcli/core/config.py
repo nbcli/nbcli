@@ -56,7 +56,7 @@ class Config:
         ]
         for ufile in filelist:
             if ufile.exists():
-                logger.info("%s already exists. Skiping.", str(ufile))
+                logger.info("%s already exists. Skipping.", str(ufile))
             else:
                 ufile.touch()
                 default = ufile.name + ".default"
