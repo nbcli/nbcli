@@ -88,7 +88,7 @@ class Config:
                 return ek.find(prefix) == 0
 
             for envkey in filter(has_prefix, os.environ.keys()):
-                attr = envkey[len(prefix) :].lower()
+                attr = envkey[len(prefix):].lower()
                 envval = auto_cast(os.environ.get(envkey))
                 getattr(self, key)[attr] = envval
 
