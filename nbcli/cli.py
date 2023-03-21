@@ -8,31 +8,32 @@ from nbcli.core.extend import load_extensions
 from nbcli.commands.base import BaseSubCommand
 
 
-class CLI():
+class CLI:
     """Command Line Interface for Netbox."""
 
     def __init__(self):
         """Set up argument parser and load sub-commands."""
-        epilog = '''
+        epilog = """
                General Options:
                  -h, --help           Show this help message and exit
                  -v, --verbose        Show more logging messages
-                 -q, --quiet          Show fewer logging messages'''
+                 -q, --quiet          Show fewer logging messages"""
 
-        self.parser = ArgumentParser(prog='nbcli',
-                                     description='Extensible CLI for Netbox',
-                                     epilog=dedent(epilog),
-                                     formatter_class=RawTextHelpFormatter)
+        self.parser = ArgumentParser(
+            prog="nbcli",
+            description="Extensible CLI for Netbox",
+            epilog=dedent(epilog),
+            formatter_class=RawTextHelpFormatter,
+        )
         self.parser.set_defaults(func=None)
 
-        if 'init' not in sys.argv:
+        if "init" not in sys.argv:
             load_extensions()
 
-        subparsers = self.parser.add_subparsers(title='Commands',
-                                                metavar='<command>')
+        subparsers = self.parser.add_subparsers(title="Commands", metavar="<command>")
 
         for command in BaseSubCommand.__subclasses__():
-            logger.debug('Loading %s', command.__module__)
+            logger.debug("Loading %s", command.__module__)
             command(subparsers)
 
     def run(self, argv):
@@ -51,5 +52,5 @@ def main():
     app.run(sys.argv[1:])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

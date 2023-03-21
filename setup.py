@@ -21,16 +21,14 @@ setuptools.setup(
     url="https://github.com/ericgeldmacher/nbcli",
     license="GPLv3",
     packages=setuptools.find_packages(),
-    package_data={
-        'nbcli': ['user_defaults/*.default', 'core/resolve_reference.yml']
-    },
-    install_requires=["pynetbox>=6.6.0,<7", 'pyyaml'],
+    package_data={"nbcli": ["user_defaults/*.default", "core/resolve_reference.yml"]},
+    install_requires=["pynetbox>=6.6.0,<7", "pyyaml"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires=">=3.6",
     entry_points={
         "console_scripts": [
             "nbcli=nbcli.cli:main",
