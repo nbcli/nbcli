@@ -4,6 +4,7 @@
 from nbcli.commands.base import BaseSubCommand
 from nbcli.core.utils import app_model_by_loc, rs_limit
 from nbcli.views.tools import nbprint
+from pynetbox.core.query import RequestError
 
 
 class SearchSubCommand(BaseSubCommand):
@@ -86,7 +87,7 @@ class SearchSubCommand(BaseSubCommand):
                             )
                         )
                     print("")
-            except:  # noqa: E722
+            except RequestError:
                 self.logger.warning('No API endpoint found for "%s".\n', obj_type)
         if result_count == 0:
             self.logger.warning("No results found")
