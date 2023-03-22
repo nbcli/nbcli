@@ -9,11 +9,11 @@ from pynetbox.core.endpoint import Endpoint
 from pynetbox.core.response import Record, RecordSet
 
 
-Resolve = namedtuple('Resolve', ['model', 'alias', 'lookup', 'reply'])
-Reply = namedtuple('Reply', ['get', 'post', 'patch'])
+Resolve = namedtuple("Resolve", ["model", "alias", "lookup", "reply"])
+Reply = namedtuple("Reply", ["get", "post", "patch"])
 
 
-class ResMgr():
+class ResMgr:
     """Store and retrieve Resolve objects."""
 
     def __init__(self, *args, **kwargs):
@@ -25,7 +25,6 @@ class ResMgr():
             self._res = Resolve(*args)
 
         for key, value in kwargs.items():
-
             value = value or {}
 
             if isinstance(value, dict):
@@ -37,20 +36,21 @@ class ResMgr():
         self._resl = tuple(self._resl)
 
     def _proc_res_data(self, key, data):
-
         model = key
-        alias = data.pop('alias', model.strip('s').split('.')[-1])
-        lookup = data.pop('lookup', 'name')
-        reply = data.pop('reply', {})
+        alias = data.pop("alias", model.strip("s").split(".")[-1])
+        lookup = data.pop("lookup", "name")
+        reply = data.pop("reply", {})
         if isinstance(reply, list):
-            reply = Reply(tuple([tuple(i) for i in reply]),
-                          tuple([tuple(i) for i in reply]),
-                          tuple([tuple(i) for i in reply]))
+            reply = Reply(
+                tuple([tuple(i) for i in reply]),
+                tuple([tuple(i) for i in reply]),
+                tuple([tuple(i) for i in reply]),
+            )
         elif isinstance(reply, dict):
             # tuple-fy
-            get = reply.pop('get', (('{}_id'.format(alias), 'id'),))
-            post = reply.pop('post', ((alias, 'id'),))
-            patch = reply.pop('patch', post)
+            get = reply.pop("get", (("{}_id".format(alias), "id"),))
+            post = reply.pop("post", ((alias, "id"),))
+            patch = reply.pop("patch", post)
             reply = Reply(get, post, patch)
 
         self._resl.append(ResMgr(model, alias, lookup, reply, **data))
@@ -63,10 +63,10 @@ class ResMgr():
             rl = list()
             for res in self._resl:
                 if res._resl:
-                    rl.append('{}*'.format(res.model))
+                    rl.append("{}*".format(res.model))
                 else:
                     rl.append(res.model)
-            return '{}({})'.format('ResMgr', ', '.join(rl))
+            return "{}({})".format("ResMgr", ", ".join(rl))
 
     def __iter__(self):
         """Iterate through list of child REsolve objects."""
@@ -96,10 +96,10 @@ def view_name(obj):
     class_name = obj.__class__.__name__
     model_loc = app_model_loc(obj)
 
-    if class_name not in ['Record', 'Endpoint']:
-        return model_loc.split('.')[0].title() + class_name + 'View'
+    if class_name not in ["Record", "Endpoint"]:
+        return model_loc.split(".")[0].title() + class_name + "View"
 
-    return model_loc.title().replace('_', '').replace('.', '') + 'View'
+    return model_loc.title().replace("_", "").replace(".", "") + "View"
 
 
 def rend_table(table):
@@ -110,41 +110,41 @@ def rend_table(table):
         colw.append(max([len(row[col]) for row in table]))
 
     # build template based on max with for each column
-    template = ''
+    template = ""
     buff = 2
     for w in colw:
-        template += '{:<' + str(w + buff) + 's}'
+        template += "{:<" + str(w + buff) + "s}"
 
-    return '\n'.join([template.format(*row) for row in table])
+    return "\n".join([template.format(*row) for row in table])
 
 
 def get_nbcli_dir():
     """Return path of nbcli directory."""
-    default = Path.home().joinpath('.nbcli')
-    return Path(os.environ.get('NBCLI_DIR', str(default)))
+    default = Path.home().joinpath(".nbcli")
+    return Path(os.environ.get("NBCLI_DIR", str(default)))
 
 
 def get_nbcli_logger():
     """Return logger object and set level if defined by env var."""
     logging.basicConfig(format="[%(levelname)s](%(name)s): %(message)s")
-    logger = logging.getLogger('nbcli')
-    env_level = os.environ.get('NBCLI_LOGLEVEL', 'WARNING').upper()
+    logger = logging.getLogger("nbcli")
+    env_level = os.environ.get("NBCLI_LOGLEVEL", "WARNING").upper()
     if hasattr(logging, env_level):
         logger.setLevel(getattr(logging, env_level))
-    logger.debug('Log level DEBUG set by enviornment.')
+    logger.debug("Log level DEBUG set by enviornment.")
     return logger
 
 
 def auto_cast(string):
     """Convert True, False, and None strings to their type."""
     assert isinstance(string, str)
-    if string.lower() == 'none':
+    if string.lower() == "none":
         return None
-    if string.lower() == 'true':
+    if string.lower() == "true":
         return True
-    if string.lower() == 'false':
+    if string.lower() == "false":
         return False
-    if ('{' in string) or ('[' in string):
+    if ("{" in string) or ("[" in string):
         try:
             return json.loads(string)
         except Exception:
@@ -159,18 +159,18 @@ def app_model_loc(obj):
         url = obj.url
     else:
         url = obj.endpoint.url
-    parts = url.replace(obj.api.base_url, '').strip('/').split('/')
-    return '.'.join(parts[:2]).replace('-', '_')
+    parts = url.replace(obj.api.base_url, "").strip("/").split("/")
+    return ".".join(parts[:2]).replace("-", "_")
 
 
 def app_model_by_loc(api, loc):
     """Return Endpoint defined by location."""
     assert isinstance(loc, str)
-    loc = loc.lower().replace('-', '_')
+    loc = loc.lower().replace("-", "_")
     res = api.nbcli.rm.get(loc)
     if res:
         loc = res.model
-    app_ep = loc.split('.')
+    app_ep = loc.split(".")
     assert len(app_ep) == 2
     app = getattr(api, app_ep[0])
     ep = getattr(app, app_ep[1])
@@ -180,7 +180,6 @@ def app_model_by_loc(api, loc):
 def is_list_of_records(result):
     """Determine if list only contains pynetbox Records of the same type."""
     if isinstance(result, list) and (len(result) > 0):
-
         # check all entries are an instance of Record
         rc = [isinstance(e, Record) for e in result].count(True) == len(result)
 
@@ -192,9 +191,10 @@ def is_list_of_records(result):
     else:
         return False
 
+
 def rs_limit(record_set, result_limit):
     """Limit the number of results in a RecordSet."""
-    assert(isinstance(record_set, RecordSet))
+    assert isinstance(record_set, RecordSet)
 
     ep = record_set.endpoint
 
@@ -202,8 +202,8 @@ def rs_limit(record_set, result_limit):
 
     result = list()
 
-    if rep.get('results'):
-        result = [Record(r, ep.api, ep) for r in rep['results']]
+    if rep.get("results"):
+        result = [Record(r, ep.api, ep) for r in rep["results"]]
 
     return result
 
@@ -211,8 +211,8 @@ def rs_limit(record_set, result_limit):
 def getter(obj, string):
     """Get attribute or item from object defined by string."""
     assert isinstance(string, str)
-    def getitem(o, k):
 
+    def getitem(o, k):
         try:
             try:
                 return o[str(k)]
@@ -221,9 +221,9 @@ def getter(obj, string):
         except Exception:
             return None
 
-    for attr in string.split('.'):
-        keys = attr.split(':')[1:]
-        attr = attr.split(':')[0]
+    for attr in string.split("."):
+        keys = attr.split(":")[1:]
+        attr = attr.split(":")[0]
         try:
             obj = getattr(obj, attr)
             for key in keys:
