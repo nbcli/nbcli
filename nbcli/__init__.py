@@ -1,6 +1,6 @@
 """Initialize nbcli module."""
 
-from nbcli.__version__ import __version__  # noqa: F401
+from nbcli.__version__ import __version__
 from nbcli.core.utils import get_nbcli_logger
 
 

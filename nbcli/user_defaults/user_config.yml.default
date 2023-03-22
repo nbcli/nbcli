@@ -29,7 +29,6 @@ nbcli:
 #    - prefix
 #    - address
 #    - vlan
-#    - secret
 #    - tenant
 #    - cluster
 #    - virtual_machine
