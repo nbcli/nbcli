@@ -1,0 +1,31 @@
+pipeline:
+
+  docs_setup:
+    image: codeberg.org/nbcli/dev-tools:latest
+    pull: true
+    secrets: [pages_token]
+    commands: 
+      - git config user.name $(git log -1 --pretty=format:'%an')
+      - git config user.email $(git log -1 --pretty=format:'%ae')
+      - git remote add pages https://$$PAGES_TOKEN@codeberg.org/nbcli/pages.git
+      - git fetch pages main --depth=1
+    when:
+
+  build_dev_docs:
+    image: codeberg.org/nbcli/dev-tools:latest
+    commands:
+      - mike deploy -p dev -b main -r pages
+    when:
+      branch: [develop]
+
+  build_release_docs:
+    image: codeberg.org/nbcli/dev-tools:latest
+    commands:
+      - mike deploy -p latest -b main -r pages
+      - mike set-default -p latest -b main -r pages
+    when:
+      branch: [release]
+
+when:
+  event: [push]
+  branch: [release, develop]
