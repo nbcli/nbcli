@@ -1,5 +1,52 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "nbcli"
+version = "0.9.1.dev2"
+authors = [
+  { name="Eric Geldmacher", email="egeldmacher@wustl.edu" },
+]
+description = "CLI for netbox using pynetbox module"
+readme = "README.md"
+license = {text = "GPLv3"}
+requires-python = ">=3.6"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "pyyaml",
+  "pynetbox >= 6.6.0, < 7",
+]
+
+
+[tool.setuptools.packages.find]
+
+
+[tool.setuptools.package-data]
+nbcli = [
+  "user_defaults/*.default",
+  "core/resolve_reference.yml",
+]
+
+
+[project.scripts]
+nbcli = "nbcli.cli:main"
+
+
+[project.urls]
+"Documentation" = "https://nbcli.codeberg.page"
+"Repository" = "https://codeberg.org/nbcli/nbcli"
+"Bug Tracker" = "https://codeberg.org/nbcli/nbcli/issues"
+
+
 [tool.black]
 line-length = 100
+
 
 [tool.flake8]
 extend-ignore = ["E203"]

@@ -4,7 +4,7 @@ pipeline:
     image: codeberg.org/nbcli/dev-tools:latest
     pull: true
     commands:
-      - python3 setup.py sdist bdist_wheel
+      - python3 -m build
       - twine check dist/*
     when:
       event: [push]
@@ -17,7 +17,7 @@ pipeline:
       - source: pypi_nbcli_token
         target: twine_password
     commands:
-      - python3 setup.py sdist bdist_wheel
+      - python3 -m build
       - twine check dist/*
       - twine upload dist/*
     when:
