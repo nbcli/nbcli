@@ -1,0 +1,29 @@
+pipeline:
+
+  build:
+    image: codeberg.org/nbcli/dev-tools:latest
+    pull: true
+    commands:
+      - python3 setup.py sdist bdist_wheel
+      - twine check dist/*
+    when:
+      event: [push]
+
+  publish:
+    image: codeberg.org/nbcli/dev-tools:latest
+    secrets:
+      - source: pypi_username
+        target: twine_username
+      - source: pypi_nbcli_token
+        target: twine_password
+    commands:
+      - python3 setup.py sdist bdist_wheel
+      - twine check dist/*
+      - twine upload dist/*
+    when:
+      event: tag
+      tag: v*
+
+when:
+  branch: [ release, develop ]
+  event: [ push, tag ]
