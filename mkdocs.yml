@@ -1,9 +1,9 @@
 site_name: "nbcli: NetBox Command-Line Client"
 site_author: Eric Geldmacher
 
-repo_name: ericgeldmacher/nbcli
-repo_url: https://github.com/ericgeldmacher/nbcli
-edit_uri: ""
+repo_name: codeberg.org/nbcli/nbcli
+repo_url: https://codeberg.org/nbcli/nbcli
+edit_uri: https://codeberg.org/nbcli/nbcli/src/branch/develop/docs
 
 nav:
   - Home: index.md

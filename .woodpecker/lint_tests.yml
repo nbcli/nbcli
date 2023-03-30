@@ -1,0 +1,19 @@
+pipeline:
+
+  lint:
+    image: codeberg.org/nbcli/dev-tools:latest
+    pull: true
+    commands:
+      - flake8 . --count
+    when:
+      status: [ success, failure ]
+
+  format:
+    image: codeberg.org/nbcli/dev-tools:latest
+    commands:
+      - black . --check
+    when:
+      status: [ success, failure ]
+
+when:
+  event: [push]

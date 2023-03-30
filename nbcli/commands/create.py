@@ -128,8 +128,8 @@ class CreateSubCommand(BaseSubCommand):
         """Run command.
 
         See documentation and reference examples.
-        https://ericgeldmacher.github.io/nbcli/latest/commands/create/
-        https://ericgeldmacher.github.io/nbcli/latest/reference/create-examples/
+        https://nbcli.codeberg.page/latest/commands/create/
+        https://nbcli.codeberg.page/latest/reference/create-examples/
 
         Usage Examples:
 
