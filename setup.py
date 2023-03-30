@@ -18,7 +18,7 @@ setuptools.setup(
     description="CLI for netbox using pynetbox module",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ericgeldmacher/nbcli",
+    url="https://codeberg.org/nbcli/nbcli",
     license="GPLv3",
     packages=setuptools.find_packages(),
     package_data={"nbcli": ["user_defaults/*.default", "core/resolve_reference.yml"]},

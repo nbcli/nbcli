@@ -6,7 +6,7 @@ Instructions require python >= 3.6, git, and docker-compose to be installed.
 ## Clone nbcli repo
 
 ```bash
-git clone https://github.com/ericgeldmacher/nbcli.git && \
+git clone https://codeberg.org/nbcli/nbcli.git && \
     cd nbcli
 ```
 
