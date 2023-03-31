@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nbcli"
-version = "0.9.1.dev2"
+version = "0.9.1.dev3"
 authors = [
   { name="Eric Geldmacher", email="egeldmacher@wustl.edu" },
 ]
