@@ -2,6 +2,7 @@
 
 import json
 from collections import OrderedDict
+from concurrent.futures import ThreadPoolExecutor
 from pynetbox.core.response import Record, RecordSet
 from nbcli.core.utils import is_list_of_records, view_name, rend_table
 
@@ -125,15 +126,28 @@ class Formatter:
         self.cols = cols
         self.disable_header = disable_header
         self._string = ""
+        self._threading = False
+        self._max_workers = 4
 
     def _build_table(self):
         display = list()
 
-        for i, entry in enumerate(self.result):
+        # add table header
+        hview = self.view_model(self.result[0], cols=self.cols)
+        display.append([k for k in hview.keys()])
+
+        def thread_worker(entry):
             view = self.view_model(entry, cols=self.cols)
-            if i == 0:
-                display.append([i for i in view.keys()])
-            display.append([i for i in view.values()])
+            return [v for v in view.values()]
+
+        if self._threading:
+            with ThreadPoolExecutor(max_workers=self._max_workers) as executor:
+                results = executor.map(thread_worker, self.result)
+            display = display + list(results)
+        else:
+            for entry in self.result:
+                view = self.view_model(entry, cols=self.cols)
+                display.append([v for v in view.values()])
 
         return display
 
@@ -164,6 +178,12 @@ class Formatter:
         self._string = rend_table(display)
 
     def _get_view(self):
+        # probably not the best way to do this, but first opportunity
+        # to get threading and max_workers from conf
+        nb = self.result[0].api
+        self._threading = nb.threading
+        self._max_workers = nb.nbcli.conf.nbcli.get("max_workers", 4)
+
         if not self.view_model:
             self.view_model = view_name(self.result[0])
 
@@ -190,7 +210,7 @@ class Formatter:
 
     @property
     def string(self):
-        """Generate string based on peramiters passed to Display."""
+        """Generate string based on parameters passed to Display."""
         if self.json_view:
             self._get_json()
             return self._string

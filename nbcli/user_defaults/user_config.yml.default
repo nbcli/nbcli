@@ -13,6 +13,9 @@ nbcli:
   # Limit results returned from filter command. Set to 0 to disable.
   filter_limit: 50
 
+  # Number of working if threading is enabled
+#  max_workers: 10
+
 #  search_objects:
 #    - provider
 #    - circuit
