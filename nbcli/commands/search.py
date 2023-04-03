@@ -1,5 +1,6 @@
 """Search sub command to emulate Netbox main search bar."""
 
+from concurrent.futures import ThreadPoolExecutor
 
 from nbcli.commands.base import BaseSubCommand
 from nbcli.core.utils import app_model_by_loc, rs_limit
@@ -67,28 +68,45 @@ class SearchSubCommand(BaseSubCommand):
         else:
             modellist = self.search_objects
 
-        result_count = 0
+        self.result_count = 0
+        self.results = list()
 
-        print("")
-        for obj_type in modellist:
-            try:
-                model = app_model_by_loc(self.netbox, obj_type)
-                result = rs_limit(model.filter(self.args.searchterm), 15)
-                full_count = model.count(self.args.searchterm)
-                if len(result) > 0:
-                    result_count += 1
-                    print("{}\n{}".format(obj_type.title(), "=" * len(obj_type)))
-                    self.nbprint(result)
-                    if len(result) < full_count:
-                        print(
-                            "*** See all {} results: ".format(full_count)
-                            + "'$ nbcli filter {} {} --dl' ***".format(
-                                obj_type, self.args.searchterm
-                            )
-                        )
-                    print("")
-            except RequestError:
-                self.logger.warning('No API endpoint found for "%s".\n', obj_type)
-        if result_count == 0:
+        max_workers = self.netbox.nbcli.conf.nbcli.get("max_workers", 4)
+
+        if self.netbox.threading:
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                self.results = executor.map(self.search_model, modellist)
+        else:
+            for obj_type in modellist:
+                self.results.append(self.search_model(obj_type))
+
+        self.results = [r for r in self.results if r != ""]
+
+        if self.result_count == 0:
             self.logger.warning("No results found")
+        else:
             print("")
+            for result in self.results:
+                print(f"{result}\n")
+
+    def search_model(self, obj_type):
+        """Search for given model for search term."""
+        result_str = ""
+
+        try:
+            model = app_model_by_loc(self.netbox, obj_type)
+            result = rs_limit(model.filter(self.args.searchterm), 15)
+            full_count = model.count(self.args.searchterm)
+            if len(result) > 0:
+                self.result_count += 1
+                result_str += f"{obj_type.title()}\n{'=' * len(obj_type)}\n"
+                result_str += self.nbprint(result, string=True)
+                if len(result) < full_count:
+                    result_str += f"\n*** See all {full_count} results: "
+                    result_str += f"'$nbcli filter {obj_type} {self.args.searchterm} --dl' ***"
+
+        except (RequestError, AssertionError) as err:
+            self.logger.warning('No API endpoint found for "%s".', obj_type)
+            self.logger.warning(err)
+
+        return result_str

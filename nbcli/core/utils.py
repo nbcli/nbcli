@@ -171,7 +171,7 @@ def app_model_by_loc(api, loc):
     if res:
         loc = res.model
     app_ep = loc.split(".")
-    assert len(app_ep) == 2
+    assert len(app_ep) == 2, "Endpoint must be in format '{APP}.{ENDPOINT}'."
     app = getattr(api, app_ep[0])
     ep = getattr(app, app_ep[1])
     return ep
