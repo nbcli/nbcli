@@ -141,6 +141,7 @@ class BaseSubCommand:
                 level = 1
 
         self.logger.parent.setLevel(level)
+        self.logger.root.setLevel(level)
 
     def setup(self):
         """Define additional parser options for sub command."""
