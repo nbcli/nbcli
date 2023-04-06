@@ -94,6 +94,11 @@ class Shell:
                 argv.append("-i")
             argv.append(self.script)
 
+        # Keep parso logger above DEBUG level to keep the ipython shell usable
+        plogger = self.logger.root.getChild("parso")
+        if plogger.getEffectiveLevel() <= 10:
+            plogger.setLevel(11)
+
         start_ipython(argv=argv, user_ns=self.ns, config=c)
 
     def run(self):
