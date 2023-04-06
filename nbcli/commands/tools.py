@@ -45,7 +45,17 @@ class NbArgs:
 
     def string(self, string):
         """Process raw string, convert to kwarg, or resolve if needed."""
-        if ":" in string:
+
+        def proc_kw_string(kw_string):
+            """Process string as a keyword argument."""
+            kv = string.split("=")
+            if (len(kv) == 2) and (len(kv[0]) > 0) and (len(kv[1]) > 0):
+                self.update(kv[0], kv[1])
+            else:
+                self._logger.warning("Could not process '%s'", string)
+
+        def proc_res_string(res_string):
+            """Process string as auto-resolve argument."""
             args = list()
             for resol in reversed(string.split("::")):
                 al = list()
@@ -57,12 +67,16 @@ class NbArgs:
                 args = al
             for arg in args:
                 self.update(*arg)
+
+        if "=" in string and ":" in string:
+            if string.find("=") < string.find(":"):
+                # If the string has both kw token and res token and  kw token comes first
+                # Process the string as a kwarg
+                proc_kw_string(string)
+        elif ":" in string:
+            proc_res_string(string)
         elif "=" in string:
-            kv = string.split("=")
-            if (len(kv) == 2) and (len(kv[0]) > 0) and (len(kv[1]) > 0):
-                self.update(kv[0], kv[1])
-            else:
-                self._logger.warning("Could not process '%s'", string)
+            proc_kw_string(string)
         else:
             self.args.append(string)
 
