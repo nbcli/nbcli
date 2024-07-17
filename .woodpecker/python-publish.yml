@@ -15,7 +15,7 @@ steps:
       twine_username:
         from_secret: pypi_username
       twine_password:
-        from_secret: pypy_nbcli_token
+        from_secret: pypi_nbcli_token
     commands:
       - python3 -m build
       - twine check dist/*
