@@ -1,6 +1,6 @@
-pipeline:
+steps:
 
-  lint:
+  - name: lint
     image: codeberg.org/nbcli/dev-tools:latest
     pull: true
     commands:
@@ -8,7 +8,7 @@ pipeline:
     when:
       status: [ success, failure ]
 
-  format:
+  - name: format
     image: codeberg.org/nbcli/dev-tools:latest
     commands:
       - black . --check

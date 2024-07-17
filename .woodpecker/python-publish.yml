@@ -1,6 +1,6 @@
-pipeline:
+steps:
 
-  build:
+  - name: build
     image: codeberg.org/nbcli/dev-tools:latest
     pull: true
     commands:
@@ -9,7 +9,7 @@ pipeline:
     when:
       event: [push]
 
-  publish:
+  - name: publish
     image: codeberg.org/nbcli/dev-tools:latest
     secrets:
       - source: pypi_username
