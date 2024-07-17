@@ -10,6 +10,8 @@ steps:
       - git remote add pages https://$$PAGES_TOKEN@codeberg.org/nbcli/pages.git
       - git fetch pages main --depth=1
     when:
+      event: [push]
+      branch: [release, develop]
 
   - name: build_dev_docs
     image: codeberg.org/nbcli/dev-tools:latest
