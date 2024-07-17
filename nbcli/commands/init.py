@@ -1,6 +1,5 @@
 """Sub Command to set up bare nbcli user directory."""
 
-
 import logging
 from nbcli.commands.base import BaseSubCommand
 from nbcli.core.config import get_session

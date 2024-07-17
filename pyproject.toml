@@ -5,14 +5,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nbcli"
-version = "0.9.3.dev1"
+version = "0.10.0.dev1"
 authors = [
   { name="Eric Geldmacher", email="egeldmacher@wustl.edu" },
 ]
 description = "CLI for netbox using pynetbox module"
 readme = "README.md"
 license = {text = "GPLv3"}
-requires-python = ">=3.6"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
@@ -20,7 +20,7 @@ classifiers = [
 ]
 dependencies = [
   "pyyaml",
-  "pynetbox >= 6.6.0, < 7",
+  "pynetbox >= 7.3.4, < 8",
 ]
 
 
