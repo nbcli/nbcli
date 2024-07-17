@@ -1,6 +1,6 @@
-pipeline:
+steps:
 
-  docs_setup:
+  - name: docs_setup
     image: codeberg.org/nbcli/dev-tools:latest
     pull: true
     secrets: [pages_token]
@@ -10,15 +10,17 @@ pipeline:
       - git remote add pages https://$$PAGES_TOKEN@codeberg.org/nbcli/pages.git
       - git fetch pages main --depth=1
     when:
+      event: [push]
+      branch: [release, develop]
 
-  build_dev_docs:
+  - name: build_dev_docs
     image: codeberg.org/nbcli/dev-tools:latest
     commands:
       - mike deploy -p dev -b main -r pages
     when:
       branch: [develop]
 
-  build_release_docs:
+  - name: build_release_docs
     image: codeberg.org/nbcli/dev-tools:latest
     commands:
       - mike deploy -p latest -b main -r pages

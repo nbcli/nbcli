@@ -1,6 +1,5 @@
 """Load sub-commands for nbcli."""
 
-
 from nbcli.commands.base import BaseSubCommand
 from nbcli.commands.init import InitSubCommand
 from nbcli.commands.info import InfoSubCommand

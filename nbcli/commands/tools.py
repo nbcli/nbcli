@@ -73,6 +73,9 @@ class NbArgs:
                 # If the string has both kw token and res token and  kw token comes first
                 # Process the string as a kwarg
                 proc_kw_string(string)
+            else:
+                # Process the string as a res_arg
+                proc_res_string(string)
         elif ":" in string:
             proc_res_string(string)
         elif "=" in string:

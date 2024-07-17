@@ -1,3 +1,5 @@
 """Declare version number for nbcli."""
 
-__version__ = "0.9.3.dev1"
+import importlib.metadata
+
+__version__ = importlib.metadata.version("nbcli")
