@@ -12,9 +12,9 @@ steps:
   - name: publish
     image: codeberg.org/nbcli/dev-tools:latest
     environment:
-      twine_username:
+      TWINE_USERNAME:
         from_secret: pypi_username
-      twine_password:
+      TWINE_PASSWORD:
         from_secret: pypi_nbcli_token
     commands:
       - python3 -m build
