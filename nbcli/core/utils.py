@@ -116,7 +116,7 @@ def rend_table(table):
     for w in colw:
         template += "{:<" + str(w + buff) + "s}"
 
-    return "\n".join([template.format(*row) for row in table])
+    return "\n".join([template.format(*row).strip() for row in table])
 
 
 def get_nbcli_dir():
