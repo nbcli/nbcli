@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nbcli"
-version = "0.10.0.dev1"
+version = "0.10.0.dev2"
 authors = [
   { name="Eric Geldmacher", email="egeldmacher@wustl.edu" },
 ]
@@ -21,6 +21,7 @@ classifiers = [
 dependencies = [
   "pyyaml",
   "pynetbox >= 7.3.4, < 8",
+  "setuptools",
 ]
 
 
