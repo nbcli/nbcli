@@ -1,7 +1,7 @@
 """Objects related to loading nbcli configuration."""
 
 import os
-from pkg_resources import resource_string
+from importlib.resources import files
 import pynetbox
 import requests
 import urllib3
@@ -60,7 +60,7 @@ class Config:
                 default = ufile.name + ".default"
                 logger.debug(default)
                 with open(str(ufile), "w") as fh:
-                    fh.write(resource_string("nbcli.user_defaults", default).decode())
+                    fh.write((files("nbcli.user_defaults") / default).read_text())
 
         print("Edit pynetbox 'url' and 'token' entries in user_config.yml:")
         print("\t{}".format(str(self.user_files.user_config.absolute())))
@@ -121,7 +121,7 @@ def get_session(init=False):
 
     nb.nbcli = type("nbcli", (), {})()
 
-    resstr = resource_string("nbcli.core", "resolve_reference.yml").decode()
+    resstr = (files("nbcli.core") / "resolve_reference.yml").read_text()
     resdict = yaml.safe_load(resstr)
     nb.nbcli.rm = ResMgr(**resdict)
 
