@@ -20,6 +20,7 @@ steps:
   - name: build_dev_docs
     image: python:3-alpine
     commands:
+      - apk add git
       - pip3 install mkdocs-material mike
       - mike deploy -p dev -b main -r pages
     when:
@@ -28,6 +29,7 @@ steps:
   - name: build_release_docs
     image: python:3-alpine
     commands:
+      - apk add git
       - pip3 install mkdocs-material mike
       - mike deploy -p latest -b main -r pages
       - mike set-default -p latest -b main -r pages
