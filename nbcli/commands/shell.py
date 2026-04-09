@@ -1,6 +1,6 @@
 """Sub command to launch python shell preloaded with pynetbox objects."""
 
-import pkgutil
+import importlib
 import sys
 import pynetbox
 from pynetbox.core.endpoint import Endpoint
@@ -16,7 +16,7 @@ class Shell:
         self, netbox, interactive_shell=None, script=None, cmd=None, interact=False, logger=None
     ):
         """Initialize Shell object."""
-        if pkgutil.find_loader("IPython") is None:
+        if importlib.util.find_spec("IPython") is None:
             interactive_shell = "python"
 
         self.interactive_shell = interactive_shell
