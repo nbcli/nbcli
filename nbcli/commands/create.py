@@ -137,9 +137,11 @@ class CreateSubCommand(BaseSubCommand):
           $ nbcli create file.yml
         """
         with open(self.args.file) as fh:
+            self.logger.debug("Reading yaml file")
             data_stream = yaml.safe_load_all(fh.read())
 
         for data in data_stream:
+            self.logger.debug(data)
             for key, value in data.items():
                 assert self.netbox.nbcli.rm.get(key.split(":")[0])
                 Upsert(self.netbox, self.logger, key, value, parent=None)
