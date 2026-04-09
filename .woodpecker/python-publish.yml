@@ -1,22 +1,24 @@
 steps:
 
   - name: build
-    image: codeberg.org/nbcli/dev-tools:latest
+    image: python:3-alpine
     pull: true
     commands:
+      - pip3 install setuptools wheel twine build
       - python3 -m build
       - twine check dist/*
     when:
       event: [push]
 
   - name: publish
-    image: codeberg.org/nbcli/dev-tools:latest
+    image: python:3-alpine
     environment:
       TWINE_USERNAME:
         from_secret: pypi_username
       TWINE_PASSWORD:
         from_secret: pypi_nbcli_token
     commands:
+      - pip3 install setuptools wheel twine build
       - python3 -m build
       - twine check dist/*
       - twine upload dist/*

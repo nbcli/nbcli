@@ -1,16 +1,18 @@
 steps:
 
   - name: lint
-    image: codeberg.org/nbcli/dev-tools:latest
+    image: python:3-alpine
     pull: true
     commands:
+      - pip3 install flake8 flake8-docstrings Flake8-pyproject
       - flake8 . --count
     when:
       status: [ success, failure ]
 
   - name: format
-    image: codeberg.org/nbcli/dev-tools:latest
+    image: python:3-alpine
     commands:
+      - pip3 install black
       - black . --check
     when:
       status: [ success, failure ]

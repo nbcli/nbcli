@@ -1,7 +1,8 @@
 steps:
 
   - name: docs_setup
-    image: codeberg.org/nbcli/dev-tools:latest
+    #image: codeberg.org/nbcli/dev-tools:latest
+    image: python:3-alpine
     pull: true
     environment:
       PAGES_TOKEN:
@@ -16,15 +17,17 @@ steps:
       branch: [release, develop]
 
   - name: build_dev_docs
-    image: codeberg.org/nbcli/dev-tools:latest
+    image: python:3-alpine
     commands:
+      - pip3 install mkdocs-material mike
       - mike deploy -p dev -b main -r pages
     when:
       branch: [develop]
 
   - name: build_release_docs
-    image: codeberg.org/nbcli/dev-tools:latest
+    image: python:3-alpine
     commands:
+      - pip3 install mkdocs-material mike
       - mike deploy -p latest -b main -r pages
       - mike set-default -p latest -b main -r pages
     when:
