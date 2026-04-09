@@ -2,7 +2,6 @@
 
 from nbcli.views.tools import BaseView
 
-
 # class DcimCableTerminationsView(BaseView):
 # class DcimCablesView(BaseView):
 # class DcimConnectedDeviceView(BaseView):

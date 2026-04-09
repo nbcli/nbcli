@@ -9,7 +9,6 @@ from pathlib import Path
 from pynetbox.core.endpoint import Endpoint
 from pynetbox.core.response import Record, RecordSet
 
-
 Resolve = namedtuple("Resolve", ["model", "alias", "lookup", "reply"])
 Reply = namedtuple("Reply", ["get", "post", "patch"])
 
