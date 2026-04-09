@@ -3,7 +3,9 @@ steps:
   - name: docs_setup
     image: codeberg.org/nbcli/dev-tools:latest
     pull: true
-    secrets: [pages_token]
+    environment:
+      PAGES_TOKEN:
+        from_secret: pages_token
     commands: 
       - git config user.name $(git log -1 --pretty=format:'%an')
       - git config user.email $(git log -1 --pretty=format:'%ae')
