@@ -8,6 +8,7 @@ steps:
       PAGES_TOKEN:
         from_secret: pages_token
     commands: 
+      - apk add git
       - git config user.name $(git log -1 --pretty=format:'%an')
       - git config user.email $(git log -1 --pretty=format:'%ae')
       - git remote add pages https://$$PAGES_TOKEN@codeberg.org/nbcli/pages.git
